@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi  
-NIM: 241524028  
+Author: Adi Rafi Chaerufarizki 
+NIM: 241524001  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -8,6 +8,7 @@ Politeknik Negeri Bandung
 */
 
 #include "implementasi_jadwal_kereta.h"
+#include "databases.h"
 
 // Fungsi untuk membuat jadwal kereta baru
 JadwalHarian BuatJadwalKereta(char* id_kereta, char* tanggal) {
@@ -432,4 +433,120 @@ boolean ValidasiTanggal(char* tanggal) {
     }
     
     return TRUE;
+}
+
+// Helper: cek apakah id kereta valid di informasi_umum.txt
+int CekIdKeretaValid(const char* id) {
+    Record rec; InisialisasiRecord(&rec);
+    return BacaInformasiKereta(&rec, id);
+}
+
+void TampilkanDaftarJadwal() {
+    clearScreen();
+    FILE* f = fopen("jadwal_kereta.txt", "r");
+    printf("+-----------------------------------------------------------------------------------+\n");
+    printf("|                                 DAFTAR JADWAL KERETA                              |\n");
+    printf("+-----------------------------------------------------------------------------------+\n");
+    if (!f) {
+        printf("| Tidak ada data jadwal kereta.                                                     |\n");
+    } else {
+        char line[512];
+        while (fgets(line, sizeof(line), f)) {
+            char* id = strtok(line, "|");
+            char* stasiun = strtok(NULL, "|");
+            char* waktu = strtok(NULL, "|");
+            printf("| ID: %-8s | Stasiun: %-40s | Waktu: %-20s |\n", id ? id : "-", stasiun ? stasiun : "-", waktu ? waktu : "-");
+        }
+        fclose(f);
+    }
+    printf("+-----------------------------------------------------------------------------------+\n");
+}
+
+void TambahJadwal() {
+    clearScreen();
+    printf("+----------------------------------------------+\n");
+    printf("|               TAMBAH JADWAL                 |\n");
+    printf("+----------------------------------------------+\n");
+    char id[20], stasiun[256], waktu[256];
+    printf("ID Kereta (harus sudah terdaftar): "); scanf("%s", id); while(getchar()!='\n');
+    if (!CekIdKeretaValid(id)) {
+        printf("ID kereta tidak ditemukan di database!\nTekan Enter untuk kembali..."); getchar(); return;
+    }
+    printf("Daftar stasiun (pisahkan dengan koma, contoh: Bandung,Jakarta): "); fgets(stasiun, sizeof(stasiun), stdin); stasiun[strcspn(stasiun, "\n")] = 0;
+    printf("Daftar waktu (pisahkan dengan koma, contoh: 05:00,06:00): "); fgets(waktu, sizeof(waktu), stdin); waktu[strcspn(waktu, "\n")] = 0;
+    FILE* f = fopen("jadwal_kereta.txt", "a");
+    if (f) {
+        fprintf(f, "%s|%s|%s\n", id, stasiun, waktu);
+        fclose(f);
+        printf("\nJadwal berhasil ditambahkan!\n");
+    } else {
+        printf("\nGagal menambah jadwal!\n");
+    }
+    printf("Tekan Enter untuk kembali..."); getchar();
+}
+
+void EditJadwal() {
+    TampilkanDaftarJadwal();
+    char id[20];
+    printf("\nMasukkan ID kereta yang ingin diedit jadwalnya: ");
+    scanf("%s", id); while(getchar()!='\n');
+    if (!CekIdKeretaValid(id)) {
+        printf("ID kereta tidak ditemukan di database!\nTekan Enter untuk kembali..."); getchar(); return;
+    }
+    // Baca semua jadwal ke memori
+    FILE* f = fopen("jadwal_kereta.txt", "r");
+    char lines[100][512]; int n = 0, found = 0;
+    while (f && fgets(lines[n], sizeof(lines[n]), f)) {
+        char temp[512]; strcpy(temp, lines[n]);
+        char* tid = strtok(temp, "|");
+        if (tid && strcmp(tid, id) == 0) found = 1;
+        n++;
+    }
+    if (f) fclose(f);
+    if (!found) { printf("Jadwal untuk ID ini tidak ditemukan!\nTekan Enter untuk kembali..."); getchar(); return; }
+    char stasiun[256], waktu[256];
+    printf("Stasiun baru (pisahkan koma): "); fgets(stasiun, sizeof(stasiun), stdin); stasiun[strcspn(stasiun, "\n")] = 0;
+    printf("Waktu baru (pisahkan koma): "); fgets(waktu, sizeof(waktu), stdin); waktu[strcspn(waktu, "\n")] = 0;
+    // Tulis ulang file
+    f = fopen("jadwal_kereta.txt", "w");
+    for (int i = 0; i < n; i++) {
+        char temp[512]; strcpy(temp, lines[i]);
+        char* tid = strtok(temp, "|");
+        if (tid && strcmp(tid, id) == 0) {
+            fprintf(f, "%s|%s|%s\n", id, stasiun, waktu);
+        } else {
+            fputs(lines[i], f);
+        }
+    }
+    fclose(f);
+    printf("\nJadwal berhasil diupdate!\nTekan Enter untuk kembali..."); getchar();
+}
+
+void HapusJadwalDashboard() {
+    TampilkanDaftarJadwal();
+    char id[20];
+    printf("\nMasukkan ID kereta yang ingin dihapus jadwalnya: ");
+    scanf("%s", id); while(getchar()!='\n');
+    if (!CekIdKeretaValid(id)) {
+        printf("ID kereta tidak ditemukan di database!\nTekan Enter untuk kembali..."); getchar(); return;
+    }
+    printf("Apakah Anda yakin ingin menghapus jadwal kereta %s? (y/n): ", id);
+    char yakin = getchar(); while(getchar()!='\n' && getchar()!=EOF);
+    if (yakin != 'y' && yakin != 'Y') { printf("\nPenghapusan dibatalkan.\nTekan Enter untuk kembali..."); getchar(); return; }
+    // Baca semua jadwal ke memori
+    FILE* f = fopen("jadwal_kereta.txt", "r");
+    char lines[100][512]; int n = 0;
+    while (f && fgets(lines[n], sizeof(lines[n]), f)) n++;
+    if (f) fclose(f);
+    // Tulis ulang file tanpa jadwal yang dihapus
+    f = fopen("jadwal_kereta.txt", "w");
+    for (int i = 0; i < n; i++) {
+        char temp[512]; strcpy(temp, lines[i]);
+        char* tid = strtok(temp, "|");
+        if (!(tid && strcmp(tid, id) == 0)) {
+            fputs(lines[i], f);
+        }
+    }
+    fclose(f);
+    printf("\nJadwal berhasil dihapus!\nTekan Enter untuk kembali..."); getchar();
 } 

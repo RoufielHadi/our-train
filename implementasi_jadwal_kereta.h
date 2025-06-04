@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi  
-NIM: 241524028  
+Author: Adi Rafi Chaerufarizki 
+NIM: 241524001  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -83,5 +83,11 @@ boolean KonversiTanggal(char* tanggal_input, char* tanggal_output);
 
 // Fungsi untuk validasi tanggal
 boolean ValidasiTanggal(char* tanggal);
+
+// Fungsi CRUD untuk dashboard jadwal
+void TampilkanDaftarJadwal();
+void TambahJadwal();
+void EditJadwal();
+void HapusJadwalDashboard();
 
 #endif /* IMPLEMENTASI_JADWAL_KERETA_H */ 
