@@ -16,13 +16,33 @@ Politeknik Negeri Bandung
 
 #define FILE_RIWAYAT "riwayatPembelian.txt"
 
+// Struktur data untuk user dalam riwayat tiket
+typedef struct {
+    char nama[100];
+    char email[100];
+    char nomor_telepon[20];
+} UserRiwayat;
+
+// Struktur data untuk kereta dalam riwayat tiket
+typedef struct {
+    char kode_kereta[20];
+    char nama_kereta[100];
+    char stasiun_asal[100];
+    char stasiun_tujuan[100];
+    char jam_berangkat[10];
+    char jam_tiba[10];
+    char tanggal_berangkat[20];
+    char kelas[50];
+    int harga;
+} KeretaRiwayat;
+
 // Definisi struktur data RiwayatTiket
 typedef struct {
-    struct User riwayat_user;
-    struct InformasiKereta riwayat_kereta; 
+    UserRiwayat riwayat_user;
+    KeretaRiwayat riwayat_kereta; 
     int riwayat_nomor_gerbong;
     int riwayat_nomor_kursi; 
-    struct Waktu riwayat_waktu_pemesanan; 
+    Waktu riwayat_waktu_pemesanan; 
 } RiwayatTiket;
 
 // Definisi struktur node DataRiwayat
