@@ -1,0 +1,12 @@
+KA004|Taksaka|Yogyakarta|Gambir|08:00|14:30|2025-06-08|250000|Eksekutif|Budi Santoso|budi@mail.com|081278341239|B5|3|2025-06-04 23:01:12
+KA005|Matarmaja|Malang|Pasar Senen|16:00|06:00|2025-06-09|180000|Ekonomi|Nina Kartika|nina@mail.com|082198743210|E2|5|2025-06-04 23:10:05
+KA006|Gajayana|Gambir|Malang|20:00|10:00|2025-06-10|300000|Eksekutif|Dedi Wahyudi|dedi@mail.com|081377892123|A3|1|2025-06-04 23:20:45
+KA007|Turangga|Bandung|Surabaya Gubeng|19:00|06:00|2025-06-11|275000|Eksekutif|Lisa Mariana|lisa@mail.com|085278432190|B7|2|2025-06-04 23:31:32
+KA008|Singasari|Blitar|Pasar Senen|12:00|02:00|2025-06-12|200000|Ekonomi|Yoga Pratama|yoga@mail.com|081265432189|F4|6|2025-06-04 23:40:11
+KA009|Jayabaya|Malang|Pasar Senen|14:00|04:00|2025-06-13|220000|Ekonomi|Sari Dewi|sari@mail.com|081345673219|D1|4|2025-06-04 23:45:20
+KA010|Argo Wilis|Bandung|Surabaya Gubeng|08:00|20:00|2025-06-14|320000|Eksekutif|Andre Saputra|andre@mail.com|089876543210|C6|3|2025-06-04 23:50:50
+KA011|Bima|Gambir|Surabaya Gubeng|17:00|06:00|2025-06-15|350000|Eksekutif|Putri Anggraeni|putri@mail.com|082134567899|A2|1|2025-06-04 23:55:10
+KA012|Bangunkarta|Jombang|Pasar Senen|15:00|05:00|2025-06-16|230000|Ekonomi|Fajar Nugroho|fajar@mail.com|082176543210|D3|4|2025-06-05 00:01:12
+KA013|Kertajaya|Surabaya Pasar Turi|Pasar Senen|21:00|11:00|2025-06-17|170000|Ekonomi|Mira Lestari|mira@mail.com|081289763452|E5|5|2025-06-05 00:05:33
+KA014|Brantas|Blitar|Pasar Senen|13:00|03:00|2025-06-18|160000|Ekonomi|Rangga Permana|rangga@mail.com|083298743210|C1|3|2025-06-05 00:10:20
+KA015|Argo Dwipangga|Solo Balapan|Gambir|07:00|13:00|2025-06-19|280000|Eksekutif|Yuni Ardianti|yuni@mail.com|084356789012|B4|2|2025-06-05 00:15:47
