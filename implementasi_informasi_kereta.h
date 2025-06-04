@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi  
-NIM: 241524028  
+Author: Adi Rafi Chaerufarizki 
+NIM: 241524001  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -31,12 +31,6 @@ boolean TambahInformasiKereta(ListKereta *L, InformasiKereta kereta_baru);
 // Fungsi untuk mencari informasi kereta berdasarkan ID
 boolean CariInformasiKereta(ListKereta L, char* id_kereta, InformasiKereta* hasil);
 
-// Fungsi untuk memperbarui informasi kereta
-boolean UpdateInformasiKereta(ListKereta *L, char* id_kereta, InformasiKereta kereta_baru);
-
-// Fungsi untuk menghapus informasi kereta
-boolean HapusInformasiKereta(ListKereta *L, char* id_kereta);
-
 // Fungsi untuk menampilkan informasi kereta
 void TampilkanInformasiKereta(InformasiKereta kereta);
 
@@ -66,5 +60,11 @@ int HitungJumlahKeretaBerdasarkanLayanan(ListKereta L, char* jenis_layanan);
 
 // Fungsi untuk menghasilkan ID kereta unik baru
 void GenerateIDKereta(ListKereta L, char* id_baru);
+
+// Fungsi CRUD untuk dashboard
+void TampilkanDaftarKereta();
+void TambahKereta();
+void EditKereta();
+void HapusKereta();
 
 #endif /* IMPLEMENTASI_INFORMASI_KERETA_H */ 
