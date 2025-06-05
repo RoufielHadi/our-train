@@ -31,7 +31,7 @@ OurTrain adalah sistem pemesanan tiket kereta api yang dikembangkan untuk mengel
 - `implementasi_morse.h` & `implementasi_morse.c`: Implementasi sistem kode Morse
 - `hash_password.h` & `hash_password.c`: Implementasi sistem hashing password
 
-## Kontributor 1 
+## Kontributor 
 1. Roufiel Hadi (241524028)
 - Kelas 1A
 - Jurusan Teknik Komputer dan Informatika
