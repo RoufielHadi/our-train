@@ -16,12 +16,6 @@ Politeknik Negeri Bandung
 #include <stdlib.h>
 #include <string.h>
 
-// Struktur untuk menyimpan pasangan karakter dan kode Morse
-typedef struct {
-    char character;
-    char* morseCode;
-} MorseCode;
-
 // *** PROTOTYPE FUNGSI IMPLEMENTASI MORSE ***
 
 // *** OPERASI DASAR MORSE CODE ***
@@ -67,35 +61,43 @@ HashPassword* BuatNodeMorse(char karakter);
 /* IS      : karakter terdefinisi */
 /* FS      : Mengembalikan pointer ke node baru dengan info=karakter */
 
-MorseCode* GetMorseTable();
-/* Tujuan : Mendapatkan tabel kode Morse untuk semua karakter */
-/* IS      : - */
-/* FS      : Mengembalikan array berisi pasangan karakter dan kode Morse */
-
-int GetMorseTableSize();
-/* Tujuan : Mendapatkan ukuran tabel kode Morse */
-/* IS      : - */
-/* FS      : Mengembalikan jumlah entri dalam tabel kode Morse */
-
-void TampilkanTabelMorse();
+void TampilkanTabelMorse(HashPassword *root);
 /* Tujuan : Menampilkan tabel kode Morse ke layar */
-/* IS      : - */
+/* IS      : root sudah terdefinisi */
 /* FS      : Tabel kode Morse ditampilkan ke layar */
 
-// *** FUNGSI BARU SESUAI DENGAN GITHUB REPOSITORY ***
-char TraverseMorseTree(HashPassword *root, const char *code);
-/* Tujuan : Melakukan traversal pada tree Morse berdasarkan kode Morse */
-/* IS      : root sudah terdefinisi, code berisi kode Morse untuk satu karakter */
-/* FS      : Mengembalikan karakter sesuai dengan kode Morse */
-
+// *** FUNGSI BINARY TREE MORSE ***
 void BuildMorseTree(HashPassword **root);
-/* Tujuan : Membangun tree Morse dengan pendekatan baru */
+/* Tujuan : Membangun tree Morse dengan pendekatan hardcoded */
 /* IS      : root belum terdefinisi atau kosong */
 /* FS      : root terisi dengan tree Morse yang komplit */
 
-void InsertIntoMorseTree(HashPassword **root, char character, const char *code);
-/* Tujuan : Menyisipkan karakter ke dalam tree Morse berdasarkan kodenya */
-/* IS      : root sudah terdefinisi, character dan code terdefinisi */
-/* FS      : Karakter disisipkan ke dalam tree pada posisi yang sesuai */
+// *** FUNGSI PENCARIAN PATH ***
+char* GetMorseCodeFromTree(HashPassword *root, char karakter);
+/* Tujuan : Mendapatkan kode Morse dari karakter berdasarkan tree */
+/* IS      : root sudah terdefinisi, karakter terdefinisi */
+/* FS      : Mengembalikan string kode Morse untuk karakter tersebut */
+
+boolean FindCharPath(HashPassword *root, char karakter, char *path, int *index, int depth);
+/* Tujuan : Mencari jalur ke karakter dalam tree Morse */
+/* IS      : root sudah terdefinisi, path adalah buffer untuk menyimpan jalur */
+/* FS      : Mengembalikan TRUE jika karakter ditemukan dan path terisi */
+
+// *** FUNGSI VISUALISASI TREE ***
+void VisualisasiTreeMorse(HashPassword *root, int level, char *path);
+/* Tujuan : Menampilkan visualisasi tree Morse dengan karakter dan jalur */
+/* IS      : root sudah terdefinisi, level adalah 0, path adalah string kosong */
+/* FS      : Tree ditampilkan dengan karakter dan jalur (dot dan dash) */
+
+// *** FUNGSI STATISTIK TREE ***
+int HitungKarakterDalamTree(HashPassword *root);
+/* Tujuan : Menghitung jumlah karakter dalam tree Morse */
+/* IS      : root sudah terdefinisi */
+/* FS      : Mengembalikan jumlah karakter yang ada dalam tree */
+
+void HitungKarakterPerKategori(HashPassword *root, int *kapital, int *kecil, int *angka, int *simbol, int *lainnya);
+/* Tujuan : Menghitung jumlah karakter per kategori dalam tree Morse */
+/* IS      : root sudah terdefinisi, pointer untuk setiap kategori terdefinisi */
+/* FS      : Jumlah karakter per kategori terisi dengan nilai yang sesuai */
 
 #endif /* IMPLEMENTASI_MORSE_H */ 

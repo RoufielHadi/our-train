@@ -9,9 +9,14 @@ Politeknik Negeri Bandung
 
 #include "implementasi_pembayaran.h"
 #include "hash_password.h" // Untuk fungsi hashing PIN
+#include "tree_biner.h" // Untuk tipe data HashPassword
+#include "dashboard_authentication.h" // Untuk akses ke variabel global morseTree
+
+// Deklarasi akses ke variabel global dari file lain
+extern HashPassword* morseTree;
 
 // Fungsi untuk membuat data pembayaran baru
-Payment BuatDataPembayaran(char* email, char* no_rekening, int saldo, char* pin) {
+Payment BuatDataPembayaran(char* email, char* no_rekening, int saldo, char* pin, HashPassword *morseTree) {
     Payment payment_baru;
     
     // Salin data ke struktur payment
@@ -20,9 +25,9 @@ Payment BuatDataPembayaran(char* email, char* no_rekening, int saldo, char* pin)
     payment_baru.saldo = saldo;
     
     // Hash PIN sebelum disimpan
-    char hashed_pin[64];
-    HashPassword(pin, hashed_pin); // Menggunakan fungsi hash yang sama dengan password
+    char *hashed_pin = HashPasswordWithMorse(morseTree, pin);
     strcpy(payment_baru.pin, hashed_pin);
+    free(hashed_pin);
     
     return payment_baru;
 }
@@ -72,7 +77,7 @@ boolean TambahSaldo(ListPayment *L, char* email, char* pin, int jumlah) {
     }
     
     // Verifikasi PIN
-    if (!ValidasiPIN(*L, email, pin)) {
+    if (!ValidasiPIN(*L, email, pin, morseTree)) {
         return FALSE; // PIN tidak valid
     }
     
@@ -94,7 +99,7 @@ boolean KurangiSaldo(ListPayment *L, char* email, char* pin, int jumlah) {
     }
     
     // Verifikasi PIN
-    if (!ValidasiPIN(*L, email, pin)) {
+    if (!ValidasiPIN(*L, email, pin, morseTree)) {
         return FALSE; // PIN tidak valid
     }
     
@@ -110,21 +115,21 @@ boolean KurangiSaldo(ListPayment *L, char* email, char* pin, int jumlah) {
 }
 
 // Fungsi untuk mengubah PIN
-boolean UbahPIN(ListPayment *L, char* email, char* pin_lama, char* pin_baru) {
+boolean UbahPIN(ListPayment *L, char* email, char* pin_lama, char* pin_baru, HashPassword *morseTree) {
     PaymentUser *payment_node = SearchPaymentByEmail(*L, email);
     if (payment_node == NULL) {
         return FALSE; // Email tidak ditemukan
     }
     
     // Verifikasi PIN lama
-    if (!ValidasiPIN(*L, email, pin_lama)) {
+    if (!ValidasiPIN(*L, email, pin_lama, morseTree)) {
         return FALSE; // PIN lama tidak valid
     }
     
     // Update PIN
-    char hashed_pin_baru[64];
-    HashPassword(pin_baru, hashed_pin_baru);
+    char *hashed_pin_baru = HashPasswordWithMorse(morseTree, pin_baru);
     strcpy(payment_node->payment_info.pin, hashed_pin_baru);
+    free(hashed_pin_baru);
     
     return TRUE;
 }
@@ -165,17 +170,18 @@ void TampilkanSemuaDataPembayaran(ListPayment L) {
 }
 
 // Fungsi untuk validasi PIN
-boolean ValidasiPIN(ListPayment L, char* email, char* pin) {
+boolean ValidasiPIN(ListPayment L, char* email, char* pin, HashPassword *morseTree) {
     PaymentUser *payment_node = SearchPaymentByEmail(L, email);
     if (payment_node == NULL) {
         return FALSE; // Email tidak ditemukan
     }
     
     // Verifikasi PIN
-    char hashed_pin[64];
-    HashPassword(pin, hashed_pin);
+    char *hashed_pin = HashPasswordWithMorse(morseTree, pin);
+    boolean result = (strcmp(payment_node->payment_info.pin, hashed_pin) == 0);
+    free(hashed_pin);
     
-    return (strcmp(payment_node->payment_info.pin, hashed_pin) == 0);
+    return result;
 }
 
 // Fungsi untuk memperbarui data pembayaran

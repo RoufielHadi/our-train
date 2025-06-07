@@ -16,24 +16,34 @@ Politeknik Negeri Bandung
 // *** OPERASI DASAR RUTE KERETA ***
 
 void InisialisasiRuteKereta(Isi_Tree *pohonRute) {
-    // Inisialisasi tree kosong
-    for (int i = 1; i <= jml_maks; i++) {
-        (*pohonRute)[i].info = NULL;
-        (*pohonRute)[i].ps_fs = 0;
-        (*pohonRute)[i].ps_nb = 0;
-        (*pohonRute)[i].ps_pr = 0;
-    }
+    // Inisialisasi root dan node utama
+    (*pohonRute)[1].info = strdup("Rute Kereta Api Jawa");
+    (*pohonRute)[1].ps_fs = 2; // First Son: Jalur Utara
+    (*pohonRute)[1].ps_nb = 0;
+    (*pohonRute)[1].ps_pr = 0; // Root tidak punya parent
     
-    // Membuat root node dengan info "Pulau Jawa"
-    (*pohonRute)[1].info = strdup("Pulau Jawa");
+    // Inisialisasi 3 jalur utama dan jalur cabang
+    (*pohonRute)[2].info = strdup("Jalur Utara");
+    (*pohonRute)[2].ps_fs = 0; // Akan diisi nanti
+    (*pohonRute)[2].ps_nb = 3; // Next Brother: Jalur Selatan
+    (*pohonRute)[2].ps_pr = 1; // Parent: Rute Kereta Api Jawa
     
-    // Menambahkan tiga jalur utama sebagai anak dari root
-    InsertNode(*pohonRute, "Jalur Utara", 1);
-    InsertNode(*pohonRute, "Jalur Selatan", 1);
-    InsertNode(*pohonRute, "Jalur Tengah", 1);
-    InsertNode(*pohonRute, "Jalur Cabang", 1);
+    (*pohonRute)[3].info = strdup("Jalur Selatan");
+    (*pohonRute)[3].ps_fs = 0; // Akan diisi nanti
+    (*pohonRute)[3].ps_nb = 4; // Next Brother: Jalur Tengah
+    (*pohonRute)[3].ps_pr = 1; // Parent: Rute Kereta Api Jawa
     
-    // Inisialisasi jalur-jalur
+    (*pohonRute)[4].info = strdup("Jalur Tengah");
+    (*pohonRute)[4].ps_fs = 0; // Akan diisi nanti
+    (*pohonRute)[4].ps_nb = 5; // Next Brother: Jalur Cabang
+    (*pohonRute)[4].ps_pr = 1; // Parent: Rute Kereta Api Jawa
+    
+    (*pohonRute)[5].info = strdup("Jalur Cabang");
+    (*pohonRute)[5].ps_fs = 0; // Akan diisi nanti
+    (*pohonRute)[5].ps_nb = 0;
+    (*pohonRute)[5].ps_pr = 1; // Parent: Rute Kereta Api Jawa
+    
+    // Inisialisasi stasiun-stasiun di tiap jalur
     InisialisasiJalurUtara(pohonRute);
     InisialisasiJalurSelatan(pohonRute);
     InisialisasiJalurTengah(pohonRute);
@@ -56,60 +66,60 @@ void InisialisasiJalurUtara(Isi_Tree *pohonRute) {
     // Jakarta - Cirebon - Tegal - Pekalongan - Semarang - Surabaya
     
     // Stasiun di DKI Jakarta dan Jawa Barat
-    InsertNode(*pohonRute, "Jakarta Kota", idxJalurUtara);
-    InsertNode(*pohonRute, "Kampung Bandan", idxJalurUtara);
-    InsertNode(*pohonRute, "Ancol", idxJalurUtara);
-    InsertNode(*pohonRute, "Tanjung Priok", idxJalurUtara);
-    InsertNode(*pohonRute, "Kemayoran", idxJalurUtara);
-    InsertNode(*pohonRute, "Pasar Senen", idxJalurUtara);
-    InsertNode(*pohonRute, "Jatinegara", idxJalurUtara);
-    InsertNode(*pohonRute, "Bekasi", idxJalurUtara);
-    InsertNode(*pohonRute, "Cikarang", idxJalurUtara);
-    InsertNode(*pohonRute, "Karawang", idxJalurUtara);
-    InsertNode(*pohonRute, "Klari", idxJalurUtara);
-    InsertNode(*pohonRute, "Kosambi", idxJalurUtara);
-    InsertNode(*pohonRute, "Cikampek", idxJalurUtara);
-    InsertNode(*pohonRute, "Dawuan", idxJalurUtara);
-    InsertNode(*pohonRute, "Haurgeulis", idxJalurUtara);
-    InsertNode(*pohonRute, "Terisi", idxJalurUtara);
-    InsertNode(*pohonRute, "Jatibarang", idxJalurUtara);
-    InsertNode(*pohonRute, "Arjawinangun", idxJalurUtara);
-    InsertNode(*pohonRute, "Cirebon", idxJalurUtara);
-    InsertNode(*pohonRute, "Cirebon Prujakan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Jakarta Kota", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kampung Bandan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Ancol", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Tanjung Priok", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kemayoran", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Pasar Senen", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Jatinegara", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Bekasi", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Cikarang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Karawang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Klari", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kosambi", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Cikampek", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Dawuan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Haurgeulis", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Terisi", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Jatibarang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Arjawinangun", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Cirebon", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Cirebon Prujakan", idxJalurUtara);
     
     // Stasiun di Jawa Tengah
-    InsertNode(*pohonRute, "Brebes", idxJalurUtara);
-    InsertNode(*pohonRute, "Tegal", idxJalurUtara);
-    InsertNode(*pohonRute, "Pemalang", idxJalurUtara);
-    InsertNode(*pohonRute, "Petarukan", idxJalurUtara);
-    InsertNode(*pohonRute, "Pekalongan", idxJalurUtara);
-    InsertNode(*pohonRute, "Batang", idxJalurUtara);
-    InsertNode(*pohonRute, "Weleri", idxJalurUtara);
-    InsertNode(*pohonRute, "Kaliwungu", idxJalurUtara);
-    InsertNode(*pohonRute, "Mangkang", idxJalurUtara);
-    InsertNode(*pohonRute, "Semarang Poncol", idxJalurUtara);
-    InsertNode(*pohonRute, "Semarang Tawang", idxJalurUtara);
-    InsertNode(*pohonRute, "Alastua", idxJalurUtara);
-    InsertNode(*pohonRute, "Demak", idxJalurUtara);
-    InsertNode(*pohonRute, "Kudus", idxJalurUtara);
-    InsertNode(*pohonRute, "Pati", idxJalurUtara);
-    InsertNode(*pohonRute, "Juwana", idxJalurUtara);
-    InsertNode(*pohonRute, "Rembang", idxJalurUtara);
-    InsertNode(*pohonRute, "Lasem", idxJalurUtara);
-    InsertNode(*pohonRute, "Kragan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Brebes", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Tegal", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Pemalang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Petarukan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Pekalongan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Batang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Weleri", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kaliwungu", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Mangkang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Semarang Poncol", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Semarang Tawang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Alastua", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Demak", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kudus", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Pati", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Juwana", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Rembang", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Lasem", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kragan", idxJalurUtara);
     
     // Stasiun di Jawa Timur
-    InsertNode(*pohonRute, "Tuban", idxJalurUtara);
-    InsertNode(*pohonRute, "Babat", idxJalurUtara);
-    InsertNode(*pohonRute, "Bojonegoro", idxJalurUtara);
-    InsertNode(*pohonRute, "Sumberrejo", idxJalurUtara);
-    InsertNode(*pohonRute, "Lamongan", idxJalurUtara);
-    InsertNode(*pohonRute, "Duduk", idxJalurUtara);
-    InsertNode(*pohonRute, "Cerme", idxJalurUtara);
-    InsertNode(*pohonRute, "Benowo", idxJalurUtara);
-    InsertNode(*pohonRute, "Kandangan", idxJalurUtara);
-    InsertNode(*pohonRute, "Tandes", idxJalurUtara);
-    InsertNode(*pohonRute, "Surabaya Pasar Turi", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Tuban", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Babat", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Bojonegoro", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Sumberrejo", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Lamongan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Duduk", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Cerme", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Benowo", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Kandangan", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Tandes", idxJalurUtara);
+    InsertRuteNode(*pohonRute, "Surabaya Pasar Turi", idxJalurUtara);
 }
 
 void InisialisasiJalurSelatan(Isi_Tree *pohonRute) {
@@ -128,68 +138,68 @@ void InisialisasiJalurSelatan(Isi_Tree *pohonRute) {
     // Jakarta - Bandung - Yogyakarta - Solo - Madiun - Surabaya
     
     // Stasiun di DKI Jakarta dan Jawa Barat
-    InsertNode(*pohonRute, "Jakarta Gambir", idxJalurSelatan);
-    InsertNode(*pohonRute, "Manggarai", idxJalurSelatan);
-    InsertNode(*pohonRute, "Depok", idxJalurSelatan);
-    InsertNode(*pohonRute, "Depok Baru", idxJalurSelatan);
-    InsertNode(*pohonRute, "Citayam", idxJalurSelatan);
-    InsertNode(*pohonRute, "Bojong Gede", idxJalurSelatan);
-    InsertNode(*pohonRute, "Cilebut", idxJalurSelatan);
-    InsertNode(*pohonRute, "Bogor", idxJalurSelatan);
-    InsertNode(*pohonRute, "Sukabumi", idxJalurSelatan);
-    InsertNode(*pohonRute, "Cianjur", idxJalurSelatan);
-    InsertNode(*pohonRute, "Cimahi", idxJalurSelatan);
-    InsertNode(*pohonRute, "Bandung", idxJalurSelatan);
-    InsertNode(*pohonRute, "Kiaracondong", idxJalurSelatan);
-    InsertNode(*pohonRute, "Gedebage", idxJalurSelatan);
-    InsertNode(*pohonRute, "Cicalengka", idxJalurSelatan);
-    InsertNode(*pohonRute, "Rancaekek", idxJalurSelatan);
-    InsertNode(*pohonRute, "Haurpugur", idxJalurSelatan);
-    InsertNode(*pohonRute, "Nagreg", idxJalurSelatan);
-    InsertNode(*pohonRute, "Leles", idxJalurSelatan);
-    InsertNode(*pohonRute, "Cibatu", idxJalurSelatan);
-    InsertNode(*pohonRute, "Warungbandrek", idxJalurSelatan);
-    InsertNode(*pohonRute, "Tasikmalaya", idxJalurSelatan);
-    InsertNode(*pohonRute, "Manonjaya", idxJalurSelatan);
-    InsertNode(*pohonRute, "Ciamis", idxJalurSelatan);
-    InsertNode(*pohonRute, "Banjar", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Jakarta Gambir", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Manggarai", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Depok", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Depok Baru", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Citayam", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Bojong Gede", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Cilebut", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Bogor", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Sukabumi", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Cianjur", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Cimahi", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Bandung", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Kiaracondong", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Gedebage", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Cicalengka", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Rancaekek", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Haurpugur", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Nagreg", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Leles", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Cibatu", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Warungbandrek", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Tasikmalaya", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Manonjaya", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Ciamis", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Banjar", idxJalurSelatan);
     
     // Stasiun di Jawa Tengah
-    InsertNode(*pohonRute, "Karangpucung", idxJalurSelatan);
-    InsertNode(*pohonRute, "Cipari", idxJalurSelatan);
-    InsertNode(*pohonRute, "Sidareja", idxJalurSelatan);
-    InsertNode(*pohonRute, "Gandrungmangu", idxJalurSelatan);
-    InsertNode(*pohonRute, "Kroya", idxJalurSelatan);
-    InsertNode(*pohonRute, "Gombong", idxJalurSelatan);
-    InsertNode(*pohonRute, "Karanganyar", idxJalurSelatan);
-    InsertNode(*pohonRute, "Kebumen", idxJalurSelatan);
-    InsertNode(*pohonRute, "Kutoarjo", idxJalurSelatan);
-    InsertNode(*pohonRute, "Wates", idxJalurSelatan);
-    InsertNode(*pohonRute, "Yogyakarta", idxJalurSelatan);
-    InsertNode(*pohonRute, "Klaten", idxJalurSelatan);
-    InsertNode(*pohonRute, "Solo Balapan", idxJalurSelatan);
-    InsertNode(*pohonRute, "Purwosari", idxJalurSelatan);
-    InsertNode(*pohonRute, "Sragen", idxJalurSelatan);
-    InsertNode(*pohonRute, "Kedungbanteng", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Karangpucung", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Cipari", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Sidareja", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Gandrungmangu", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Kroya", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Gombong", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Karanganyar", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Kebumen", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Kutoarjo", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Wates", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Yogyakarta", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Klaten", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Solo Balapan", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Purwosari", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Sragen", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Kedungbanteng", idxJalurSelatan);
     
     // Stasiun di Jawa Timur
-    InsertNode(*pohonRute, "Walikukun", idxJalurSelatan);
-    InsertNode(*pohonRute, "Madiun", idxJalurSelatan);
-    InsertNode(*pohonRute, "Caruban", idxJalurSelatan);
-    InsertNode(*pohonRute, "Nganjuk", idxJalurSelatan);
-    InsertNode(*pohonRute, "Baron", idxJalurSelatan);
-    InsertNode(*pohonRute, "Kertosono", idxJalurSelatan);
-    InsertNode(*pohonRute, "Jombang", idxJalurSelatan);
-    InsertNode(*pohonRute, "Peterongan", idxJalurSelatan);
-    InsertNode(*pohonRute, "Sumobito", idxJalurSelatan);
-    InsertNode(*pohonRute, "Curahmalang", idxJalurSelatan);
-    InsertNode(*pohonRute, "Mojokerto", idxJalurSelatan);
-    InsertNode(*pohonRute, "Tarik", idxJalurSelatan);
-    InsertNode(*pohonRute, "Sepanjang", idxJalurSelatan);
-    InsertNode(*pohonRute, "Waru", idxJalurSelatan);
-    InsertNode(*pohonRute, "Wonokromo", idxJalurSelatan);
-    InsertNode(*pohonRute, "Surabaya Gubeng", idxJalurSelatan);
-    InsertNode(*pohonRute, "Surabaya Kota", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Walikukun", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Madiun", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Caruban", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Nganjuk", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Baron", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Kertosono", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Jombang", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Peterongan", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Sumobito", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Curahmalang", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Mojokerto", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Tarik", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Sepanjang", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Waru", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Wonokromo", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Surabaya Gubeng", idxJalurSelatan);
+    InsertRuteNode(*pohonRute, "Surabaya Kota", idxJalurSelatan);
 }
 
 void InisialisasiJalurTengah(Isi_Tree *pohonRute) {
@@ -208,50 +218,50 @@ void InisialisasiJalurTengah(Isi_Tree *pohonRute) {
     // Jakarta - Cikampek - Purwakarta - Bandung
     
     // Stasiun di Jalur Jakarta-Bandung
-    InsertNode(*pohonRute, "Jakarta Gambir", idxJalurTengah);
-    InsertNode(*pohonRute, "Manggarai", idxJalurTengah);
-    InsertNode(*pohonRute, "Jatinegara", idxJalurTengah);
-    InsertNode(*pohonRute, "Bekasi", idxJalurTengah);
-    InsertNode(*pohonRute, "Tambun", idxJalurTengah);
-    InsertNode(*pohonRute, "Cikarang", idxJalurTengah);
-    InsertNode(*pohonRute, "Lemah Abang", idxJalurTengah);
-    InsertNode(*pohonRute, "Karawang", idxJalurTengah);
-    InsertNode(*pohonRute, "Cikampek", idxJalurTengah);
-    InsertNode(*pohonRute, "Cibungur", idxJalurTengah);
-    InsertNode(*pohonRute, "Sadang", idxJalurTengah);
-    InsertNode(*pohonRute, "Purwakarta", idxJalurTengah);
-    InsertNode(*pohonRute, "Plered", idxJalurTengah);
-    InsertNode(*pohonRute, "Cisomang", idxJalurTengah);
-    InsertNode(*pohonRute, "Cikadondong", idxJalurTengah);
-    InsertNode(*pohonRute, "Cilame", idxJalurTengah);
-    InsertNode(*pohonRute, "Padalarang", idxJalurTengah);
-    InsertNode(*pohonRute, "Gadobangkong", idxJalurTengah);
-    InsertNode(*pohonRute, "Cimahi", idxJalurTengah);
-    InsertNode(*pohonRute, "Cimindi", idxJalurTengah);
-    InsertNode(*pohonRute, "Andir", idxJalurTengah);
-    InsertNode(*pohonRute, "Ciroyom", idxJalurTengah);
-    InsertNode(*pohonRute, "Bandung", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Jakarta Gambir", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Manggarai", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Jatinegara", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Bekasi", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Tambun", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cikarang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Lemah Abang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Karawang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cikampek", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cibungur", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Sadang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Purwakarta", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Plered", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cisomang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cikadondong", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cilame", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Padalarang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Gadobangkong", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cimahi", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Cimindi", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Andir", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Ciroyom", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Bandung", idxJalurTengah);
     
     // Stasiun di Jalur Surabaya-Malang
-    InsertNode(*pohonRute, "Surabaya Gubeng", idxJalurTengah);
-    InsertNode(*pohonRute, "Wonokromo", idxJalurTengah);
-    InsertNode(*pohonRute, "Sepanjang", idxJalurTengah);
-    InsertNode(*pohonRute, "Gedangan", idxJalurTengah);
-    InsertNode(*pohonRute, "Sidoarjo", idxJalurTengah);
-    InsertNode(*pohonRute, "Tanggulangin", idxJalurTengah);
-    InsertNode(*pohonRute, "Porong", idxJalurTengah);
-    InsertNode(*pohonRute, "Bangil", idxJalurTengah);
-    InsertNode(*pohonRute, "Lawang", idxJalurTengah);
-    InsertNode(*pohonRute, "Singosari", idxJalurTengah);
-    InsertNode(*pohonRute, "Blimbing", idxJalurTengah);
-    InsertNode(*pohonRute, "Malang", idxJalurTengah);
-    InsertNode(*pohonRute, "Malang Kota Lama", idxJalurTengah);
-    InsertNode(*pohonRute, "Pakisaji", idxJalurTengah);
-    InsertNode(*pohonRute, "Kepanjen", idxJalurTengah);
-    InsertNode(*pohonRute, "Sumberpucung", idxJalurTengah);
-    InsertNode(*pohonRute, "Kesamben", idxJalurTengah);
-    InsertNode(*pohonRute, "Wlingi", idxJalurTengah);
-    InsertNode(*pohonRute, "Blitar", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Surabaya Gubeng", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Wonokromo", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Sepanjang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Gedangan", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Sidoarjo", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Tanggulangin", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Porong", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Bangil", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Lawang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Singosari", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Blimbing", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Malang", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Malang Kota Lama", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Pakisaji", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Kepanjen", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Sumberpucung", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Kesamben", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Wlingi", idxJalurTengah);
+    InsertRuteNode(*pohonRute, "Blitar", idxJalurTengah);
 }
 
 void InisialisasiJalurCabang(Isi_Tree *pohonRute) {
@@ -267,51 +277,51 @@ void InisialisasiJalurCabang(Isi_Tree *pohonRute) {
     if (idxJalurCabang == 0) return; // Jalur Cabang tidak ditemukan
     
     // === Cabang Garut ===
-    int idxCabangGarut = InsertNodeAndGetIndex(*pohonRute, "Cabang Garut", idxJalurCabang);
-    InsertNode(*pohonRute, "Cibatu", idxCabangGarut);
-    InsertNode(*pohonRute, "Wanaraja", idxCabangGarut);
-    InsertNode(*pohonRute, "Garut", idxCabangGarut);
-    InsertNode(*pohonRute, "Bayongbong", idxCabangGarut);
-    InsertNode(*pohonRute, "Leles", idxCabangGarut);
-    InsertNode(*pohonRute, "Cipeundeuy", idxCabangGarut);
+    int idxCabangGarut = InsertRuteNodeAndGetIndex(pohonRute, "Cabang Garut", idxJalurCabang);
+    InsertRuteNode(*pohonRute, "Cibatu", idxCabangGarut);
+    InsertRuteNode(*pohonRute, "Wanaraja", idxCabangGarut);
+    InsertRuteNode(*pohonRute, "Garut", idxCabangGarut);
+    InsertRuteNode(*pohonRute, "Bayongbong", idxCabangGarut);
+    InsertRuteNode(*pohonRute, "Leles", idxCabangGarut);
+    InsertRuteNode(*pohonRute, "Cipeundeuy", idxCabangGarut);
     
     // === Cabang Cianjur-Sukabumi ===
-    int idxCabangCianjurSukabumi = InsertNodeAndGetIndex(*pohonRute, "Cabang Cianjur-Sukabumi", idxJalurCabang);
-    InsertNode(*pohonRute, "Cianjur", idxCabangCianjurSukabumi);
-    InsertNode(*pohonRute, "Cibeber", idxCabangCianjurSukabumi);
-    InsertNode(*pohonRute, "Lampegan", idxCabangCianjurSukabumi);
-    InsertNode(*pohonRute, "Cicurug", idxCabangCianjurSukabumi);
-    InsertNode(*pohonRute, "Parungkuda", idxCabangCianjurSukabumi);
-    InsertNode(*pohonRute, "Cisaat", idxCabangCianjurSukabumi);
-    InsertNode(*pohonRute, "Sukabumi", idxCabangCianjurSukabumi);
+    int idxCabangCianjurSukabumi = InsertRuteNodeAndGetIndex(pohonRute, "Cabang Cianjur-Sukabumi", idxJalurCabang);
+    InsertRuteNode(*pohonRute, "Cianjur", idxCabangCianjurSukabumi);
+    InsertRuteNode(*pohonRute, "Cibeber", idxCabangCianjurSukabumi);
+    InsertRuteNode(*pohonRute, "Lampegan", idxCabangCianjurSukabumi);
+    InsertRuteNode(*pohonRute, "Cicurug", idxCabangCianjurSukabumi);
+    InsertRuteNode(*pohonRute, "Parungkuda", idxCabangCianjurSukabumi);
+    InsertRuteNode(*pohonRute, "Cisaat", idxCabangCianjurSukabumi);
+    InsertRuteNode(*pohonRute, "Sukabumi", idxCabangCianjurSukabumi);
     
     // === Cabang Purwokerto-Wonosobo ===
-    int idxCabangPurwokertoWonosobo = InsertNodeAndGetIndex(*pohonRute, "Cabang Purwokerto-Wonosobo", idxJalurCabang);
-    InsertNode(*pohonRute, "Purwokerto", idxCabangPurwokertoWonosobo);
-    InsertNode(*pohonRute, "Sokaraja", idxCabangPurwokertoWonosobo);
-    InsertNode(*pohonRute, "Banjarnegara", idxCabangPurwokertoWonosobo);
-    InsertNode(*pohonRute, "Wonosobo", idxCabangPurwokertoWonosobo);
+    int idxCabangPurwokertoWonosobo = InsertRuteNodeAndGetIndex(pohonRute, "Cabang Purwokerto-Wonosobo", idxJalurCabang);
+    InsertRuteNode(*pohonRute, "Purwokerto", idxCabangPurwokertoWonosobo);
+    InsertRuteNode(*pohonRute, "Sokaraja", idxCabangPurwokertoWonosobo);
+    InsertRuteNode(*pohonRute, "Banjarnegara", idxCabangPurwokertoWonosobo);
+    InsertRuteNode(*pohonRute, "Wonosobo", idxCabangPurwokertoWonosobo);
     
     // === Cabang Yogyakarta-Magelang ===
-    int idxCabangYogyakartaMagelang = InsertNodeAndGetIndex(*pohonRute, "Cabang Yogyakarta-Magelang", idxJalurCabang);
-    InsertNode(*pohonRute, "Yogyakarta", idxCabangYogyakartaMagelang);
-    InsertNode(*pohonRute, "Sleman", idxCabangYogyakartaMagelang);
-    InsertNode(*pohonRute, "Tempel", idxCabangYogyakartaMagelang);
-    InsertNode(*pohonRute, "Mungkid", idxCabangYogyakartaMagelang);
-    InsertNode(*pohonRute, "Magelang", idxCabangYogyakartaMagelang);
+    int idxCabangYogyakartaMagelang = InsertRuteNodeAndGetIndex(pohonRute, "Cabang Yogyakarta-Magelang", idxJalurCabang);
+    InsertRuteNode(*pohonRute, "Yogyakarta", idxCabangYogyakartaMagelang);
+    InsertRuteNode(*pohonRute, "Sleman", idxCabangYogyakartaMagelang);
+    InsertRuteNode(*pohonRute, "Tempel", idxCabangYogyakartaMagelang);
+    InsertRuteNode(*pohonRute, "Mungkid", idxCabangYogyakartaMagelang);
+    InsertRuteNode(*pohonRute, "Magelang", idxCabangYogyakartaMagelang);
     
     // === Cabang Solo-Wonogiri ===
-    int idxCabangSoloWonogiri = InsertNodeAndGetIndex(*pohonRute, "Cabang Solo-Wonogiri", idxJalurCabang);
-    InsertNode(*pohonRute, "Solo Balapan", idxCabangSoloWonogiri);
-    InsertNode(*pohonRute, "Purwosari", idxCabangSoloWonogiri);
-    InsertNode(*pohonRute, "Gawok", idxCabangSoloWonogiri);
-    InsertNode(*pohonRute, "Sukoharjo", idxCabangSoloWonogiri);
-    InsertNode(*pohonRute, "Wonogiri", idxCabangSoloWonogiri);
+    int idxCabangSoloWonogiri = InsertRuteNodeAndGetIndex(pohonRute, "Cabang Solo-Wonogiri", idxJalurCabang);
+    InsertRuteNode(*pohonRute, "Solo Balapan", idxCabangSoloWonogiri);
+    InsertRuteNode(*pohonRute, "Purwosari", idxCabangSoloWonogiri);
+    InsertRuteNode(*pohonRute, "Gawok", idxCabangSoloWonogiri);
+    InsertRuteNode(*pohonRute, "Sukoharjo", idxCabangSoloWonogiri);
+    InsertRuteNode(*pohonRute, "Wonogiri", idxCabangSoloWonogiri);
 }
 
 // Fungsi bantuan untuk mendapatkan indeks node yang baru diinsert
-int InsertNodeAndGetIndex(Isi_Tree *pohonRute, char* namaStasiun, int parent_idx) {
-    InsertNode(*pohonRute, namaStasiun, parent_idx);
+int InsertRuteNodeAndGetIndex(Isi_Tree *pohonRute, const char* namaStasiun, int parent_idx) {
+    InsertRuteNode(*pohonRute, namaStasiun, parent_idx);
     
     // Cari indeks node yang baru saja diinsert
     for (int i = 1; i <= jml_maks; i++) {
@@ -325,7 +335,7 @@ int InsertNodeAndGetIndex(Isi_Tree *pohonRute, char* namaStasiun, int parent_idx
 
 // *** OPERASI PENCARIAN RUTE ***
 
-boolean IsRuteTersedia(Isi_Tree pohonRute, char* stasiunAsal, char* stasiunTujuan) {
+boolean IsRuteTersedia(Isi_Tree pohonRute, const char* stasiunAsal, const char* stasiunTujuan) {
     // Fungsi ini mengecek apakah kedua stasiun ada dalam tree
     // dan terhubung (berada dalam jalur yang sama)
     
@@ -379,7 +389,7 @@ boolean IsRuteTersedia(Isi_Tree pohonRute, char* stasiunAsal, char* stasiunTujua
     return FALSE; // Tidak ada parent yang sama
 }
 
-int HitungJarak(InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* stasiunTujuan) {
+int HitungJarak(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan) {
     // Mencari rute langsung
     for (int i = 0; i < jumlahRute; i++) {
         if ((strcmp(infoJarak[i].stasiunAsal, stasiunAsal) == 0 && 
@@ -398,7 +408,7 @@ int HitungJarak(InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* st
     return -1;
 }
 
-int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* stasiunTujuan) {
+int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan) {
     // Mencari rute langsung
     for (int i = 0; i < jumlahRute; i++) {
         if ((strcmp(infoJarak[i].stasiunAsal, stasiunAsal) == 0 && 
@@ -419,7 +429,7 @@ int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, ch
 
 // *** OPERASI MANAJEMEN RUTE ***
 
-void TambahStasiun(Isi_Tree *pohonRute, char* namaStasiun, char* stasiunInduk) {
+void TambahStasiun(Isi_Tree *pohonRute, const char* namaStasiun, const char* stasiunInduk) {
     // Cari indeks stasiun induk
     int idxStasiunInduk = 0;
     for (int i = 1; i <= jml_maks; i++) {
@@ -443,12 +453,12 @@ void TambahStasiun(Isi_Tree *pohonRute, char* namaStasiun, char* stasiunInduk) {
     }
     
     // Tambahkan stasiun baru
-    InsertNode(*pohonRute, namaStasiun, idxStasiunInduk);
+    InsertRuteNode(*pohonRute, namaStasiun, idxStasiunInduk);
     printf("Stasiun \"%s\" berhasil ditambahkan sebagai anak dari \"%s\".\n", 
            namaStasiun, stasiunInduk);
 }
 
-void TambahInfoRute(InfoRute **infoJarak, int *jumlahRute, char* stasiunAsal, char* stasiunTujuan, int jarak, int waktuTempuh) {
+void TambahInfoRute(InfoRute **infoJarak, int *jumlahRute, const char* stasiunAsal, const char* stasiunTujuan, int jarak, int waktuTempuh) {
     // Realokasi array infoJarak jika perlu
     if (*jumlahRute == 0) {
         *infoJarak = (InfoRute*)malloc(sizeof(InfoRute));
@@ -468,7 +478,7 @@ void TambahInfoRute(InfoRute **infoJarak, int *jumlahRute, char* stasiunAsal, ch
            stasiunAsal, stasiunTujuan);
 }
 
-void HapusStasiun(Isi_Tree *pohonRute, char* namaStasiun) {
+void HapusStasiun(Isi_Tree *pohonRute, const char* namaStasiun) {
     // Cari indeks stasiun
     int idxStasiun = 0;
     for (int i = 1; i <= jml_maks; i++) {
@@ -521,7 +531,7 @@ void TampilkanRute(Isi_Tree pohonRute) {
     TampilkanJalurRekursif(pohonRute, 1, 0);
 }
 
-void TampilkanStasiunTerdekat(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, char* namaStasiun, int radius) {
+void TampilkanStasiunTerdekat(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, const char* namaStasiun, int radius) {
     printf("=== STASIUN TERDEKAT DARI %s (RADIUS %d KM) ===\n\n", namaStasiun, radius);
     
     // Cari stasiun yang berjarak kurang dari atau sama dengan radius
@@ -548,7 +558,7 @@ void TampilkanStasiunTerdekat(Isi_Tree pohonRute, InfoRute* infoJarak, int jumla
     }
 }
 
-void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* stasiunTujuan) {
+void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan) {
     printf("=== JALUR TERPENDEK DARI %s KE %s ===\n\n", stasiunAsal, stasiunTujuan);
     
     // Implementasi algoritma Dijkstra untuk mencari jalur terpendek
@@ -579,7 +589,7 @@ void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlah
 
 // *** FUNGSI PEMBANTU ***
 
-int CariIndeksStasiun(Isi_Tree pohonRute, char* namaStasiun) {
+int CariIndeksStasiun(Isi_Tree pohonRute, const char* namaStasiun) {
     for (int i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL && strcmp(pohonRute[i].info, namaStasiun) == 0) {
             return i;
@@ -604,14 +614,14 @@ char** DapatkanDaftarStasiun(Isi_Tree pohonRute, int *jumlahStasiun) {
     int idx = 0;
     for (int i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
-            daftarStasiun[idx++] = pohonRute[i].info;
+            daftarStasiun[idx++] = (char*)pohonRute[i].info;
         }
     }
     
     return daftarStasiun;
 }
 
-void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, char* namaFile) {
+void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, const char* namaFile) {
     FILE* file = fopen(namaFile, "w");
     if (file == NULL) {
         printf("Error: Tidak dapat membuka file %s untuk ditulis.\n", namaFile);
@@ -646,7 +656,7 @@ void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, c
     printf("Data rute berhasil disimpan ke file %s.\n", namaFile);
 }
 
-void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute, char* namaFile) {
+void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute, const char* namaFile) {
     FILE* file = fopen(namaFile, "r");
     if (file == NULL) {
         printf("Error: Tidak dapat membuka file %s.\n", namaFile);
@@ -660,7 +670,7 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     // Bersihkan tree
     for (int i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL) {
-            free((*pohonRute)[i].info);
+            free((void*)(*pohonRute)[i].info);
             (*pohonRute)[i].info = NULL;
         }
         (*pohonRute)[i].ps_fs = 0;
@@ -699,4 +709,45 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     
     fclose(file);
     printf("Data rute berhasil dibaca dari file %s.\n", namaFile);
+}
+
+// Fungsi untuk menambahkan node baru
+void InsertRuteNode(Isi_Tree P, const char* info, int parent_idx) {
+    if (parent_idx < 1 || parent_idx > jml_maks) {
+        printf("Indeks parent tidak valid.\n");
+        return;
+    }
+    
+    // Cari slot kosong
+    int empty_idx = 0;
+    for (int i = 1; i <= jml_maks; i++) {
+        if (P[i].info == NULL) {
+            empty_idx = i;
+            break;
+        }
+    }
+    
+    if (empty_idx == 0) {
+        printf("Tree penuh, tidak dapat menambahkan node baru.\n");
+        return;
+    }
+    
+    // Alokasi node baru
+    P[empty_idx].info = strdup(info); // Duplikasi string untuk mencegah masalah memori
+    P[empty_idx].ps_fs = 0;
+    P[empty_idx].ps_nb = 0;
+    P[empty_idx].ps_pr = parent_idx;
+    
+    // Cek apakah parent sudah memiliki First Son
+    if (P[parent_idx].ps_fs == 0) {
+        // Jika belum, node baru menjadi First Son
+        P[parent_idx].ps_fs = empty_idx;
+    } else {
+        // Jika sudah, traverse hingga Next Brother terakhir dan tambahkan node baru
+        int current = P[parent_idx].ps_fs;
+        while (P[current].ps_nb != 0) {
+            current = P[current].ps_nb;
+        }
+        P[current].ps_nb = empty_idx;
+    }
 } 

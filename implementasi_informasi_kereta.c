@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi  
-NIM: 241524028  
+Author: Adi Rafi Chaerufarizki 
+NIM: 241524001  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -8,6 +8,7 @@ Politeknik Negeri Bandung
 */
 
 #include "implementasi_informasi_kereta.h"
+#include "databases.h"
 
 // Fungsi untuk membuat informasi kereta baru
 InformasiKereta BuatInformasiKereta(char* id_kereta, char* nama_kereta, char* jenis_layanan, float harga_tiket, char* jumlah_gerbong) {
@@ -57,55 +58,6 @@ boolean CariInformasiKereta(ListKereta L, char* id_kereta, InformasiKereta* hasi
     }
     
     return TRUE;
-}
-
-// Fungsi untuk memperbarui informasi kereta
-boolean UpdateInformasiKereta(ListKereta *L, char* id_kereta, InformasiKereta kereta_baru) {
-    DataInformasiKereta *kereta_node = SearchKeretaById(*L, id_kereta);
-    if (kereta_node == NULL) {
-        return FALSE; // ID kereta tidak ditemukan
-    }
-    
-    // Update data kereta (kecuali ID karena primary key)
-    strcpy(kereta_node->kereta_info.nama_kereta, kereta_baru.nama_kereta);
-    strcpy(kereta_node->kereta_info.jenis_layanan, kereta_baru.jenis_layanan);
-    kereta_node->kereta_info.harga_tiket = kereta_baru.harga_tiket;
-    strcpy(kereta_node->kereta_info.jumlah_gerbong, kereta_baru.jumlah_gerbong);
-    
-    // Jadwal tidak diupdate di sini
-    
-    return TRUE;
-}
-
-// Fungsi untuk menghapus informasi kereta
-boolean HapusInformasiKereta(ListKereta *L, char* id_kereta) {
-    if (isEmptyKereta(*L)) {
-        return FALSE; // List kosong
-    }
-    
-    // Jika kereta yang dihapus adalah elemen pertama
-    if (strcmp(L->First->kereta_info.id_Kereta, id_kereta) == 0) {
-        DeleteFirstKereta(L);
-        return TRUE;
-    }
-    
-    // Cari kereta di posisi lain
-    DataInformasiKereta *prev = L->First;
-    DataInformasiKereta *current = prev->next;
-    
-    while (current != NULL) {
-        if (strcmp(current->kereta_info.id_Kereta, id_kereta) == 0) {
-            // Hapus node current
-            prev->next = current->next;
-            free(current);
-            return TRUE;
-        }
-        
-        prev = current;
-        current = current->next;
-    }
-    
-    return FALSE; // ID kereta tidak ditemukan
 }
 
 // Fungsi untuk menampilkan informasi kereta
@@ -369,4 +321,103 @@ void GenerateIDKereta(ListKereta L, char* id_baru) {
     } while (SearchKeretaById(L, temp_id) != NULL && nomor < 1000);
     
     strcpy(id_baru, temp_id);
+}
+
+void TampilkanDaftarKereta() {
+    Record records[MAX_FIELDS];
+    int jumlahRecord = 0;
+    DaftarKereta(records, &jumlahRecord);
+    clearScreen();
+    printf("+----------------------------------------------+\n");
+    printf("|               DAFTAR KERETA                 |\n");
+    printf("+----------------------------------------------+\n");
+    if (jumlahRecord == 0) {
+        printf("| Tidak ada data kereta.                      |\n");
+    } else {
+        printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", "ID", "Nama", "Layanan", "Harga", "Gerbong");
+        printf("+------------+-----------------+------------+----------+--------+\n");
+        for (int i = 0; i < jumlahRecord; i++) {
+            char* id = AmbilNilai(&records[i], "kodeKereta");
+            char* nama = AmbilNilai(&records[i], "namaKereta");
+            char* layanan = AmbilNilai(&records[i], "jenisLayanan");
+            char* harga = AmbilNilai(&records[i], "harga");
+            char* gerbong = AmbilNilai(&records[i], "jumlahGerbong");
+            printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", id ? id : "-", nama ? nama : "-", layanan ? layanan : "-", harga ? harga : "-", gerbong ? gerbong : "-");
+        }
+    }
+    printf("+----------------------------------------------+\n");
+}
+
+void TambahKereta() {
+    clearScreen();
+    printf("+----------------------------------------------+\n");
+    printf("|               TAMBAH KERETA                 |\n");
+    printf("+----------------------------------------------+\n");
+    char id[20], nama[50], layanan[20], harga[20], gerbong[10];
+    printf("ID Kereta         : "); scanf("%s", id); while(getchar()!='\n');
+    printf("Nama Kereta       : "); fgets(nama, sizeof(nama), stdin); nama[strcspn(nama, "\n")] = 0;
+    printf("Jenis Layanan     : "); fgets(layanan, sizeof(layanan), stdin); layanan[strcspn(layanan, "\n")] = 0;
+    printf("Harga             : "); fgets(harga, sizeof(harga), stdin); harga[strcspn(harga, "\n")] = 0;
+    printf("Jumlah Gerbong    : "); fgets(gerbong, sizeof(gerbong), stdin); gerbong[strcspn(gerbong, "\n")] = 0;
+
+    Record record; InisialisasiRecord(&record);
+    TambahField(&record, "kodeKereta", id);
+    TambahField(&record, "namaKereta", nama);
+    TambahField(&record, "jenisLayanan", layanan);
+    TambahField(&record, "harga", harga);
+    TambahField(&record, "jumlahGerbong", gerbong);
+
+    if (SimpanInformasiKereta(&record)) {
+        printf("\nData kereta berhasil ditambahkan!\n");
+    } else {
+        printf("\nGagal menambah data kereta (ID sudah ada?)!\n");
+    }
+    printf("Tekan Enter untuk kembali..."); getchar();
+}
+
+void EditKereta() {
+    TampilkanDaftarKereta();
+    char id[20];
+    printf("\nMasukkan ID kereta yang ingin diedit: ");
+    scanf("%s", id); while(getchar()!='\n');
+    Record record; InisialisasiRecord(&record);
+    if (!BacaInformasiKereta(&record, id)) {
+        printf("Data kereta tidak ditemukan!\nTekan Enter untuk kembali..."); getchar(); return;
+    }
+    printf("\nData lama:\n");
+    CetakRecord(&record);
+    char nama[50] = "", layanan[20] = "", harga[20] = "", gerbong[10] = "";
+    printf("Nama Kereta baru (kosongkan jika tidak diubah): "); fgets(nama, sizeof(nama), stdin); nama[strcspn(nama, "\n")] = 0;
+    printf("Jenis Layanan baru (kosongkan jika tidak diubah): "); fgets(layanan, sizeof(layanan), stdin); layanan[strcspn(layanan, "\n")] = 0;
+    printf("Harga baru (kosongkan jika tidak diubah): "); fgets(harga, sizeof(harga), stdin); harga[strcspn(harga, "\n")] = 0;
+    printf("Jumlah Gerbong baru (kosongkan jika tidak diubah): "); fgets(gerbong, sizeof(gerbong), stdin); gerbong[strcspn(gerbong, "\n")] = 0;
+    if (strlen(nama) > 0) UbahNilai(&record, "namaKereta", nama);
+    if (strlen(layanan) > 0) UbahNilai(&record, "jenisLayanan", layanan);
+    if (strlen(harga) > 0) UbahNilai(&record, "harga", harga);
+    if (strlen(gerbong) > 0) UbahNilai(&record, "jumlahGerbong", gerbong);
+    if (UpdateInformasiKereta(&record)) {
+        printf("\nData kereta berhasil diupdate!\n");
+    } else {
+        printf("\nGagal update data kereta!\n");
+    }
+    printf("Tekan Enter untuk kembali..."); getchar();
+}
+
+void HapusKereta() {
+    TampilkanDaftarKereta();
+    char id[20];
+    printf("\nMasukkan ID kereta yang ingin dihapus: ");
+    scanf("%s", id); while(getchar()!='\n');
+    printf("Apakah Anda yakin ingin menghapus kereta %s? (y/n): ", id);
+    char yakin = getchar(); while(getchar()!='\n' && getchar()!=EOF);
+    if (yakin == 'y' || yakin == 'Y') {
+        if (HapusInformasiKereta(id)) {
+            printf("\nData kereta berhasil dihapus!\n");
+        } else {
+            printf("\nGagal menghapus data kereta!\n");
+        }
+    } else {
+        printf("\nPenghapusan dibatalkan.\n");
+    }
+    printf("Tekan Enter untuk kembali..."); getchar();
 } 

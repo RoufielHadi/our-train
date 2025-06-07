@@ -517,7 +517,7 @@ char* EncodeToMorse(HashPassword *root, char character) {
     return result;
 }
 
-char* HashPassword(HashPassword *root, const char* password) {
+char* GenerateHashFromPassword(HashPassword *root, const char* password) {
     if (root == NULL || password == NULL) return NULL;
     
     int len = strlen(password);

@@ -159,7 +159,7 @@ char* EncodeToMorse(HashPassword *root, char character);
 /* IS      : root terdefinisi, character adalah karakter yang akan dikodekan */
 /* FS      : Mengembalikan string kode Morse untuk karakter tersebut */
 
-char* HashPassword(HashPassword *root, const char* password);
+char* GenerateHashFromPassword(HashPassword *root, const char* password);
 /* Tujuan : Menghasilkan hash dari password menggunakan kode Morse */
 /* IS      : root terdefinisi, password adalah string yang akan di-hash */
 /* FS      : Mengembalikan string hash dari password */

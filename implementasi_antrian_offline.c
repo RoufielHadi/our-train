@@ -142,8 +142,8 @@ void TampilkanEstimasiWaktu(Queue Q, int waktuLayananPerOrang) {
 }
 
 // *** OPERASI PEMBELIAN TIKET ***
-boolean ProsesLayananTiket(Queue *Q, StackRiwayat *riwayat, struct User user, 
-                          struct InformasiKereta kereta, int nomor_gerbong, int nomor_kursi) {
+boolean ProsesLayananTiket(Queue *Q, StackRiwayat *riwayat, User user, 
+                          InformasiKereta kereta, int nomor_gerbong, int nomor_kursi) {
     int nomorAntrian;
     
     // Panggil antrian berikutnya

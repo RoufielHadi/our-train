@@ -20,30 +20,30 @@ Politeknik Negeri Bandung
 // *** PROTOTYPE FUNGSI IMPLEMENTASI RIWAYAT ***
 
 // *** OPERASI PENCATATAN RIWAYAT ***
-void CatatRiwayatPembelian(StackRiwayat *S, struct User user, struct InformasiKereta kereta, 
+void CatatRiwayatPembelian(StackRiwayat *S, User user, InformasiKereta kereta, 
                           int nomor_gerbong, int nomor_kursi);
 /* Tujuan : Mencatat riwayat pembelian tiket dengan waktu saat ini */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Riwayat pembelian ditambahkan ke dalam stack */
 
 // *** OPERASI PENCARIAN DAN FILTER ***
-StackRiwayat CariRiwayatByUser(StackRiwayat S, struct User user);
+StackRiwayat CariRiwayatByUser(StackRiwayat S, User user);
 /* Tujuan : Mencari semua riwayat pembelian oleh pengguna tertentu */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Mengembalikan stack baru berisi riwayat pembelian pengguna yang dicari */
 
-StackRiwayat CariRiwayatByKereta(StackRiwayat S, struct InformasiKereta kereta);
+StackRiwayat CariRiwayatByKereta(StackRiwayat S, InformasiKereta kereta);
 /* Tujuan : Mencari semua riwayat pembelian untuk kereta tertentu */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Mengembalikan stack baru berisi riwayat pembelian untuk kereta yang dicari */
 
-StackRiwayat FilterRiwayatByWaktu(StackRiwayat S, struct Waktu waktu_awal, struct Waktu waktu_akhir);
+StackRiwayat FilterRiwayatByWaktu(StackRiwayat S, Waktu waktu_awal, Waktu waktu_akhir);
 /* Tujuan : Memfilter riwayat pembelian berdasarkan rentang waktu */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Mengembalikan stack baru berisi riwayat dalam rentang waktu yang ditentukan */
 
 // *** OPERASI TAMPILAN ***
-void TampilkanRiwayatPengguna(StackRiwayat S, struct User user);
+void TampilkanRiwayatPengguna(StackRiwayat S, User user);
 /* Tujuan : Menampilkan semua riwayat pembelian untuk pengguna tertentu */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Informasi riwayat pembelian pengguna ditampilkan ke layar */
@@ -59,12 +59,12 @@ void ExportRiwayatToCSV(StackRiwayat S, const char *filename);
 /* FS      : File CSV berisi data riwayat pembelian dibuat */
 
 // *** OPERASI ADMINISTRATIF ***
-void HapusRiwayatSebelumTanggal(StackRiwayat *S, struct Waktu batas_waktu);
+void HapusRiwayatSebelumTanggal(StackRiwayat *S, Waktu batas_waktu);
 /* Tujuan : Menghapus semua riwayat pembelian sebelum tanggal tertentu */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Riwayat pembelian sebelum batas waktu dihapus dari stack */
 
-int HitungJumlahRiwayatPengguna(StackRiwayat S, struct User user);
+int HitungJumlahRiwayatPengguna(StackRiwayat S, User user);
 /* Tujuan : Menghitung jumlah pembelian tiket oleh pengguna tertentu */
 /* IS      : Stack riwayat terdefinisi */
 /* FS      : Mengembalikan jumlah pembelian oleh pengguna */

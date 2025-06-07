@@ -128,7 +128,7 @@ DataInformasiKereta* CreateDataKereta(InformasiKereta keretaData) {
     return newNode;
 }
 
-StasiunTransit* CreateStasiunTransit(char* nama_stasiun, Waktu waktu_transit) {
+StasiunTransit* CreateStasiunTransit(char* nama_stasiun, WaktuSingkat waktu_transit) {
     StasiunTransit* newNode = (StasiunTransit*)malloc(sizeof(StasiunTransit));
     if (newNode == NULL) {
         printf("Error: Gagal mengalokasikan memori untuk stasiun transit baru!\n");
@@ -610,7 +610,7 @@ void PrintStasiun(ListStasiun L) {
     StasiunTransit *P = L.First;
     while (P != NULL) {
         printf("Stasiun: %s\n", P->nama_stasiun);
-        PrintWaktu(P->waktu_transit);
+        PrintWaktuSingkat(P->waktu_transit);
         printf("\n-------------------------\n");
         P = P->next;
     }
@@ -622,7 +622,7 @@ void PrintJadwal(JadwalKereta J) {
     while (P != NULL) {
         printf("Stasiun %d: %s\n", i++, P->nama_stasiun);
         printf("Waktu: ");
-        PrintWaktu(P->waktu_transit);
+        PrintWaktuSingkat(P->waktu_transit);
         printf("\n-------------------------\n");
         P = P->next;
     }

@@ -246,7 +246,7 @@ KonfigurasiKursi GetKonfigurasiKursiByJenis(JenisKereta jenis) {
     return konfig;
 }
 
-char* GetNamaJenisKereta(JenisKereta jenis) {
+const char* GetNamaJenisKereta(JenisKereta jenis) {
     switch (jenis) {
         case EKONOMI:
             return "Ekonomi";

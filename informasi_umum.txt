@@ -1,0 +1,56 @@
+KA371|Bandung Raya|Ekonomi|1500.0|7
+KA351|Bandung Raya|Ekonomi|1500.0|7
+KA373|Bandung Raya|Ekonomi|1500.0|7
+KA443|Bandung Raya|Ekonomi|1500.0|7
+KA445|Bandung Raya|Ekonomi|1500.0|7
+KA444|Bandung Raya|Ekonomi|1500.0|7
+KA446|Bandung Raya|Ekonomi|1500.0|7
+KA450|Bandung Raya|Ekonomi|1500.0|7
+KA452|Bandung Raya|Ekonomi|1500.0|7
+KA454|Bandung Raya|Ekonomi|1500.0|7
+KA456|Bandung Raya|Ekonomi|1500.0|7
+KA348|Commuter Line Garut|Ekonomi|6000.0|8
+KA349|Commuter Line Garut|Ekonomi|6000.0|8
+KA350|Commuter Line Garut|Ekonomi|6000.0|8
+KA351|Commuter Line Garut|Ekonomi|6000.0|8
+KA367|Commuter Line Garut|Ekonomi|6000.0|8
+KA378|Commuter Line Garut|Ekonomi|6000.0|8
+KA391|Commuter Line Garut|Ekonomi|6000.0|8
+KA325|Walahar Ekspres|Ekonomi|5000.0|8
+KA326|Walahar Ekspres|Ekonomi|5000.0|8
+KA327|Walahar Ekspres|Ekonomi|5000.0|8
+KA328|Walahar Ekspres|Ekonomi|5000.0|8
+KA329|Walahar Ekspres|Ekonomi|5000.0|8
+KA330|Walahar Ekspres|Ekonomi|5000.0|8
+KA331|Walahar Ekspres|Ekonomi|5000.0|8
+KA332|Walahar Ekspres|Ekonomi|5000.0|8
+KA333|Walahar Ekspres|Ekonomi|5000.0|8
+KA334|Walahar Ekspres|Ekonomi|5000.0|8
+KA335|Jatiluhur Ekspres|Ekonomi|5000.0|8
+KA336|Jatiluhur Ekspres|Ekonomi|5000.0|8
+KA337|Jatiluhur Ekspres|Ekonomi|5000.0|8
+KA338|Jatiluhur Ekspres|Ekonomi|5000.0|8
+KA341|Siliwangi|Ekonomi|3000.0|8
+KA342|Siliwangi|Ekonomi|3000.0|8
+KA343|Siliwangi|Ekonomi|3000.0|8
+KA344|Siliwangi|Ekonomi|3000.0|8
+KA345|Siliwangi|Ekonomi|3000.0|8
+KA346|Siliwangi|Ekonomi|3000.0|8
+KA129|Papandayan|Eksekutif|315000.0|8
+KA130|Papandayan|Eksekutif|315000.0|8
+KA229|Cikuray|Ekonomi|45000.0|8
+KA300|Cikuray|Ekonomi|45000.0|8
+KA127|Pangandaran|Eksekutif|370000.0|8
+KA128|Pangandaran|Eksekutif|370000.0|8
+KA131|Argo Parahyangan|Eksekutif|150000.0|8
+KA132|Argo Parahyangan|Eksekutif|150000.0|8
+KA133|Argo Parahyangan|Eksekutif|150000.0|8
+KA134|Argo Parahyangan|Eksekutif|150000.0|8
+KA135|Argo Parahyangan|Eksekutif|150000.0|8
+KA136|Argo Parahyangan|Eksekutif|150000.0|8
+KA137|Argo Parahyangan|Eksekutif|150000.0|8
+KA138|Argo Parahyangan|Eksekutif|150000.0|8
+KA139|Argo Parahyangan|Eksekutif|150000.0|8
+KA140|Argo Parahyangan|Eksekutif|150000.0|8
+KA141|Argo Parahyangan|Eksekutif|150000.0|8
+KA142|Argo Parahyangan|Eksekutif|150000.0|8

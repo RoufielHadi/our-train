@@ -15,6 +15,7 @@ Politeknik Negeri Bandung
 #include <string.h>
 #include "boolean.h"
 #include "linked.h"
+#include "tree_biner.h"
 
 // Tipe pengguna:
 // 1 = Admin
@@ -23,13 +24,13 @@ Politeknik Negeri Bandung
 // 4 = User biasa
 
 // Fungsi untuk membuat akun baru
-User BuatAkun(char* email, char* nama, char* alamat, char* nomor_telepon, char* password, int tipe_pengguna);
+User BuatAkun(char* email, char* nama, char* alamat, char* nomor_telepon, char* password, int tipe_pengguna, HashPassword *morseTree);
 
 // Fungsi untuk menambahkan akun baru ke dalam list
 boolean TambahAkun(ListUser *L, User user_baru);
 
 // Fungsi untuk login
-boolean Login(ListUser L, char* email, char* password, User* user_aktif);
+boolean Login(ListUser L, char* email, char* password, User* user_aktif, HashPassword *morseTree);
 
 // Fungsi untuk mencari akun berdasarkan email
 boolean CariAkun(ListUser L, char* email, User* hasil);
@@ -47,7 +48,7 @@ void TampilkanAkun(User user);
 void TampilkanSemuaAkun(ListUser L);
 
 // Fungsi untuk mengubah password
-boolean UbahPassword(ListUser *L, char* email, char* password_lama, char* password_baru);
+boolean UbahPassword(ListUser *L, char* email, char* password_lama, char* password_baru, HashPassword *morseTree);
 
 // Fungsi untuk mengubah tipe pengguna (hanya admin)
 boolean UbahTipePengguna(ListUser *L, char* email, int tipe_pengguna_baru);

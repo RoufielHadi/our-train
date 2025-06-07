@@ -109,9 +109,12 @@ boolean HapusHargaKereta(DaftarHargaTiket *daftar, char *id_kereta) {
 }
 
 HargaTiketKereta* GetHargaKereta(DaftarHargaTiket daftar, char *id_kereta) {
+    static HargaTiketKereta hasil; // Menggunakan static agar variabel tetap ada setelah fungsi berakhir
+    
     for (int i = 0; i < daftar.jumlah; i++) {
         if (strcmp(daftar.data[i].id_kereta, id_kereta) == 0) {
-            return &daftar.data[i];
+            hasil = daftar.data[i]; // Salin nilainya, bukan alamatnya
+            return &hasil;
         }
     }
     
@@ -211,20 +214,29 @@ int HitungHargaTiket(DaftarHargaTiket daftar, char *id_kereta, int jenis_kereta)
     }
 }
 
+// Mengembalikan jenis kereta berdasarkan nama kelas
+int GetJenisKeretaDariKelas(const char* kelas) {
+    if (strcmp(kelas, "Ekonomi") == 0) return 0;
+    if (strcmp(kelas, "Ekonomi Premium") == 0) return 1;
+    if (strcmp(kelas, "Bisnis") == 0) return 2;
+    if (strcmp(kelas, "Eksekutif") == 0) return 3;
+    if (strcmp(kelas, "Luxury") == 0) return 4;
+    if (strcmp(kelas, "Priority") == 0) return 5;
+    if (strcmp(kelas, "Sleeper") == 0) return 6;
+    if (strcmp(kelas, "Compartment") == 0) return 7;
+    return 0; // Default: Ekonomi
+}
+
 long HitungTotalKeuntungan(StackRiwayat riwayat, DaftarHargaTiket daftar) {
-    if (isEmptyStackRiwayat(riwayat)) {
-        return 0;
-    }
-    
     long total = 0;
     
-    // Buat stack sementara untuk mempertahankan stack asli
+    // Buat stack sementara
     StackRiwayat temp;
     RiwayatTiket tiket;
     
     CreateStackRiwayat(&temp);
     
-    // Salin stack asli ke temp
+    // Salin stack riwayat ke temp
     addressRiwayat P = riwayat.top;
     while (P != NULL) {
         PushRiwayat(&temp, P->info);
@@ -234,9 +246,9 @@ long HitungTotalKeuntungan(StackRiwayat riwayat, DaftarHargaTiket daftar) {
     // Hitung keuntungan dari setiap tiket
     while (!isEmptyStackRiwayat(temp)) {
         if (PopRiwayat(&temp, &tiket)) {
-            // Asumsikan bahwa jenis kereta disimpan dalam suatu field
-            // dalam struktur InformasiKereta (misalnya jenis_kereta)
-            int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.id_kereta, tiket.riwayat_kereta.jenis_kereta);
+            // Menggunakan kode_kereta dan kelas dari struct KeretaRiwayat
+            int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.kode_kereta, 
+                                        GetJenisKeretaDariKelas(tiket.riwayat_kereta.kelas));
             total += harga;
         }
     }
@@ -245,7 +257,7 @@ long HitungTotalKeuntungan(StackRiwayat riwayat, DaftarHargaTiket daftar) {
 }
 
 long HitungKeuntunganPeriode(StackRiwayat riwayat, DaftarHargaTiket daftar, 
-                           struct Waktu waktu_awal, struct Waktu waktu_akhir) {
+                           Waktu waktu_awal, Waktu waktu_akhir) {
     // Filter riwayat berdasarkan periode waktu
     StackRiwayat filtered = FilterRiwayatByWaktu(riwayat, waktu_awal, waktu_akhir);
     
@@ -260,7 +272,7 @@ long HitungKeuntunganPeriode(StackRiwayat riwayat, DaftarHargaTiket daftar,
 
 // *** OPERASI REKAPITULASI ***
 RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket daftar, 
-                                      struct Waktu waktu_awal, struct Waktu waktu_akhir) {
+                                      Waktu waktu_awal, Waktu waktu_akhir) {
     RekapitulasiKeuntungan rekap;
     
     // Set periode waktu
@@ -306,7 +318,7 @@ RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket d
                 boolean found = FALSE;
                 
                 for (int i = 0; i < jumlah_kereta; i++) {
-                    if (strcmp(kereta_count[i].id_kereta, tiket.riwayat_kereta.id_kereta) == 0) {
+                    if (strcmp(kereta_count[i].id_kereta, tiket.riwayat_kereta.kode_kereta) == 0) {
                         kereta_count[i].jumlah++;
                         found = TRUE;
                         break;
@@ -314,7 +326,7 @@ RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket d
                 }
                 
                 if (!found && jumlah_kereta < 100) {
-                    strcpy(kereta_count[jumlah_kereta].id_kereta, tiket.riwayat_kereta.id_kereta);
+                    strcpy(kereta_count[jumlah_kereta].id_kereta, tiket.riwayat_kereta.kode_kereta);
                     strcpy(kereta_count[jumlah_kereta].nama_kereta, tiket.riwayat_kereta.nama_kereta);
                     kereta_count[jumlah_kereta].jumlah = 1;
                     jumlah_kereta++;
@@ -416,7 +428,8 @@ void ExportRekapitulasiToCSV(RekapitulasiKeuntungan rekap, StackRiwayat riwayat,
     // Tulis detail tiket
     while (!isEmptyStackRiwayat(temp)) {
         if (PopRiwayat(&temp, &tiket)) {
-            int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.id_kereta, tiket.riwayat_kereta.jenis_kereta);
+            int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.kode_kereta, 
+                                        GetJenisKeretaDariKelas(tiket.riwayat_kereta.kelas));
             
             fprintf(file, "%s,%s,%d,%d,%02d/%02d/%04d,%02d:%02d:%02d,Rp %d\n",
                    tiket.riwayat_user.nama,
@@ -442,12 +455,14 @@ void ExportRekapitulasiToCSV(RekapitulasiKeuntungan rekap, StackRiwayat riwayat,
 
 // *** OPERASI ANALISIS LANJUTAN ***
 void AnalisisKeuntunganPerKereta(StackRiwayat riwayat, DaftarHargaTiket daftar) {
+    printf("\n=== ANALISIS KEUNTUNGAN PER KERETA ===\n");
+    
     if (isEmptyStackRiwayat(riwayat)) {
         printf("Tidak ada data riwayat pembelian tiket.\n");
         return;
     }
     
-    // Struktur untuk menyimpan data analisis
+    // Struktur untuk menyimpan analisis per kereta
     struct {
         char id_kereta[10];
         char nama_kereta[100];
@@ -470,14 +485,16 @@ void AnalisisKeuntunganPerKereta(StackRiwayat riwayat, DaftarHargaTiket daftar) 
         P = P->next;
     }
     
-    // Analisis data
+    // Proses setiap tiket
     while (!isEmptyStackRiwayat(temp)) {
         if (PopRiwayat(&temp, &tiket)) {
-            int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.id_kereta, tiket.riwayat_kereta.jenis_kereta);
+            int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.kode_kereta, 
+                                        GetJenisKeretaDariKelas(tiket.riwayat_kereta.kelas));
             
             boolean found = FALSE;
+            
             for (int i = 0; i < jumlah_kereta; i++) {
-                if (strcmp(analisis[i].id_kereta, tiket.riwayat_kereta.id_kereta) == 0) {
+                if (strcmp(analisis[i].id_kereta, tiket.riwayat_kereta.kode_kereta) == 0) {
                     analisis[i].jumlah_tiket++;
                     analisis[i].total_keuntungan += harga;
                     found = TRUE;
@@ -486,7 +503,7 @@ void AnalisisKeuntunganPerKereta(StackRiwayat riwayat, DaftarHargaTiket daftar) 
             }
             
             if (!found && jumlah_kereta < 100) {
-                strcpy(analisis[jumlah_kereta].id_kereta, tiket.riwayat_kereta.id_kereta);
+                strcpy(analisis[jumlah_kereta].id_kereta, tiket.riwayat_kereta.kode_kereta);
                 strcpy(analisis[jumlah_kereta].nama_kereta, tiket.riwayat_kereta.nama_kereta);
                 analisis[jumlah_kereta].jumlah_tiket = 1;
                 analisis[jumlah_kereta].total_keuntungan = harga;
@@ -496,7 +513,6 @@ void AnalisisKeuntunganPerKereta(StackRiwayat riwayat, DaftarHargaTiket daftar) 
     }
     
     // Tampilkan hasil analisis
-    printf("\n=== ANALISIS KEUNTUNGAN PER KERETA ===\n");
     printf("%-5s | %-30s | %-15s | %-20s | %-15s\n", 
            "No", "Nama Kereta", "Jumlah Tiket", "Total Keuntungan", "Rata-rata Harga");
     printf("--------------------------------------------------------------------------\n");
@@ -538,19 +554,17 @@ void AnalisisKeuntunganPerBulan(StackRiwayat riwayat, DaftarHargaTiket daftar, i
         P = P->next;
     }
     
-    // Analisis data
+    // Proses setiap tiket
     while (!isEmptyStackRiwayat(temp)) {
         if (PopRiwayat(&temp, &tiket)) {
-            // Cek jika tahun sesuai
             if (tiket.riwayat_waktu_pemesanan.tahun == tahun) {
-                int bulan_idx = tiket.riwayat_waktu_pemesanan.bulan - 1; // 0-based index
+                int bulan_idx = tiket.riwayat_waktu_pemesanan.bulan - 1; // Konversi ke indeks 0-11
                 
-                if (bulan_idx >= 0 && bulan_idx < 12) {
-                    int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.id_kereta, tiket.riwayat_kereta.jenis_kereta);
-                    
-                    bulan[bulan_idx].jumlah_tiket++;
-                    bulan[bulan_idx].total_keuntungan += harga;
-                }
+                int harga = HitungHargaTiket(daftar, tiket.riwayat_kereta.kode_kereta, 
+                                           GetJenisKeretaDariKelas(tiket.riwayat_kereta.kelas));
+                
+                bulan[bulan_idx].jumlah_tiket++;
+                bulan[bulan_idx].total_keuntungan += harga;
             }
         }
     }
@@ -621,7 +635,7 @@ void PrediksiKeuntunganBulanan(StackRiwayat riwayat, DaftarHargaTiket daftar) {
     }
     
     // Buat batas waktu untuk bulan ini
-    struct Waktu awal_bulan_ini, akhir_bulan_ini;
+    Waktu awal_bulan_ini, akhir_bulan_ini;
     awal_bulan_ini.tahun = tahun_ini;
     awal_bulan_ini.bulan = bulan_ini;
     awal_bulan_ini.hari = 1;
@@ -637,7 +651,7 @@ void PrediksiKeuntunganBulanan(StackRiwayat riwayat, DaftarHargaTiket daftar) {
     akhir_bulan_ini.detik = 59;
     
     // Buat batas waktu untuk bulan lalu
-    struct Waktu awal_bulan_lalu, akhir_bulan_lalu;
+    Waktu awal_bulan_lalu, akhir_bulan_lalu;
     awal_bulan_lalu.tahun = tahun_lalu;
     awal_bulan_lalu.bulan = bulan_lalu;
     awal_bulan_lalu.hari = 1;

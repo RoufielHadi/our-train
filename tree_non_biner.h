@@ -26,7 +26,7 @@ Politeknik Negeri Bandung
 /* Indeks dalam bahasa C dimulai dengan 0; tetapi indeks 0 tidak
    dipakai */
 /* Kamus */
-typedef char* infotype;
+typedef const char* infotype;
 typedef int address;
 typedef struct {
     infotype info;
@@ -44,6 +44,19 @@ void Create_tree(Isi_Tree X, int Jml_Node);
 
 boolean IsEmpty (Isi_Tree P);
 /* Mengirimkan true jika Isi_Tree KOSONG */
+
+/***** Helper Functions *****/
+void RecursePreOrder(Isi_Tree P, int idx);
+/* Helper function for PreOrder traversal */
+
+void RecurseInOrder(Isi_Tree P, int idx);
+/* Helper function for InOrder traversal */
+
+void RecursePostOrder(Isi_Tree P, int idx);
+/* Helper function for PostOrder traversal */
+
+void RecurseDelete(Isi_Tree P, int i);
+/* Helper function for DeleteNode */
 
 /***** Traversal *****/
 void PreOrder (Isi_Tree P);

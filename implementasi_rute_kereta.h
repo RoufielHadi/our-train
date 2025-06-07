@@ -61,33 +61,33 @@ void InisialisasiJalurCabang(Isi_Tree *pohonRute);
 /* FS      : pohonRute terdefinisi dengan struktur tree jalur cabang */
 
 // *** OPERASI PENCARIAN RUTE ***
-boolean IsRuteTersedia(Isi_Tree pohonRute, char* stasiunAsal, char* stasiunTujuan);
+boolean IsRuteTersedia(Isi_Tree pohonRute, const char* stasiunAsal, const char* stasiunTujuan);
 /* Tujuan : Memeriksa apakah rute tersedia antara dua stasiun */
 /* IS      : pohonRute sudah terdefinisi, stasiunAsal dan stasiunTujuan terdefinisi */
 /* FS      : Mengembalikan true jika rute tersedia, false jika tidak */
 
-int HitungJarak(InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* stasiunTujuan);
+int HitungJarak(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan);
 /* Tujuan : Menghitung jarak antara dua stasiun */
 /* IS      : infoJarak sudah terdefinisi, stasiunAsal dan stasiunTujuan terdefinisi */
 /* FS      : Mengembalikan jarak dalam kilometer, -1 jika rute tidak ditemukan */
 
-int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* stasiunTujuan);
+int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan);
 /* Tujuan : Menghitung waktu tempuh antara dua stasiun */
 /* IS      : infoJarak sudah terdefinisi, stasiunAsal dan stasiunTujuan terdefinisi */
 /* FS      : Mengembalikan waktu tempuh dalam menit, -1 jika rute tidak ditemukan */
 
 // *** OPERASI MANAJEMEN RUTE ***
-void TambahStasiun(Isi_Tree *pohonRute, char* namaStasiun, char* stasiunInduk);
+void TambahStasiun(Isi_Tree *pohonRute, const char* namaStasiun, const char* stasiunInduk);
 /* Tujuan : Menambahkan stasiun baru ke dalam tree rute */
 /* IS      : pohonRute sudah terdefinisi, namaStasiun dan stasiunInduk terdefinisi */
 /* FS      : Stasiun baru ditambahkan ke dalam tree rute */
 
-void TambahInfoRute(InfoRute **infoJarak, int *jumlahRute, char* stasiunAsal, char* stasiunTujuan, int jarak, int waktuTempuh);
+void TambahInfoRute(InfoRute **infoJarak, int *jumlahRute, const char* stasiunAsal, const char* stasiunTujuan, int jarak, int waktuTempuh);
 /* Tujuan : Menambahkan informasi rute baru */
 /* IS      : infoJarak sudah terdefinisi, parameter rute terdefinisi */
 /* FS      : Informasi rute baru ditambahkan ke array infoJarak */
 
-void HapusStasiun(Isi_Tree *pohonRute, char* namaStasiun);
+void HapusStasiun(Isi_Tree *pohonRute, const char* namaStasiun);
 /* Tujuan : Menghapus stasiun dari tree rute */
 /* IS      : pohonRute sudah terdefinisi, namaStasiun terdefinisi */
 /* FS      : Stasiun dihapus dari tree rute jika ditemukan */
@@ -98,18 +98,18 @@ void TampilkanRute(Isi_Tree pohonRute);
 /* IS      : pohonRute sudah terdefinisi */
 /* FS      : Seluruh rute kereta api ditampilkan ke layar */
 
-void TampilkanStasiunTerdekat(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, char* namaStasiun, int radius);
+void TampilkanStasiunTerdekat(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, const char* namaStasiun, int radius);
 /* Tujuan : Menampilkan stasiun-stasiun terdekat dari suatu stasiun */
 /* IS      : pohonRute dan infoJarak sudah terdefinisi, namaStasiun terdefinisi, radius dalam kilometer */
 /* FS      : Stasiun-stasiun yang berada dalam radius tertentu dari stasiun yang ditentukan ditampilkan */
 
-void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, char* stasiunAsal, char* stasiunTujuan);
+void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan);
 /* Tujuan : Menampilkan jalur terpendek antara dua stasiun */
 /* IS      : pohonRute dan infoJarak sudah terdefinisi, stasiunAsal dan stasiunTujuan terdefinisi */
 /* FS      : Jalur terpendek antara dua stasiun ditampilkan ke layar */
 
 // *** FUNGSI PEMBANTU ***
-int CariIndeksStasiun(Isi_Tree pohonRute, char* namaStasiun);
+int CariIndeksStasiun(Isi_Tree pohonRute, const char* namaStasiun);
 /* Tujuan : Mencari indeks stasiun dalam tree rute */
 /* IS      : pohonRute sudah terdefinisi, namaStasiun terdefinisi */
 /* FS      : Mengembalikan indeks stasiun, 0 jika tidak ditemukan */
@@ -119,19 +119,24 @@ char** DapatkanDaftarStasiun(Isi_Tree pohonRute, int *jumlahStasiun);
 /* IS      : pohonRute sudah terdefinisi */
 /* FS      : Mengembalikan array berisi nama-nama stasiun dan mengisi jumlahStasiun */
 
-void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, char* namaFile);
+void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, const char* namaFile);
 /* Tujuan : Menyimpan data rute ke file */
 /* IS      : pohonRute dan infoJarak sudah terdefinisi, namaFile terdefinisi */
 /* FS      : Data rute tersimpan dalam file */
 
-void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute, char* namaFile);
+void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute, const char* namaFile);
 /* Tujuan : Membaca data rute dari file */
 /* IS      : namaFile terdefinisi */
 /* FS      : pohonRute dan infoJarak terisi dengan data dari file */
 
-int InsertNodeAndGetIndex(Isi_Tree *pohonRute, char* namaStasiun, int parent_idx);
+int InsertRuteNodeAndGetIndex(Isi_Tree *pohonRute, const char* namaStasiun, int parent_idx);
 /* Tujuan : Menambahkan stasiun baru ke dalam tree rute dan mengembalikan indeksnya */
 /* IS      : pohonRute sudah terdefinisi, namaStasiun dan parent_idx terdefinisi */
 /* FS      : Stasiun baru ditambahkan ke dalam tree rute dan indeksnya dikembalikan */
+
+void InsertRuteNode(Isi_Tree P, const char* info, int parent_idx);
+/* Tujuan : Menambahkan node baru ke dalam tree */
+/* IS      : P terdefinisi, info dan parent_idx terdefinisi */
+/* FS      : Node baru ditambahkan ke dalam tree */
 
 #endif /* IMPLEMENTASI_RUTE_KERETA_H */ 

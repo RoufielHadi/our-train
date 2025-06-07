@@ -1,0 +1,4 @@
+"email"='ourtrain@admin.com;' | "password"='admin123_hashed;' | "pin"='123456_hashed;' | "nama"='Administrator OurTrain;' | "alamat"='Kantor Pusat OurTrain;' | "nomor_telepon"='081234567890;' | "tipe_akun"='2;'
+"email"='kasir.jakartakota@ourtrain.com;' | "password"='Kasir123_hashed;' | "pin"='456789_hashed;' | "nama"='Kasir Jakarta Kota;' | "alamat"='Stasiun Jakarta Kota;' | "nomor_telepon"='082345678901;' | "tipe_akun"='3;'
+"email"='mesin.jakartakota@ourtrain.com;' | "password"='Mesin123_hashed;' | "pin"='789012_hashed;' | "nama"='Mesin Jakarta Kota;' | "alamat"='Stasiun Jakarta Kota;' | "nomor_telepon"='083456789012;' | "tipe_akun"='4;'
+"email"='asep@mail.com;' | "password"='Asep1234_hashed;' | "pin"='654321_hashed;' | "nama"='Asep Sunandar;' | "alamat"='Jl. Merdeka No. 123, Bandung;' | "nomor_telepon"='089876543210;' | "tipe_akun"='1;'

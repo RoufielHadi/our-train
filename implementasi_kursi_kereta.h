@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi
-NIM: 241524028
+Author:  Devi Maulani
+NIM: 241524007
 Kelas: 1A
 Prodi: Sarjana Terapan Teknik Informatika
 Jurusan: Teknik Komputer dan Informatika

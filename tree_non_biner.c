@@ -51,47 +51,53 @@ boolean IsEmpty(Isi_Tree P) {
     return P[1].info == NULL;
 }
 
+// Helper function for PreOrder traversal
+void RecursePreOrder(Isi_Tree P, int idx) {
+    if (idx == 0 || P[idx].info == NULL) return;
+    printf("%s ", P[idx].info);
+    RecursePreOrder(P, P[idx].ps_fs);
+    RecursePreOrder(P, P[idx].ps_nb);
+}
+
 void PreOrder(Isi_Tree P) {
-    void RecursePreOrder(Isi_Tree P, int idx) {
-        if (idx == 0 || P[idx].info == NULL) return;
-        printf("%s ", P[idx].info);
-        RecursePreOrder(P, P[idx].ps_fs);
-        RecursePreOrder(P, P[idx].ps_nb);
-    }
     RecursePreOrder(P, 1);
     printf("\n");
 }
 
-void InOrder(Isi_Tree P) {
-    void RecurseInOrder(Isi_Tree P, int idx) {
-        if (idx == 0 || P[idx].info == NULL) return;
-        int child = P[idx].ps_fs;
-        if (child != 0) {
+// Helper function for InOrder traversal
+void RecurseInOrder(Isi_Tree P, int idx) {
+    if (idx == 0 || P[idx].info == NULL) return;
+    int child = P[idx].ps_fs;
+    if (child != 0) {
+        RecurseInOrder(P, child);
+    }
+    printf("%s ", P[idx].info);
+    if (child != 0) {
+        child = P[child].ps_nb;
+        while (child != 0) {
             RecurseInOrder(P, child);
-        }
-        printf("%s ", P[idx].info);
-        if (child != 0) {
             child = P[child].ps_nb;
-            while (child != 0) {
-                RecurseInOrder(P, child);
-                child = P[child].ps_nb;
-            }
         }
     }
+}
+
+void InOrder(Isi_Tree P) {
     RecurseInOrder(P, 1);
     printf("\n");
 }
 
-void PostOrder(Isi_Tree P) {
-    void RecursePostOrder(Isi_Tree P, int idx) {
-        if (idx == 0 || P[idx].info == NULL) return;
-        int child = P[idx].ps_fs;
-        while (child != 0) {
-            RecursePostOrder(P, child);
-            child = P[child].ps_nb;
-        }
-        printf("%s ", P[idx].info);
+// Helper function for PostOrder traversal
+void RecursePostOrder(Isi_Tree P, int idx) {
+    if (idx == 0 || P[idx].info == NULL) return;
+    int child = P[idx].ps_fs;
+    while (child != 0) {
+        RecursePostOrder(P, child);
+        child = P[child].ps_nb;
     }
+    printf("%s ", P[idx].info);
+}
+
+void PostOrder(Isi_Tree P) {
     RecursePostOrder(P, 1);
     printf("\n");
 }
@@ -197,22 +203,23 @@ void InsertNode(Isi_Tree P, infotype info, int parent_idx) {
     }
 }
 
-void DeleteNode(Isi_Tree P, int idx) {
-    void RecurseDelete(Isi_Tree P, int i) {
-        if (i == 0 || P[i].info == NULL) return;
-        int child = P[i].ps_fs;
-        while (child != 0) {
-            int next = P[child].ps_nb;
-            RecurseDelete(P, child);
-            child = next;
-        }
-        free(P[i].info); // Bebaskan memori untuk string
-        P[i].info = NULL;
-        P[i].ps_fs = 0;
-        P[i].ps_nb = 0;
-        P[i].ps_pr = 0;
+// Helper function for DeleteNode
+void RecurseDelete(Isi_Tree P, int i) {
+    if (i == 0 || P[i].info == NULL) return;
+    int child = P[i].ps_fs;
+    while (child != 0) {
+        int next = P[child].ps_nb;
+        RecurseDelete(P, child);
+        child = next;
     }
+    free((void*)P[i].info); // Bebaskan memori untuk string dengan cast eksplisit
+    P[i].info = NULL;
+    P[i].ps_fs = 0;
+    P[i].ps_nb = 0;
+    P[i].ps_pr = 0;
+}
 
+void DeleteNode(Isi_Tree P, int idx) {
     int parent = P[idx].ps_pr;
     if (parent != 0) {
         if (P[parent].ps_fs == idx) {

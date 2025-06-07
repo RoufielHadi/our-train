@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi  
-NIM: 241524028  
+Author: Devi Maulani     
+NIM: 241524007  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -12,97 +12,140 @@ Politeknik Negeri Bandung
 // Fungsi untuk membuat jadwal kereta baru
 JadwalHarian BuatJadwalKereta(char* id_kereta, char* tanggal) {
     JadwalHarian jadwal_baru;
-    
-    // Salin data ke struktur jadwal
     strcpy(jadwal_baru.id_kereta, id_kereta);
     strcpy(jadwal_baru.tanggal, tanggal);
-    
-    // Inisialisasi jadwal rute kosong
     CreateJadwalKereta(&jadwal_baru.jadwal_rute);
-    
     return jadwal_baru;
 }
 
-// Fungsi untuk membuat list jadwal kosong
 void CreateListJadwal(ListJadwal *L) {
     L->First = NULL;
 }
 
-// Fungsi untuk membuat node jadwal baru
 NodeJadwal* CreateNodeJadwal(JadwalHarian jadwal) {
     NodeJadwal* newNode = (NodeJadwal*)malloc(sizeof(NodeJadwal));
-    if (newNode == NULL) {
-        printf("Error: Gagal mengalokasikan memori untuk node jadwal baru!\n");
-        return NULL;
-    }
-
+    if (newNode == NULL) return NULL;
     newNode->jadwal = jadwal;
     newNode->next = NULL;
-
     return newNode;
 }
 
-// Fungsi untuk menambahkan stasiun ke jadwal kereta
 boolean TambahStasiunKeJadwal(JadwalHarian *jadwal, char* nama_stasiun, Waktu waktu_transit) {
-    // Membuat struct WaktuSingkat dari Waktu
-    WaktuSingkat waktu_singkat;
-    waktu_singkat.jam = waktu_transit.jam;
-    waktu_singkat.menit = waktu_transit.menit;
-    
-    // Buat node stasiun transit
-    StasiunTransit* stasiun_baru = CreateStasiunTransit(nama_stasiun, waktu_singkat);
-    if (stasiun_baru == NULL) {
-        return FALSE; // Gagal alokasi memori
-    }
-    
-    // Tambahkan ke jadwal rute
+    StasiunTransit* stasiun_baru = CreateStasiunTransit(nama_stasiun, KonversiKeWaktuSingkat(waktu_transit));
+    if (stasiun_baru == NULL) return FALSE;
     InsertLastJadwal(&jadwal->jadwal_rute, stasiun_baru);
     return TRUE;
 }
 
-// Fungsi untuk menambahkan jadwal ke list jadwal
 boolean TambahJadwalKeList(ListJadwal *L, JadwalHarian jadwal) {
-    // Cek apakah jadwal dengan ID dan tanggal yang sama sudah ada
-    if (CariJadwal(*L, jadwal.id_kereta, jadwal.tanggal) != NULL) {
-        return FALSE; // Jadwal sudah ada
-    }
-    
-    // Buat node jadwal baru
     NodeJadwal* node_baru = CreateNodeJadwal(jadwal);
-    if (node_baru == NULL) {
-        return FALSE; // Gagal alokasi memori
-    }
-    
-    // Jika list kosong
+    if (node_baru == NULL) return FALSE;
     if (L->First == NULL) {
         L->First = node_baru;
-        return TRUE;
+    } else {
+        NodeJadwal* temp = L->First;
+        while (temp->next != NULL) temp = temp->next;
+        temp->next = node_baru;
     }
-    
-    // Cari posisi akhir list
-    NodeJadwal* temp = L->First;
-    while (temp->next != NULL) {
-        temp = temp->next;
-    }
-    
-    // Tambahkan di akhir list
-    temp->next = node_baru;
     return TRUE;
 }
 
-// Fungsi untuk mencari jadwal berdasarkan ID kereta dan tanggal
-NodeJadwal* CariJadwal(ListJadwal L, char* id_kereta, char* tanggal) {
+NodeJadwal* CariJadwalByRute(ListJadwal L, const char* asal, const char* tujuan) {
     NodeJadwal* temp = L.First;
-    
     while (temp != NULL) {
-        if (strcmp(temp->jadwal.id_kereta, id_kereta) == 0 && 
-            strcmp(temp->jadwal.tanggal, tanggal) == 0) {
+        if (IsStasiunTersedia(temp->jadwal, asal) && IsStasiunTersedia(temp->jadwal, tujuan)) {
             return temp;
         }
         temp = temp->next;
     }
-    
-    return NULL; // Jadwal tidak ditemukan
+    return NULL;
+}
+
+NodeJadwal* CariJadwalLengkap(ListJadwal L, const char* asal, const char* tujuan, const char* tanggal, const char* jenis_layanan) {
+    NodeJadwal* temp = L.First;
+    while (temp != NULL) {
+        if (IsStasiunTersedia(temp->jadwal, asal) && IsStasiunTersedia(temp->jadwal, tujuan) &&
+            strcmp(temp->jadwal.tanggal, tanggal) == 0) {
+
+            Record infoKereta;
+            if (BacaInformasiKereta(&infoKereta, temp->jadwal.id_kereta)) {
+                char* jenis = AmbilNilai(&infoKereta, "jenisLayanan");
+                if (jenis != NULL && strcmp(jenis, jenis_layanan) == 0) {
+                    return temp;
+                }
+            }
+        }
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+
+boolean UpdateJadwal(ListJadwal *L, char* id_kereta, char* tanggal, JadwalHarian jadwal_baru) {
+    NodeJadwal* temp = L->First;
+    while (temp != NULL) {
+        if (strcmp(temp->jadwal.id_kereta, id_kereta) == 0 &&
+            strcmp(temp->jadwal.tanggal, tanggal) == 0) {
+            temp->jadwal = jadwal_baru;
+
+            Record record;
+            KonversiJadwalKeRecord(jadwal_baru, &record);
+            UpdateJadwalKereta(&record);
+
+            return TRUE;
+        }
+        temp = temp->next;
+    }
+    return FALSE;
+}
+
+JadwalHarian KonversiRecordKeJadwalKereta(Record record) {
+    JadwalHarian jadwal;
+
+    const char* id_kereta = AmbilNilai(&record, "kodeJadwal");
+    const char* tanggal = AmbilNilai(&record, "tanggal");
+
+    if (id_kereta != NULL)
+        strncpy(jadwal.id_kereta, id_kereta, sizeof(jadwal.id_kereta));
+    else
+        strcpy(jadwal.id_kereta, "UNKNOWN");
+
+    if (tanggal != NULL)
+        strncpy(jadwal.tanggal, tanggal, sizeof(jadwal.tanggal));
+    else
+        strcpy(jadwal.tanggal, "00-00-0000");
+
+    CreateJadwalKereta(&jadwal.jadwal_rute);
+
+    const char* asal = AmbilNilai(&record, "stasiunAsal");
+    const char* tujuan = AmbilNilai(&record, "stasiunTujuan");
+
+    if (asal != NULL) {
+        Waktu w1 = {7, 0, 0};
+        TambahStasiunKeJadwal(&jadwal, (char*)asal, w1);
+    }
+
+    if (tujuan != NULL) {
+        Waktu w2 = {9, 0, 0};
+        TambahStasiunKeJadwal(&jadwal, (char*)tujuan, w2);
+    }
+
+    return jadwal;
+}
+
+
+// Fungsi untuk mengkonversi JadwalHarian ke Record
+void KonversiJadwalKeRecord(JadwalHarian jadwal, Record* record) {
+    InisialisasiRecord(record);
+    TambahField(record, "kodeJadwal", jadwal.id_kereta);
+    TambahField(record, "tanggal", jadwal.tanggal);
+
+    if (jadwal.jadwal_rute.head != NULL) {
+        TambahField(record, "stasiunAsal", jadwal.jadwal_rute.head->nama_stasiun);
+        StasiunTransit* last = jadwal.jadwal_rute.head;
+        while (last->next != NULL) last = last->next;
+        TambahField(record, "stasiunTujuan", last->nama_stasiun);
+    }
 }
 
 // Fungsi untuk menghapus jadwal dari list
@@ -307,7 +350,7 @@ boolean UpdateWaktuTransit(JadwalHarian *jadwal, char* nama_stasiun, Waktu waktu
 }
 
 // Fungsi untuk mengecek ketersediaan stasiun di jadwal
-boolean IsStasiunTersedia(JadwalHarian jadwal, char* nama_stasiun) {
+boolean IsStasiunTersedia(JadwalHarian jadwal, const char* nama_stasiun) {
     if (jadwal.jadwal_rute.head == NULL) {
         return FALSE; // Jadwal kosong
     }

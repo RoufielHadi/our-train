@@ -1,6 +1,6 @@
 /*
-Author: Roufiel Hadi  
-NIM: 241524028  
+Author: Devi Maulani  
+NIM: 241524007  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -16,6 +16,7 @@ Politeknik Negeri Bandung
 #include "boolean.h"
 #include "linked.h"
 #include "time.h"
+#include "databases.h"
 
 // Struktur untuk menyimpan jadwal kereta lengkap
 typedef struct {
@@ -48,8 +49,20 @@ boolean TambahStasiunKeJadwal(JadwalHarian *jadwal, char* nama_stasiun, Waktu wa
 // Fungsi untuk menambahkan jadwal ke list jadwal
 boolean TambahJadwalKeList(ListJadwal *L, JadwalHarian jadwal);
 
-// Fungsi untuk mencari jadwal berdasarkan ID kereta dan tanggal
-NodeJadwal* CariJadwal(ListJadwal L, char* id_kereta, char* tanggal);
+// Fungsi pencarian berdasarkan asal dan tujuan
+NodeJadwal* CariJadwalByRute(ListJadwal L, const char* asal, const char* tujuan);
+
+// Fungsi pencarian lengkap berdasarkan asal + tujuan + tanggal + jenis layanan
+NodeJadwal* CariJadwalLengkap(ListJadwal L, const char* asal, const char* tujuan, const char* tanggal, const char* jenis_layanan);
+
+// Fungsi untuk mengupdate jadwal dan menyimpan ke database
+boolean UpdateJadwal(ListJadwal *L, char* id_kereta, char* tanggal, JadwalHarian jadwal_baru);
+
+// Fungsi untuk mengkonversi RecordJadwal ke JadwalHarian
+JadwalHarian KonversiRecordKeJadwalKereta(Record record);
+
+// Fungsi konversi JadwalHarian ke Record untuk database
+void KonversiJadwalKeRecord(JadwalHarian jadwal, Record* record);
 
 // Fungsi untuk menghapus jadwal dari list
 boolean HapusJadwal(ListJadwal *L, char* id_kereta, char* tanggal);
@@ -70,7 +83,7 @@ int HitungDurasiPerjalanan(JadwalHarian jadwal, char* stasiun_asal, char* stasiu
 boolean UpdateWaktuTransit(JadwalHarian *jadwal, char* nama_stasiun, Waktu waktu_baru);
 
 // Fungsi untuk mengecek ketersediaan stasiun di jadwal
-boolean IsStasiunTersedia(JadwalHarian jadwal, char* nama_stasiun);
+boolean IsStasiunTersedia(JadwalHarian jadwal, const char* nama_stasiun);
 
 // Fungsi untuk menyalin jadwal
 JadwalHarian SalinJadwal(JadwalHarian jadwal);
@@ -84,4 +97,4 @@ boolean KonversiTanggal(char* tanggal_input, char* tanggal_output);
 // Fungsi untuk validasi tanggal
 boolean ValidasiTanggal(char* tanggal);
 
-#endif /* IMPLEMENTASI_JADWAL_KERETA_H */ 
+#endif /* IMPLEMENTASI_JADWAL_KERETA_H */

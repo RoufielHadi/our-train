@@ -11,69 +11,35 @@ Politeknik Negeri Bandung
 
 // *** VALIDASI PASSWORD ***
 boolean IsPasswordValid(const char *password) {
-    if (password == NULL) {
-        return FALSE;
+    if (password == NULL || strlen(password) < 6) {
+        return FALSE; // Password terlalu pendek
     }
     
-    int len = strlen(password);
-    boolean hasUpper = FALSE;
-    boolean hasLower = FALSE;
+    boolean hasUppercase = FALSE;
+    boolean hasLowercase = FALSE;
     boolean hasDigit = FALSE;
     
-    // Password terlalu pendek
-    if (len < 8) {
-        printf("Password harus memiliki minimal 8 karakter.\n");
-        return FALSE;
-    }
-    
-    // Periksa setiap karakter
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; password[i] != '\0'; i++) {
         if (isupper(password[i])) {
-            hasUpper = TRUE;
+            hasUppercase = TRUE;
         } else if (islower(password[i])) {
-            hasLower = TRUE;
+            hasLowercase = TRUE;
         } else if (isdigit(password[i])) {
             hasDigit = TRUE;
         }
     }
     
-    // Periksa kriteria
-    if (!hasUpper) {
-        printf("Password harus memiliki minimal satu huruf besar.\n");
-        return FALSE;
-    }
-    
-    if (!hasLower) {
-        printf("Password harus memiliki minimal satu huruf kecil.\n");
-        return FALSE;
-    }
-    
-    if (!hasDigit) {
-        printf("Password harus memiliki minimal satu angka.\n");
-        return FALSE;
-    }
-    
-    return TRUE;
+    return hasUppercase && hasLowercase && hasDigit;
 }
 
 boolean IsPinValid(const char *pin) {
-    if (pin == NULL) {
-        return FALSE;
+    if (pin == NULL || strlen(pin) != PIN_LENGTH) {
+        return FALSE; // PIN harus memiliki panjang yang sesuai
     }
     
-    int len = strlen(pin);
-    
-    // PIN harus tepat 6 digit
-    if (len != PIN_LENGTH) {
-        printf("PIN harus terdiri dari %d digit.\n", PIN_LENGTH);
-        return FALSE;
-    }
-    
-    // PIN harus terdiri dari angka saja
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < PIN_LENGTH; i++) {
         if (!isdigit(pin[i])) {
-            printf("PIN hanya boleh terdiri dari angka.\n");
-            return FALSE;
+            return FALSE; // Semua karakter harus berupa digit
         }
     }
     

@@ -60,8 +60,8 @@ void TampilkanEstimasiWaktu(Queue Q, int waktuLayananPerOrang);
 /* FS      : Estimasi waktu tunggu untuk setiap nomor antrian ditampilkan */
 
 // *** OPERASI PEMBELIAN TIKET ***
-boolean ProsesLayananTiket(Queue *Q, StackRiwayat *riwayat, struct User user, 
-                          struct InformasiKereta kereta, int nomor_gerbong, int nomor_kursi);
+boolean ProsesLayananTiket(Queue *Q, StackRiwayat *riwayat, User user, 
+                          InformasiKereta kereta, int nomor_gerbong, int nomor_kursi);
 /* Tujuan : Memproses layanan pembelian tiket untuk antrian terdepan */
 /* IS      : Queue dan riwayat terdefinisi */
 /* FS      : Jika antrian tidak kosong, pembelian tiket diproses, antrian terdepan dihapus,

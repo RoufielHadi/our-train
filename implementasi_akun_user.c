@@ -9,9 +9,10 @@ Politeknik Negeri Bandung
 
 #include "implementasi_akun_user.h"
 #include "hash_password.h" // Untuk fungsi hashing password
+#include "tree_biner.h" // Untuk tipe data HashPassword
 
 // Fungsi untuk membuat akun baru
-User BuatAkun(char* email, char* nama, char* alamat, char* nomor_telepon, char* password, int tipe_pengguna) {
+User BuatAkun(char* email, char* nama, char* alamat, char* nomor_telepon, char* password, int tipe_pengguna, HashPassword *morseTree) {
     User user_baru;
     
     // Salin data ke struktur user
@@ -21,9 +22,9 @@ User BuatAkun(char* email, char* nama, char* alamat, char* nomor_telepon, char* 
     strcpy(user_baru.nomor_telepon, nomor_telepon);
     
     // Hash password sebelum disimpan
-    char hashed_password[64];
-    HashPassword(password, hashed_password);
+    char *hashed_password = HashPasswordWithMorse(morseTree, password);
     strcpy(user_baru.password, hashed_password);
+    free(hashed_password);
     
     // Set tipe pengguna
     user_baru.is_admin = tipe_pengguna; // Menggunakan integer untuk tipe pengguna
@@ -50,7 +51,7 @@ boolean TambahAkun(ListUser *L, User user_baru) {
 }
 
 // Fungsi untuk login
-boolean Login(ListUser L, char* email, char* password, User* user_aktif) {
+boolean Login(ListUser L, char* email, char* password, User* user_aktif, HashPassword *morseTree) {
     // Cari akun berdasarkan email
     DataUser *user_node = SearchUserByEmail(L, email);
     if (user_node == NULL) {
@@ -58,18 +59,19 @@ boolean Login(ListUser L, char* email, char* password, User* user_aktif) {
     }
     
     // Verifikasi password
-    char hashed_password[64];
-    HashPassword(password, hashed_password);
+    char *hashed_password = HashPasswordWithMorse(morseTree, password);
+    boolean result = FALSE;
     
     if (strcmp(user_node->user_info.password, hashed_password) == 0) {
         // Password benar, salin data user
         if (user_aktif != NULL) {
             *user_aktif = user_node->user_info;
         }
-        return TRUE;
+        result = TRUE;
     }
     
-    return FALSE; // Password salah
+    free(hashed_password);
+    return result;
 }
 
 // Fungsi untuk mencari akun berdasarkan email
@@ -212,24 +214,25 @@ void TampilkanSemuaAkun(ListUser L) {
 }
 
 // Fungsi untuk mengubah password
-boolean UbahPassword(ListUser *L, char* email, char* password_lama, char* password_baru) {
+boolean UbahPassword(ListUser *L, char* email, char* password_lama, char* password_baru, HashPassword *morseTree) {
     DataUser *user_node = SearchUserByEmail(*L, email);
     if (user_node == NULL) {
         return FALSE; // Email tidak ditemukan
     }
     
     // Verifikasi password lama
-    char hashed_password_lama[64];
-    HashPassword(password_lama, hashed_password_lama);
+    char *hashed_password_lama = HashPasswordWithMorse(morseTree, password_lama);
     
     if (strcmp(user_node->user_info.password, hashed_password_lama) != 0) {
+        free(hashed_password_lama);
         return FALSE; // Password lama salah
     }
+    free(hashed_password_lama);
     
     // Update password
-    char hashed_password_baru[64];
-    HashPassword(password_baru, hashed_password_baru);
+    char *hashed_password_baru = HashPasswordWithMorse(morseTree, password_baru);
     strcpy(user_node->user_info.password, hashed_password_baru);
+    free(hashed_password_baru);
     
     return TRUE;
 }

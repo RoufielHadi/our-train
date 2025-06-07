@@ -43,8 +43,8 @@ typedef struct {
     long total_keuntungan;
     char kereta_terlaris[100];
     int jumlah_tiket_terlaris;
-    struct Waktu periode_awal;
-    struct Waktu periode_akhir;
+    Waktu periode_awal;
+    Waktu periode_akhir;
 } RekapitulasiKeuntungan;
 
 // *** PROTOTYPE FUNGSI IMPLEMENTASI REKAPITULASI KEUNTUNGAN ***
@@ -104,14 +104,14 @@ long HitungTotalKeuntungan(StackRiwayat riwayat, DaftarHargaTiket daftar);
 /* FS      : Mengembalikan total keuntungan dalam Rupiah */
 
 long HitungKeuntunganPeriode(StackRiwayat riwayat, DaftarHargaTiket daftar, 
-                           struct Waktu waktu_awal, struct Waktu waktu_akhir);
+                          Waktu waktu_awal, Waktu waktu_akhir);
 /* Tujuan : Menghitung keuntungan dalam periode tertentu */
 /* IS      : Stack riwayat dan daftar harga terdefinisi */
 /* FS      : Mengembalikan total keuntungan dalam periode dalam Rupiah */
 
 // *** OPERASI REKAPITULASI ***
 RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket daftar, 
-                                      struct Waktu waktu_awal, struct Waktu waktu_akhir);
+                                     Waktu waktu_awal, Waktu waktu_akhir);
 /* Tujuan : Membuat rekapitulasi keuntungan untuk periode tertentu */
 /* IS      : Stack riwayat dan daftar harga terdefinisi */
 /* FS      : Mengembalikan struktur RekapitulasiKeuntungan yang berisi hasil rekapitulasi */

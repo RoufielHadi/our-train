@@ -15,12 +15,13 @@ Politeknik Negeri Bandung
 #include <string.h>
 #include "boolean.h"
 #include "linked.h"
+#include "tree_biner.h"
 
 // Konstanta
 #define MIN_SALDO 10000 // Minimal saldo yang harus dimiliki
 
 // Fungsi untuk membuat data pembayaran baru
-Payment BuatDataPembayaran(char* email, char* no_rekening, int saldo, char* pin);
+Payment BuatDataPembayaran(char* email, char* no_rekening, int saldo, char* pin, HashPassword *morseTree);
 
 // Fungsi untuk menambahkan data pembayaran ke dalam list
 boolean TambahDataPembayaran(ListPayment *L, Payment payment_baru);
@@ -35,7 +36,7 @@ boolean TambahSaldo(ListPayment *L, char* email, char* pin, int jumlah);
 boolean KurangiSaldo(ListPayment *L, char* email, char* pin, int jumlah);
 
 // Fungsi untuk mengubah PIN
-boolean UbahPIN(ListPayment *L, char* email, char* pin_lama, char* pin_baru);
+boolean UbahPIN(ListPayment *L, char* email, char* pin_lama, char* pin_baru, HashPassword *morseTree);
 
 // Fungsi untuk menampilkan informasi pembayaran
 void TampilkanInfoPembayaran(Payment payment);
@@ -44,7 +45,7 @@ void TampilkanInfoPembayaran(Payment payment);
 void TampilkanSemuaDataPembayaran(ListPayment L);
 
 // Fungsi untuk validasi PIN
-boolean ValidasiPIN(ListPayment L, char* email, char* pin);
+boolean ValidasiPIN(ListPayment L, char* email, char* pin, HashPassword *morseTree);
 
 // Fungsi untuk memperbarui data pembayaran
 boolean UpdateDataPembayaran(ListPayment *L, char* email, Payment payment_baru);

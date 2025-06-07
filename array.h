@@ -121,7 +121,7 @@ KonfigurasiKursi GetKonfigurasiKursiByJenis(JenisKereta jenis);
 // IS      : Jenis kereta valid
 // FS      : Mengembalikan struktur KonfigurasiKursi dengan kolom dan baris sesuai jenis
 
-char* GetNamaJenisKereta(JenisKereta jenis);
+const char* GetNamaJenisKereta(JenisKereta jenis);
 // Tujuan  : Mendapatkan nama jenis kereta dalam bentuk string
 // IS      : Jenis kereta valid
 // FS      : Mengembalikan string yang berisi nama jenis kereta

@@ -11,14 +11,30 @@ Politeknik Negeri Bandung
 #include <time.h>
 
 // *** OPERASI PENCATATAN RIWAYAT ***
-void CatatRiwayatPembelian(StackRiwayat *S, struct User user, struct InformasiKereta kereta, 
+void CatatRiwayatPembelian(StackRiwayat *S, User user, InformasiKereta kereta, 
                           int nomor_gerbong, int nomor_kursi) {
     // Buat objek RiwayatTiket baru
     RiwayatTiket tiketBaru;
     
-    // Salin data user dan kereta
-    tiketBaru.riwayat_user = user;
-    tiketBaru.riwayat_kereta = kereta;
+    // Salin data user ke UserRiwayat
+    strcpy(tiketBaru.riwayat_user.nama, user.nama);
+    strcpy(tiketBaru.riwayat_user.email, user.email);
+    strcpy(tiketBaru.riwayat_user.nomor_telepon, user.nomor_telepon);
+    
+    // Salin data kereta ke KeretaRiwayat
+    strcpy(tiketBaru.riwayat_kereta.kode_kereta, kereta.id_Kereta);
+    strcpy(tiketBaru.riwayat_kereta.nama_kereta, kereta.nama_kereta);
+    strcpy(tiketBaru.riwayat_kereta.stasiun_asal, "");  // Isi sesuai kebutuhan
+    strcpy(tiketBaru.riwayat_kereta.stasiun_tujuan, ""); // Isi sesuai kebutuhan
+    strcpy(tiketBaru.riwayat_kereta.jam_berangkat, ""); // Isi sesuai kebutuhan
+    strcpy(tiketBaru.riwayat_kereta.jam_tiba, ""); // Isi sesuai kebutuhan
+    strcpy(tiketBaru.riwayat_kereta.tanggal_berangkat, ""); // Isi sesuai kebutuhan
+    
+    // Set jenis kereta berdasarkan jenis_layanan
+    strcpy(tiketBaru.riwayat_kereta.kelas, kereta.jenis_layanan);
+    
+    tiketBaru.riwayat_kereta.harga = kereta.harga_tiket;
+    
     tiketBaru.riwayat_nomor_gerbong = nomor_gerbong;
     tiketBaru.riwayat_nomor_kursi = nomor_kursi;
     
@@ -41,7 +57,7 @@ void CatatRiwayatPembelian(StackRiwayat *S, struct User user, struct InformasiKe
 }
 
 // *** OPERASI PENCARIAN DAN FILTER ***
-StackRiwayat CariRiwayatByUser(StackRiwayat S, struct User user) {
+StackRiwayat CariRiwayatByUser(StackRiwayat S, User user) {
     StackRiwayat hasil, temp;
     RiwayatTiket tiket;
     
@@ -49,10 +65,10 @@ StackRiwayat CariRiwayatByUser(StackRiwayat S, struct User user) {
     CreateStackRiwayat(&temp);
     
     // Salin stack awal ke temp agar urutan tetap sama
-    while (!isEmptyStackRiwayat(S)) {
-        addressRiwayat P = S.top;
+    addressRiwayat P = S.top;
+    while (P != NULL) {
         PushRiwayat(&temp, P->info);
-        S.top = P->next;
+        P = P->next;
     }
     
     // Cari riwayat yang sesuai dengan pengguna
@@ -68,7 +84,7 @@ StackRiwayat CariRiwayatByUser(StackRiwayat S, struct User user) {
     return hasil;
 }
 
-StackRiwayat CariRiwayatByKereta(StackRiwayat S, struct InformasiKereta kereta) {
+StackRiwayat CariRiwayatByKereta(StackRiwayat S, InformasiKereta kereta) {
     StackRiwayat hasil, temp;
     RiwayatTiket tiket;
     
@@ -76,10 +92,10 @@ StackRiwayat CariRiwayatByKereta(StackRiwayat S, struct InformasiKereta kereta) 
     CreateStackRiwayat(&temp);
     
     // Salin stack awal ke temp agar urutan tetap sama
-    while (!isEmptyStackRiwayat(S)) {
-        addressRiwayat P = S.top;
+    addressRiwayat P = S.top;
+    while (P != NULL) {
         PushRiwayat(&temp, P->info);
-        S.top = P->next;
+        P = P->next;
     }
     
     // Cari riwayat yang sesuai dengan kereta
@@ -96,7 +112,7 @@ StackRiwayat CariRiwayatByKereta(StackRiwayat S, struct InformasiKereta kereta) 
 }
 
 // Fungsi untuk membandingkan waktu (a < b)
-boolean IsWaktuLebihAwal(struct Waktu a, struct Waktu b) {
+boolean IsWaktuLebihAwalRiwayat(Waktu a, Waktu b) {
     if (a.tahun < b.tahun) return TRUE;
     if (a.tahun > b.tahun) return FALSE;
     
@@ -116,7 +132,7 @@ boolean IsWaktuLebihAwal(struct Waktu a, struct Waktu b) {
 }
 
 // Fungsi untuk membandingkan waktu (a <= b)
-boolean IsWaktuLebihAwalAtauSama(struct Waktu a, struct Waktu b) {
+boolean IsWaktuLebihAwalAtauSama(Waktu a, Waktu b) {
     if (a.tahun < b.tahun) return TRUE;
     if (a.tahun > b.tahun) return FALSE;
     
@@ -135,7 +151,7 @@ boolean IsWaktuLebihAwalAtauSama(struct Waktu a, struct Waktu b) {
     return a.detik <= b.detik;
 }
 
-StackRiwayat FilterRiwayatByWaktu(StackRiwayat S, struct Waktu waktu_awal, struct Waktu waktu_akhir) {
+StackRiwayat FilterRiwayatByWaktu(StackRiwayat S, Waktu waktu_awal, Waktu waktu_akhir) {
     StackRiwayat hasil, temp;
     RiwayatTiket tiket;
     
@@ -143,10 +159,10 @@ StackRiwayat FilterRiwayatByWaktu(StackRiwayat S, struct Waktu waktu_awal, struc
     CreateStackRiwayat(&temp);
     
     // Salin stack awal ke temp agar urutan tetap sama
-    while (!isEmptyStackRiwayat(S)) {
-        addressRiwayat P = S.top;
+    addressRiwayat P = S.top;
+    while (P != NULL) {
         PushRiwayat(&temp, P->info);
-        S.top = P->next;
+        P = P->next;
     }
     
     // Filter riwayat berdasarkan rentang waktu
@@ -164,7 +180,7 @@ StackRiwayat FilterRiwayatByWaktu(StackRiwayat S, struct Waktu waktu_awal, struc
 }
 
 // *** OPERASI TAMPILAN ***
-void TampilkanRiwayatPengguna(StackRiwayat S, struct User user) {
+void TampilkanRiwayatPengguna(StackRiwayat S, User user) {
     StackRiwayat hasil = CariRiwayatByUser(S, user);
     
     printf("\n=== RIWAYAT PEMBELIAN TIKET PENGGUNA: %s ===\n", user.nama);
@@ -209,7 +225,7 @@ void TampilkanRingkasanRiwayat(StackRiwayat S) {
     int jumlah_kereta_unik = 0;
     
     // Tampung waktu pembelian terbaru dan terlama
-    struct Waktu waktu_terbaru, waktu_terlama;
+    Waktu waktu_terbaru, waktu_terlama;
     boolean first = TRUE;
     
     while (!isEmptyStackRiwayat(temp)) {
@@ -246,10 +262,10 @@ void TampilkanRingkasanRiwayat(StackRiwayat S) {
                 waktu_terlama = tiket.riwayat_waktu_pemesanan;
                 first = FALSE;
             } else {
-                if (IsWaktuLebihAwal(waktu_terbaru, tiket.riwayat_waktu_pemesanan)) {
+                if (IsWaktuLebihAwalRiwayat(waktu_terbaru, tiket.riwayat_waktu_pemesanan)) {
                     waktu_terbaru = tiket.riwayat_waktu_pemesanan;
                 }
-                if (IsWaktuLebihAwal(tiket.riwayat_waktu_pemesanan, waktu_terlama)) {
+                if (IsWaktuLebihAwalRiwayat(tiket.riwayat_waktu_pemesanan, waktu_terlama)) {
                     waktu_terlama = tiket.riwayat_waktu_pemesanan;
                 }
             }
@@ -328,7 +344,7 @@ void ExportRiwayatToCSV(StackRiwayat S, const char *filename) {
 }
 
 // *** OPERASI ADMINISTRATIF ***
-void HapusRiwayatSebelumTanggal(StackRiwayat *S, struct Waktu batas_waktu) {
+void HapusRiwayatSebelumTanggal(StackRiwayat *S, Waktu batas_waktu) {
     // Jika stack kosong, tidak perlu melakukan apa-apa
     if (isEmptyStackRiwayat(*S)) {
         return;
@@ -343,7 +359,7 @@ void HapusRiwayatSebelumTanggal(StackRiwayat *S, struct Waktu batas_waktu) {
     // Salin riwayat yang waktunya lebih dari atau sama dengan batas waktu
     while (!isEmptyStackRiwayat(*S)) {
         if (PopRiwayat(S, &tiket)) {
-            if (!IsWaktuLebihAwal(tiket.riwayat_waktu_pemesanan, batas_waktu)) {
+            if (!IsWaktuLebihAwalAtauSama(tiket.riwayat_waktu_pemesanan, batas_waktu)) {
                 PushRiwayat(&temp, tiket);
             }
         }
@@ -360,7 +376,7 @@ void HapusRiwayatSebelumTanggal(StackRiwayat *S, struct Waktu batas_waktu) {
            batas_waktu.hari, batas_waktu.bulan, batas_waktu.tahun);
 }
 
-int HitungJumlahRiwayatPengguna(StackRiwayat S, struct User user) {
+int HitungJumlahRiwayatPengguna(StackRiwayat S, User user) {
     StackRiwayat hasil = CariRiwayatByUser(S, user);
     int jumlah = NbElmtStackRiwayat(hasil);
     
@@ -372,25 +388,27 @@ int HitungJumlahRiwayatPengguna(StackRiwayat S, struct User user) {
 
 // *** FUNGSI VALIDASI ***
 boolean IsRiwayatValid(RiwayatTiket tiket) {
+    // Validasi data user
+    if (strlen(tiket.riwayat_user.nama) == 0) {
+        return FALSE; // Nama pengguna kosong
+    }
+    
+    // Validasi data kereta
+    if (strlen(tiket.riwayat_kereta.nama_kereta) == 0) {
+        return FALSE; // Nama kereta kosong
+    }
+    
     // Validasi nomor gerbong dan kursi
     if (tiket.riwayat_nomor_gerbong <= 0 || tiket.riwayat_nomor_kursi <= 0) {
-        return FALSE;
+        return FALSE; // Nomor gerbong atau kursi tidak valid
     }
     
-    // Validasi waktu
-    if (tiket.riwayat_waktu_pemesanan.tahun < 2000 || tiket.riwayat_waktu_pemesanan.tahun > 2100 ||
+    // Validasi waktu pemesanan
+    if (tiket.riwayat_waktu_pemesanan.tahun < 2000 || 
         tiket.riwayat_waktu_pemesanan.bulan < 1 || tiket.riwayat_waktu_pemesanan.bulan > 12 ||
-        tiket.riwayat_waktu_pemesanan.hari < 1 || tiket.riwayat_waktu_pemesanan.hari > 31 ||
-        tiket.riwayat_waktu_pemesanan.jam < 0 || tiket.riwayat_waktu_pemesanan.jam > 23 ||
-        tiket.riwayat_waktu_pemesanan.menit < 0 || tiket.riwayat_waktu_pemesanan.menit > 59 ||
-        tiket.riwayat_waktu_pemesanan.detik < 0 || tiket.riwayat_waktu_pemesanan.detik > 59) {
-        return FALSE;
+        tiket.riwayat_waktu_pemesanan.hari < 1 || tiket.riwayat_waktu_pemesanan.hari > 31) {
+        return FALSE; // Tanggal tidak valid
     }
     
-    // Validasi nama user dan kereta (tidak boleh kosong)
-    if (strlen(tiket.riwayat_user.nama) == 0 || strlen(tiket.riwayat_kereta.nama_kereta) == 0) {
-        return FALSE;
-    }
-    
-    return TRUE;
+    return TRUE; // Semua validasi lulus
 } 
