@@ -120,9 +120,9 @@ void PrintTree(Isi_Tree P) {
 
 boolean Search(Isi_Tree P, infotype X) {
     for (int i = 1; i <= jml_maks; i++) {
-        if (P[i].info != NULL && strcmp(P[i].info, X) == 0) return true;
+        if (P[i].info != NULL && strcmp(P[i].info, X) == 0) return TRUE;
     }
-    return false;
+    return FALSE;
 }
 
 int nbElmt(Isi_Tree P) {
@@ -273,21 +273,21 @@ boolean CompareTrees(Isi_Tree P1, Isi_Tree P2) {
         // Periksa jika salah satu NULL dan yang lain tidak
         if ((P1[i].info == NULL && P2[i].info != NULL) || 
             (P1[i].info != NULL && P2[i].info == NULL)) {
-            return false;
+            return FALSE;
         }
         // Jika keduanya tidak NULL, bandingkan string
         if (P1[i].info != NULL && P2[i].info != NULL && 
             strcmp(P1[i].info, P2[i].info) != 0) {
-            return false;
+            return FALSE;
         }
         // Bandingkan pointer
         if (P1[i].ps_fs != P2[i].ps_fs ||
             P1[i].ps_nb != P2[i].ps_nb ||
             P1[i].ps_pr != P2[i].ps_pr) {
-            return false;
+            return FALSE;
         }
     }
-    return true;
+    return TRUE;
 }
 
 int Degree(Isi_Tree P, int idx) {

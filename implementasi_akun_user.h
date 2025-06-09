@@ -59,4 +59,10 @@ boolean ValidasiEmail(char* email);
 // Fungsi untuk validasi nomor telepon
 boolean ValidasiNomorTelepon(char* nomor_telepon);
 
+// Fungsi untuk validasi saldo
+boolean ValidasiSaldo(const char* saldo_str);
+
+// Fungsi untuk memformat nama ke Title Case
+void FormatNama(char* nama);
+
 #endif /* IMPLEMENTASI_AKUN_USER_H */ 

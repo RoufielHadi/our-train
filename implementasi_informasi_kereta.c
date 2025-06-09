@@ -7,8 +7,14 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung  
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
 #include "implementasi_informasi_kereta.h"
 #include "databases.h"
+#include "linked.h"
+#include "clear.h"
 
 // Fungsi untuk membuat informasi kereta baru
 InformasiKereta BuatInformasiKereta(char* id_kereta, char* nama_kereta, char* jenis_layanan, float harga_tiket, char* jumlah_gerbong) {
@@ -323,101 +329,252 @@ void GenerateIDKereta(ListKereta L, char* id_baru) {
     strcpy(id_baru, temp_id);
 }
 
-void TampilkanDaftarKereta() {
-    Record records[MAX_FIELDS];
-    int jumlahRecord = 0;
-    DaftarKereta(records, &jumlahRecord);
+// Fungsi UI untuk menampilkan daftar kereta
+void TampilkanDaftarKeretaInfo() {
     clearScreen();
     printf("+----------------------------------------------+\n");
-    printf("|               DAFTAR KERETA                 |\n");
-    printf("+----------------------------------------------+\n");
-    if (jumlahRecord == 0) {
-        printf("| Tidak ada data kereta.                      |\n");
+    printf("|           DAFTAR KERETA TERSEDIA             |\n");
+    printf("+----------------------------------------------+\n\n");
+    
+    // Baca data kereta dari database
+    Record records[100];
+    int jumlah_records = 0;
+    
+    for (int i = 0; i < 100; i++) {
+        InisialisasiRecord(&records[i]);
+    }
+    
+    DaftarKereta(records, &jumlah_records);
+    
+    if (jumlah_records == 0) {
+        printf("Belum ada data kereta yang tersedia.\n\n");
     } else {
-        printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", "ID", "Nama", "Layanan", "Harga", "Gerbong");
-        printf("+------------+-----------------+------------+----------+--------+\n");
-        for (int i = 0; i < jumlahRecord; i++) {
-            char* id = AmbilNilai(&records[i], "kodeKereta");
-            char* nama = AmbilNilai(&records[i], "namaKereta");
-            char* layanan = AmbilNilai(&records[i], "jenisLayanan");
-            char* harga = AmbilNilai(&records[i], "harga");
-            char* gerbong = AmbilNilai(&records[i], "jumlahGerbong");
-            printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", id ? id : "-", nama ? nama : "-", layanan ? layanan : "-", harga ? harga : "-", gerbong ? gerbong : "-");
+        printf("%-10s %-30s %-15s %-15s %-15s\n", "ID", "Nama Kereta", "Jenis Layanan", "Harga Tiket", "Jumlah Gerbong");
+        printf("----------------------------------------------------------------------------------------\n");
+        
+        for (int i = 0; i < jumlah_records; i++) {
+            char* kodeKereta = AmbilNilai(&records[i], "kodeKereta");
+            char* namaKereta = AmbilNilai(&records[i], "namaKereta");
+            char* jenisLayanan = AmbilNilai(&records[i], "jenisLayanan");
+            char* hargaTiket = AmbilNilai(&records[i], "hargaTiket");
+            char* jumlahGerbong = AmbilNilai(&records[i], "jumlahGerbong");
+            
+            if (kodeKereta && namaKereta && jenisLayanan && hargaTiket && jumlahGerbong) {
+                printf("%-10s %-30s %-15s Rp %-12s %-15s\n", 
+                       kodeKereta, namaKereta, jenisLayanan, hargaTiket, jumlahGerbong);
+            }
         }
+        printf("----------------------------------------------------------------------------------------\n");
     }
-    printf("+----------------------------------------------+\n");
+    
+    printf("\nTekan Enter untuk kembali...");
+    getch();
 }
 
-void TambahKereta() {
+// Fungsi UI untuk menambah kereta
+void TambahKeretaInfo() {
     clearScreen();
     printf("+----------------------------------------------+\n");
-    printf("|               TAMBAH KERETA                 |\n");
-    printf("+----------------------------------------------+\n");
-    char id[20], nama[50], layanan[20], harga[20], gerbong[10];
-    printf("ID Kereta         : "); scanf("%s", id); while(getchar()!='\n');
-    printf("Nama Kereta       : "); fgets(nama, sizeof(nama), stdin); nama[strcspn(nama, "\n")] = 0;
-    printf("Jenis Layanan     : "); fgets(layanan, sizeof(layanan), stdin); layanan[strcspn(layanan, "\n")] = 0;
-    printf("Harga             : "); fgets(harga, sizeof(harga), stdin); harga[strcspn(harga, "\n")] = 0;
-    printf("Jumlah Gerbong    : "); fgets(gerbong, sizeof(gerbong), stdin); gerbong[strcspn(gerbong, "\n")] = 0;
-
-    Record record; InisialisasiRecord(&record);
-    TambahField(&record, "kodeKereta", id);
-    TambahField(&record, "namaKereta", nama);
-    TambahField(&record, "jenisLayanan", layanan);
-    TambahField(&record, "harga", harga);
-    TambahField(&record, "jumlahGerbong", gerbong);
-
-    if (SimpanInformasiKereta(&record)) {
-        printf("\nData kereta berhasil ditambahkan!\n");
-    } else {
-        printf("\nGagal menambah data kereta (ID sudah ada?)!\n");
+    printf("|               TAMBAH KERETA                  |\n");
+    printf("+----------------------------------------------+\n\n");
+    
+    char id_kereta[20];
+    char nama_kereta[50];
+    char jenis_layanan[20];
+    char harga_tiket[20];
+    char jumlah_gerbong[5];
+    
+    printf("Masukkan informasi kereta baru:\n");
+    printf("ID Kereta (format: KA-XXX): ");
+    scanf("%s", id_kereta);
+    
+    // Validasi ID kereta
+    if (!ValidasiIDKereta(id_kereta)) {
+        printf("\nID Kereta tidak valid! Format yang benar adalah KA-XXX (X adalah angka).\n");
+        printf("Tekan Enter untuk kembali...");
+        getch();
+        return;
     }
-    printf("Tekan Enter untuk kembali..."); getchar();
+    
+    // Cek apakah ID kereta sudah ada
+    Record record;
+    InisialisasiRecord(&record);
+    if (BacaInformasiKereta(&record, id_kereta)) {
+        printf("\nID Kereta sudah terdaftar! Silakan gunakan ID lain.\n");
+        printf("Tekan Enter untuk kembali...");
+        getch();
+        return;
+    }
+    
+    // Input nama kereta
+    printf("Nama Kereta: ");
+    getchar(); // Buang karakter newline
+    scanf("%[^\n]", nama_kereta);
+    
+    // Input jenis layanan
+    printf("Jenis Layanan (Ekonomi/Bisnis/Eksekutif/Luxury): ");
+    getchar(); // Buang karakter newline
+    scanf("%[^\n]", jenis_layanan);
+    
+    // Validasi jenis layanan
+    if (!ValidasiJenisLayanan(jenis_layanan)) {
+        printf("\nJenis Layanan tidak valid! Pilihan yang tersedia: Ekonomi, Bisnis, Eksekutif, Luxury.\n");
+        printf("Tekan Enter untuk kembali...");
+        getch();
+        return;
+    }
+    
+    // Input harga tiket
+    printf("Harga Tiket: ");
+    scanf("%s", harga_tiket);
+    
+    // Input jumlah gerbong
+    printf("Jumlah Gerbong: ");
+    scanf("%s", jumlah_gerbong);
+    
+    // Simpan data ke database
+    InisialisasiRecord(&record);
+    TambahField(&record, "kodeKereta", id_kereta);
+    TambahField(&record, "namaKereta", nama_kereta);
+    TambahField(&record, "jenisLayanan", jenis_layanan);
+    TambahField(&record, "hargaTiket", harga_tiket);
+    TambahField(&record, "jumlahGerbong", jumlah_gerbong);
+    
+    if (SimpanInformasiKereta(&record)) {
+        printf("\nData kereta berhasil disimpan!\n");
+    } else {
+        printf("\nGagal menyimpan data kereta.\n");
+    }
+    
+    printf("Tekan Enter untuk kembali...");
+    getch();
 }
 
+// Fungsi UI untuk mengedit kereta
 void EditKereta() {
-    TampilkanDaftarKereta();
+    TampilkanDaftarKeretaInfo();
     char id[20];
     printf("\nMasukkan ID kereta yang ingin diedit: ");
-    scanf("%s", id); while(getchar()!='\n');
-    Record record; InisialisasiRecord(&record);
+    scanf("%s", id);
+    
+    // Cek apakah ID kereta ada
+    Record record;
+    InisialisasiRecord(&record);
     if (!BacaInformasiKereta(&record, id)) {
-        printf("Data kereta tidak ditemukan!\nTekan Enter untuk kembali..."); getchar(); return;
+        printf("\nID Kereta tidak ditemukan!\n");
+        printf("Tekan Enter untuk kembali...");
+        getch();
+        return;
     }
-    printf("\nData lama:\n");
-    CetakRecord(&record);
-    char nama[50] = "", layanan[20] = "", harga[20] = "", gerbong[10] = "";
-    printf("Nama Kereta baru (kosongkan jika tidak diubah): "); fgets(nama, sizeof(nama), stdin); nama[strcspn(nama, "\n")] = 0;
-    printf("Jenis Layanan baru (kosongkan jika tidak diubah): "); fgets(layanan, sizeof(layanan), stdin); layanan[strcspn(layanan, "\n")] = 0;
-    printf("Harga baru (kosongkan jika tidak diubah): "); fgets(harga, sizeof(harga), stdin); harga[strcspn(harga, "\n")] = 0;
-    printf("Jumlah Gerbong baru (kosongkan jika tidak diubah): "); fgets(gerbong, sizeof(gerbong), stdin); gerbong[strcspn(gerbong, "\n")] = 0;
-    if (strlen(nama) > 0) UbahNilai(&record, "namaKereta", nama);
-    if (strlen(layanan) > 0) UbahNilai(&record, "jenisLayanan", layanan);
-    if (strlen(harga) > 0) UbahNilai(&record, "harga", harga);
-    if (strlen(gerbong) > 0) UbahNilai(&record, "jumlahGerbong", gerbong);
+    
+    // Tampilkan data kereta yang akan diedit
+    printf("\nData Kereta yang akan diedit:\n");
+    printf("Nama Kereta: %s\n", AmbilNilai(&record, "namaKereta"));
+    printf("Jenis Layanan: %s\n", AmbilNilai(&record, "jenisLayanan"));
+    printf("Harga Tiket: %s\n", AmbilNilai(&record, "hargaTiket"));
+    printf("Jumlah Gerbong: %s\n\n", AmbilNilai(&record, "jumlahGerbong"));
+    
+    char nama_kereta[50];
+    char jenis_layanan[20];
+    char harga_tiket[20];
+    char jumlah_gerbong[5];
+    
+    printf("Masukkan informasi kereta baru (kosongkan untuk tidak mengubah):\n");
+    
+    // Input nama kereta
+    printf("Nama Kereta: ");
+    getchar(); // Buang karakter newline
+    fgets(nama_kereta, sizeof(nama_kereta), stdin);
+    nama_kereta[strcspn(nama_kereta, "\n")] = 0; // Hapus newline dari fgets
+    
+    // Input jenis layanan
+    printf("Jenis Layanan (Ekonomi/Bisnis/Eksekutif/Luxury): ");
+    fgets(jenis_layanan, sizeof(jenis_layanan), stdin);
+    jenis_layanan[strcspn(jenis_layanan, "\n")] = 0; // Hapus newline dari fgets
+    
+    // Validasi jenis layanan jika diisi
+    if (strlen(jenis_layanan) > 0 && !ValidasiJenisLayanan(jenis_layanan)) {
+        printf("\nJenis Layanan tidak valid! Pilihan yang tersedia: Ekonomi, Bisnis, Eksekutif, Luxury.\n");
+        printf("Tekan Enter untuk kembali...");
+        getch();
+        return;
+    }
+    
+    // Input harga tiket
+    printf("Harga Tiket: ");
+    fgets(harga_tiket, sizeof(harga_tiket), stdin);
+    harga_tiket[strcspn(harga_tiket, "\n")] = 0; // Hapus newline dari fgets
+    
+    // Input jumlah gerbong
+    printf("Jumlah Gerbong: ");
+    fgets(jumlah_gerbong, sizeof(jumlah_gerbong), stdin);
+    jumlah_gerbong[strcspn(jumlah_gerbong, "\n")] = 0; // Hapus newline dari fgets
+    
+    // Update data yang diisi
+    if (strlen(nama_kereta) > 0) {
+        UbahNilai(&record, "namaKereta", nama_kereta);
+    }
+    if (strlen(jenis_layanan) > 0) {
+        UbahNilai(&record, "jenisLayanan", jenis_layanan);
+    }
+    if (strlen(harga_tiket) > 0) {
+        UbahNilai(&record, "hargaTiket", harga_tiket);
+    }
+    if (strlen(jumlah_gerbong) > 0) {
+        UbahNilai(&record, "jumlahGerbong", jumlah_gerbong);
+    }
+    
+    // Simpan perubahan ke database
     if (UpdateInformasiKereta(&record)) {
-        printf("\nData kereta berhasil diupdate!\n");
+        printf("\nData kereta berhasil diperbarui!\n");
     } else {
-        printf("\nGagal update data kereta!\n");
+        printf("\nGagal memperbarui data kereta.\n");
     }
-    printf("Tekan Enter untuk kembali..."); getchar();
+    
+    printf("Tekan Enter untuk kembali...");
+    getch();
 }
 
-void HapusKereta() {
-    TampilkanDaftarKereta();
+// Fungsi UI untuk menghapus kereta
+void HapusKeretaInfo() {
+    TampilkanDaftarKeretaInfo();
     char id[20];
     printf("\nMasukkan ID kereta yang ingin dihapus: ");
-    scanf("%s", id); while(getchar()!='\n');
-    printf("Apakah Anda yakin ingin menghapus kereta %s? (y/n): ", id);
-    char yakin = getchar(); while(getchar()!='\n' && getchar()!=EOF);
-    if (yakin == 'y' || yakin == 'Y') {
+    scanf("%s", id);
+    
+    // Cek apakah ID kereta ada
+    Record record;
+    InisialisasiRecord(&record);
+    if (!BacaInformasiKereta(&record, id)) {
+        printf("\nID Kereta tidak ditemukan!\n");
+        printf("Tekan Enter untuk kembali...");
+        getch();
+        return;
+    }
+    
+    // Konfirmasi penghapusan
+    printf("\nData Kereta yang akan dihapus:\n");
+    printf("Nama Kereta: %s\n", AmbilNilai(&record, "namaKereta"));
+    printf("Jenis Layanan: %s\n", AmbilNilai(&record, "jenisLayanan"));
+    printf("Harga Tiket: %s\n", AmbilNilai(&record, "hargaTiket"));
+    printf("Jumlah Gerbong: %s\n\n", AmbilNilai(&record, "jumlahGerbong"));
+    
+    printf("Apakah Anda yakin ingin menghapus kereta ini? (Y/N): ");
+    char konfirmasi;
+    getchar(); // Buang karakter newline
+    scanf("%c", &konfirmasi);
+    
+    if (konfirmasi == 'Y' || konfirmasi == 'y') {
+        // Hapus data dari database
         if (HapusInformasiKereta(id)) {
             printf("\nData kereta berhasil dihapus!\n");
         } else {
-            printf("\nGagal menghapus data kereta!\n");
+            printf("\nGagal menghapus data kereta.\n");
         }
     } else {
         printf("\nPenghapusan dibatalkan.\n");
     }
-    printf("Tekan Enter untuk kembali..."); getchar();
+    
+    printf("Tekan Enter untuk kembali...");
+    getch();
 } 

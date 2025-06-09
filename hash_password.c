@@ -158,7 +158,7 @@ void SimpanPasswordKeFile(const char *username, const char *hashedPassword, cons
     printf("Data pengguna berhasil disimpan.\n");
 }
 
-boolean VerifikasiLogin(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename) {
+boolean VerifikasiLoginFromFile(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("File pengguna tidak ditemukan.\n");

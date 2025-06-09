@@ -98,17 +98,17 @@ boolean IsWaktuSingkatSama(WaktuSingkat w1, WaktuSingkat w2) {
 }
 
 boolean IsWaktuSingkatLebihAwal(WaktuSingkat w1, WaktuSingkat w2) {
-    if (w1.jam < w2.jam) return true;
-    if (w1.jam > w2.jam) return false;
+    if (w1.jam < w2.jam) return TRUE;
+    if (w1.jam > w2.jam) return FALSE;
     
-    if (w1.menit < w2.menit) return true;
-    if (w1.menit > w2.menit) return false;
+    if (w1.menit < w2.menit) return TRUE;
+    if (w1.menit > w2.menit) return FALSE;
     
-    return (w1.detik < w2.detik);
+    return FALSE;
 }
 
 boolean IsWaktuSingkatLebihAkhir(WaktuSingkat w1, WaktuSingkat w2) {
-    if (IsWaktuSingkatSama(w1, w2)) return false;
+    if (IsWaktuSingkatSama(w1, w2)) return FALSE;
     return !IsWaktuSingkatLebihAwal(w1, w2);
 }
 
@@ -125,26 +125,26 @@ boolean IsWaktuSama(Waktu w1, Waktu w2) {
 }
 
 boolean IsWaktuLebihAwal(Waktu w1, Waktu w2) {
-    if (w1.tahun < w2.tahun) return true;
-    if (w1.tahun > w2.tahun) return false;
+    if (w1.tahun < w2.tahun) return TRUE;
+    if (w1.tahun > w2.tahun) return FALSE;
     
-    if (w1.bulan < w2.bulan) return true;
-    if (w1.bulan > w2.bulan) return false;
+    if (w1.bulan < w2.bulan) return TRUE;
+    if (w1.bulan > w2.bulan) return FALSE;
     
-    if (w1.hari < w2.hari) return true;
-    if (w1.hari > w2.hari) return false;
+    if (w1.hari < w2.hari) return TRUE;
+    if (w1.hari > w2.hari) return FALSE;
     
-    if (w1.jam < w2.jam) return true;
-    if (w1.jam > w2.jam) return false;
+    if (w1.jam < w2.jam) return TRUE;
+    if (w1.jam > w2.jam) return FALSE;
     
-    if (w1.menit < w2.menit) return true;
-    if (w1.menit > w2.menit) return false;
+    if (w1.menit < w2.menit) return TRUE;
+    if (w1.menit > w2.menit) return FALSE;
     
-    return (w1.detik < w2.detik);
+    return FALSE;
 }
 
 boolean IsWaktuLebihAkhir(Waktu w1, Waktu w2) {
-    if (IsWaktuSama(w1, w2)) return false;
+    if (IsWaktuSama(w1, w2)) return FALSE;
     return !IsWaktuLebihAwal(w1, w2);
 }
 
@@ -354,24 +354,36 @@ boolean IsWaktuValid(int jam, int menit, int detik) {
     return (jam >= 0 && jam < 24 && menit >= 0 && menit < 60 && detik >= 0 && detik < 60);
 }
 
-boolean IsTanggalValid(int hari, int bulan, int tahun) {
-    if (bulan < 1 || bulan > 12) return false;
-    if (hari < 1) return false;
+boolean IsTanggalValid(int tanggal, int bulan, int tahun) {
+    // Validasi tahun (tahun harus positif)
+    if (tahun <= 0) return FALSE;
     
-    int max_hari = 31; // Default untuk bulan dengan 31 hari
+    // Validasi bulan (bulan harus antara 1-12)
+    if (bulan < 1 || bulan > 12) return FALSE;
     
-    if (bulan == 4 || bulan == 6 || bulan == 9 || bulan == 11) {
-        max_hari = 30;
-    } else if (bulan == 2) {
-        // Cek tahun kabisat
-        if ((tahun % 4 == 0 && tahun % 100 != 0) || (tahun % 400 == 0)) {
-            max_hari = 29;
-        } else {
-            max_hari = 28;
-        }
+    // Validasi tanggal berdasarkan bulan
+    if (tanggal < 1) return FALSE;
+    
+    // Cek jumlah hari dalam bulan
+    int jumlahHari;
+    switch (bulan) {
+        case 2: // Februari
+            // Cek tahun kabisat
+            if ((tahun % 4 == 0 && tahun % 100 != 0) || (tahun % 400 == 0)) {
+                jumlahHari = 29;
+            } else {
+                jumlahHari = 28;
+            }
+            break;
+        case 4: case 6: case 9: case 11: // April, Juni, September, November
+            jumlahHari = 30;
+            break;
+        default: // Januari, Maret, Mei, Juli, Agustus, Oktober, Desember
+            jumlahHari = 31;
+            break;
     }
     
-    return (hari <= max_hari);
+    return (tanggal <= jumlahHari);
 }
 
 int KonversiKeDetik(Waktu w) {

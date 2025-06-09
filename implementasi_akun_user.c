@@ -10,6 +10,7 @@ Politeknik Negeri Bandung
 #include "implementasi_akun_user.h"
 #include "hash_password.h" // Untuk fungsi hashing password
 #include "tree_biner.h" // Untuk tipe data HashPassword
+#include <ctype.h>
 
 // Fungsi untuk membuat akun baru
 User BuatAkun(char* email, char* nama, char* alamat, char* nomor_telepon, char* password, int tipe_pengguna, HashPassword *morseTree) {
@@ -257,34 +258,86 @@ boolean UbahTipePengguna(ListUser *L, char* email, int tipe_pengguna_baru) {
 
 // Fungsi untuk validasi email
 boolean ValidasiEmail(char* email) {
-    // Implementasi sederhana validasi email
-    // Cek apakah email mengandung karakter '@' dan '.'
-    if (strchr(email, '@') == NULL || strchr(email, '.') == NULL) {
+    if (email == NULL) {
         return FALSE;
     }
-    
-    // Cek panjang email
-    if (strlen(email) < 5 || strlen(email) > 100) {
+    // Cek keberadaan satu '@'
+    char* at = strchr(email, '@');
+    if (at == NULL || at == email) {
         return FALSE;
     }
-    
+    if (strchr(at + 1, '@') != NULL) {
+        return FALSE;
+    }
+    // Cek domain memiliki titik
+    char* dot = strchr(at + 1, '.');
+    if (dot == NULL || *(dot + 1) == '\0') {
+        return FALSE;
+    }
+    // Panjang minimum
+    size_t len = strlen(email);
+    if (len < 5 || len > 100) {
+        return FALSE;
+    }
     return TRUE;
 }
 
 // Fungsi untuk validasi nomor telepon
 boolean ValidasiNomorTelepon(char* nomor_telepon) {
-    // Cek panjang nomor telepon
-    int panjang = strlen(nomor_telepon);
-    if (panjang < 10 || panjang > 13) {
+    if (nomor_telepon == NULL) {
         return FALSE;
     }
-    
-    // Cek apakah semua karakter adalah digit
+    int panjang = strlen(nomor_telepon);
+    // Nomor telepon harus diawali '08' dan panjang antara 11-13 digit
+    if (panjang < 11 || panjang > 13) {
+        return FALSE;
+    }
+    if (nomor_telepon[0] != '0' || nomor_telepon[1] != '8') {
+        return FALSE;
+    }
+    // Cek setiap karakter adalah digit
     for (int i = 0; i < panjang; i++) {
-        if (nomor_telepon[i] < '0' || nomor_telepon[i] > '9') {
+        if (!isdigit((unsigned char)nomor_telepon[i])) {
             return FALSE;
         }
     }
-    
     return TRUE;
+}
+
+// Fungsi untuk validasi saldo
+boolean ValidasiSaldo(const char* saldo_str) {
+    if (saldo_str == NULL || *saldo_str == '\0') {
+        return FALSE;
+    }
+    // Cek setiap karakter adalah digit
+    for (int i = 0; saldo_str[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)saldo_str[i])) {
+            return FALSE;
+        }
+    }
+    // Konversi ke nilai numerik dan cek non-negatif
+    long val = atol(saldo_str);
+    if (val < 0) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+// Fungsi untuk memformat nama ke Title Case
+void FormatNama(char* nama) {
+    if (nama == NULL) {
+        return;
+    }
+    int len = strlen(nama);
+    int newWord = 1;
+    for (int i = 0; i < len; i++) {
+        if (isspace((unsigned char)nama[i])) {
+            newWord = 1;
+        } else if (newWord) {
+            nama[i] = toupper((unsigned char)nama[i]);
+            newWord = 0;
+        } else {
+            nama[i] = tolower((unsigned char)nama[i]);
+        }
+    }
 } 

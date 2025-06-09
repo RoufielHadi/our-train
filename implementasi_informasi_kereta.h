@@ -63,15 +63,15 @@ int HitungJumlahKeretaBerdasarkanLayanan(ListKereta L, char* jenis_layanan);
 void GenerateIDKereta(ListKereta L, char* id_baru);
 
 // Fungsi UI untuk menampilkan daftar kereta
-void TampilkanDaftarKereta();
+void TampilkanDaftarKeretaInfo();
 
 // Fungsi UI untuk menambah kereta
-void TambahKereta();
+void TambahKeretaInfo();
 
 // Fungsi UI untuk mengedit kereta
 void EditKereta();
 
 // Fungsi UI untuk menghapus kereta
-void HapusKereta();
+void HapusKeretaInfo();
 
 #endif /* IMPLEMENTASI_INFORMASI_KERETA_H */ 

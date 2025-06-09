@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = tree_non_biner.o tree_biner.o implementasi_morse.o hash_password.o implementasi_rute_kereta.o main.o implementasi_akun_user.o implementasi_pembayaran.o implementasi_jadwal_kereta.o implementasi_informasi_kereta.o array.o clear.o implementasi_antrian_offline.o implementasi_kursi_kereta.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o linked.o queue.o stack.o time.o databases.o dashboard_authentication.o dashboard_user.o dashboard_admin.o dashboard_cashier.o dashboard_machine.o
-LINKOBJ  = tree_non_biner.o tree_biner.o implementasi_morse.o hash_password.o implementasi_rute_kereta.o main.o implementasi_akun_user.o implementasi_pembayaran.o implementasi_jadwal_kereta.o implementasi_informasi_kereta.o array.o clear.o implementasi_antrian_offline.o implementasi_kursi_kereta.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o linked.o queue.o stack.o time.o databases.o dashboard_authentication.o dashboard_user.o dashboard_admin.o dashboard_cashier.o dashboard_machine.o
+OBJ      = tree_non_biner.o tree_biner.o implementasi_morse.o hash_password.o implementasi_rute_kereta.o main.o implementasi_akun_user.o implementasi_pembayaran.o implementasi_jadwal_kereta.o implementasi_informasi_kereta.o array.o clear.o implementasi_antrian_offline.o implementasi_kursi_kereta.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o linked.o queue.o stack.o time.o databases.o dashboard_authentication.o dashboard_user.o dashboard_admin.o dashboard_cashier.o dashboard_machine.o dashboard_manajemen_kereta.o dashboard_manajemen_jadwal.o dashboard_lihat_jadwal.o dashboard_tiket_saya.o implementasi_tiket_saya.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_akun_saya.o dashboard_rekening_saya.o
+LINKOBJ  = tree_non_biner.o tree_biner.o implementasi_morse.o hash_password.o implementasi_rute_kereta.o main.o implementasi_akun_user.o implementasi_pembayaran.o implementasi_jadwal_kereta.o implementasi_informasi_kereta.o array.o clear.o implementasi_antrian_offline.o implementasi_kursi_kereta.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o linked.o queue.o stack.o time.o databases.o dashboard_authentication.o dashboard_user.o dashboard_admin.o dashboard_cashier.o dashboard_machine.o dashboard_manajemen_kereta.o dashboard_manajemen_jadwal.o dashboard_lihat_jadwal.o dashboard_tiket_saya.o implementasi_tiket_saya.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_akun_saya.o dashboard_rekening_saya.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -101,3 +101,30 @@ dashboard_cashier.o: dashboard_cashier.c
 
 dashboard_machine.o: dashboard_machine.c
 	$(CPP) -c dashboard_machine.c -o dashboard_machine.o $(CXXFLAGS)
+
+dashboard_manajemen_kereta.o: dashboard_manajemen_kereta.c
+	$(CPP) -c dashboard_manajemen_kereta.c -o dashboard_manajemen_kereta.o $(CXXFLAGS)
+
+dashboard_manajemen_jadwal.o: dashboard_manajemen_jadwal.c
+	$(CPP) -c dashboard_manajemen_jadwal.c -o dashboard_manajemen_jadwal.o $(CXXFLAGS)
+
+dashboard_lihat_jadwal.o: dashboard_lihat_jadwal.c
+	$(CPP) -c dashboard_lihat_jadwal.c -o dashboard_lihat_jadwal.o $(CXXFLAGS)
+
+dashboard_tiket_saya.o: dashboard_tiket_saya.c
+	$(CPP) -c dashboard_tiket_saya.c -o dashboard_tiket_saya.o $(CXXFLAGS)
+
+implementasi_tiket_saya.o: implementasi_tiket_saya.c
+	$(CPP) -c implementasi_tiket_saya.c -o implementasi_tiket_saya.o $(CXXFLAGS)
+
+dashboard_manajemen_rute.o: dashboard_manajemen_rute.c
+	$(CPP) -c dashboard_manajemen_rute.c -o dashboard_manajemen_rute.o $(CXXFLAGS)
+
+dashboard_manajemen_user.o: dashboard_manajemen_user.c
+	$(CPP) -c dashboard_manajemen_user.c -o dashboard_manajemen_user.o $(CXXFLAGS)
+
+dashboard_akun_saya.o: dashboard_akun_saya.c
+	$(CPP) -c dashboard_akun_saya.c -o dashboard_akun_saya.o $(CXXFLAGS)
+
+dashboard_rekening_saya.o: dashboard_rekening_saya.c
+	$(CPP) -c dashboard_rekening_saya.c -o dashboard_rekening_saya.o $(CXXFLAGS)
