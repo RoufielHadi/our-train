@@ -162,7 +162,7 @@ void TampilkanTiketSaya(TiketSaya T, User user_aktif) {
 }
 
 // Fungsi untuk menampilkan detail tiket berdasarkan indeks
-boolean TampilkanDetailTiket(TiketSaya T, User user_aktif, int indeks) {
+boolean TampilkanDetailTiketPembelian(TiketSaya T, User user_aktif, int indeks) {
     if (isEmptyStackRiwayat(T.tiket_user)) {
         printf("Anda belum memiliki tiket!\n");
         return FALSE;

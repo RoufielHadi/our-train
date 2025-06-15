@@ -7,6 +7,16 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung  
 */
 
+/*
+Author fungsi antar modul : Devi Maulani
+NIM: 241524007  
+Kelas: 1A  
+Prodi: Sarjana Terapan Teknik Informatika  
+Jurusan: Teknik Komputer dan Informatika  
+Politeknik Negeri Bandung  
+*/
+
+
 #ifndef IMPLEMENTASI_INFORMASI_KERETA_H
 #define IMPLEMENTASI_INFORMASI_KERETA_H
 
@@ -15,13 +25,25 @@ Politeknik Negeri Bandung
 #include <string.h>
 #include "boolean.h"
 #include "linked.h"
+#include "array.h"
 #include "clear.h"
 
-// Konstanta untuk jenis layanan kereta
-#define EKONOMI "Ekonomi"
-#define BISNIS "Bisnis"
-#define EKSEKUTIF "Eksekutif"
-#define LUXURY "Luxury"
+// Konstanta untuk jenis layanan kereta (removed EKONOMI which conflicted with array.h)
+#define STR_EKONOMI "Ekonomi"
+#define STR_BISNIS "Bisnis"
+#define STR_EKSEKUTIF "Eksekutif"
+#define STR_LUXURY "Luxury"
+
+
+// Deklarasi variabel global untuk akses di seluruh program
+extern ListKereta globalListKereta;
+extern ArrayKereta globalArrayKereta;
+
+// UI functions for kereta management
+void TampilkanDaftarKeretaUI();
+void TambahKeretaUI();
+void EditKereta();
+void HapusKeretaUI();
 
 // Fungsi untuk membuat informasi kereta baru
 InformasiKereta BuatInformasiKereta(char* id_kereta, char* nama_kereta, char* jenis_layanan, float harga_tiket, char* jumlah_gerbong);
@@ -62,16 +84,49 @@ int HitungJumlahKeretaBerdasarkanLayanan(ListKereta L, char* jenis_layanan);
 // Fungsi untuk menghasilkan ID kereta unik baru
 void GenerateIDKereta(ListKereta L, char* id_baru);
 
-// Fungsi UI untuk menampilkan daftar kereta
-void TampilkanDaftarKereta();
+// Fungsi helper untuk integrasi antar modul
+// ==================================================
 
-// Fungsi UI untuk menambah kereta
-void TambahKereta();
+// Mendapatkan pointer ke informasi kereta berdasarkan ID
+InformasiKereta* GetInformasiKeretaById(ListKereta L, const char* id_kereta);
+// Tujuan  : Mendapatkan pointer ke informasi kereta berdasarkan ID
+// IS      : L terdefinisi, id_kereta valid
+// FS      : Mengembalikan pointer ke InformasiKereta jika ditemukan, NULL jika tidak
 
-// Fungsi UI untuk mengedit kereta
-void EditKereta();
 
-// Fungsi UI untuk menghapus kereta
-void HapusKereta();
+// Mendapatkan jenis layanan kereta berdasarkan ID
+const char* GetJenisLayananById(ListKereta L, const char* id_kereta);
+// Tujuan  : Mendapatkan jenis layanan kereta berdasarkan ID
+// IS      : L terdefinisi, id_kereta valid
+// FS      : Mengembalikan string jenis layanan kereta
+
+
+// Mendapatkan harga tiket kereta berdasarkan ID
+float GetHargaTiketById(ListKereta L, const char* id_kereta);
+// Tujuan  : Mendapatkan harga tiket kereta berdasarkan ID
+// IS      : L terdefinisi, id_kereta valid
+// FS      : Mengembalikan harga tiket kereta, 0 jika tidak ditemukan
+
+
+// Mendapatkan jumlah gerbong kereta berdasarkan ID
+int GetJumlahGerbongById(ListKereta L, const char* id_kereta);
+// Tujuan  : Mendapatkan jumlah gerbong kereta berdasarkan ID
+// IS      : L terdefinisi, id_kereta valid
+// FS      : Mengembalikan jumlah gerbong kereta, 0 jika tidak ditemukan
+
+
+// Inisialisasi list kereta global
+void InisialisasiListKeretaGlobal();
+// Tujuan  : Menginisialisasi list kereta global untuk digunakan di seluruh program
+// IS      : -
+// FS      : globalListKereta diinisialisasi sebagai list kosong
+
+
+// Memuat semua data kereta dari database ke list global
+boolean MuatDataKeretaKeGlobal();
+// Tujuan  : Memuat semua data kereta dari database ke list global
+// IS      : globalListKereta sudah diinisialisasi
+// FS      : globalListKereta berisi semua data kereta dari database
+
 
 #endif /* IMPLEMENTASI_INFORMASI_KERETA_H */ 

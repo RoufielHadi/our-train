@@ -1,6 +1,6 @@
 /*
-Author: Devi Maulani     
-NIM: 241524007  
+Author: Adi Rafi Chaerufarizki 
+NIM: 241524001  
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -443,7 +443,8 @@ boolean ValidasiTanggal(char* tanggal) {
     }
     
     // Cek apakah semua karakter (kecuali pemisah) adalah digit
-    for (int i = 0; i < 10; i++) {
+    int i;
+    for ( i = 0; i < 10; i++) {
         if (i != 2 && i != 5) {
             if (tanggal[i] < '0' || tanggal[i] > '9') {
                 return FALSE;

@@ -199,7 +199,7 @@ void BuildMorseTree(HashPassword **root) {
     (*root)->kiri->kanan->kanan->kiri->kiri->kiri = BuatNodeMorse(']');
     (*root)->kiri->kanan->kanan->kiri->kiri->kanan = BuatNodeMorse('{');
     (*root)->kiri->kanan->kanan->kiri->kanan->kiri = BuatNodeMorse('}');
-    (*root)->kiri->kanan->kanan->kiri->kanan->kanan = BuatNodeMorse('\\');
+    (*root)->kiri->kanan->kanan->kiri->kanan->kanan = BuatNodeMorse('2');
     (*root)->kiri->kanan->kanan->kanan->kiri->kiri = BuatNodeMorse('|');
     (*root)->kiri->kanan->kanan->kanan->kiri->kanan = BuatNodeMorse(';');
     (*root)->kiri->kanan->kanan->kanan->kanan->kiri = BuatNodeMorse(':');
@@ -253,24 +253,16 @@ boolean FindCharPath(HashPassword *root, char karakter, char *path, int *index, 
 
 // Fungsi untuk mendapatkan Morse code berdasarkan path di tree
 char* GetMorseCodeFromTree(HashPassword *root, char karakter) {
-    // Alokasi memori untuk hasil (maksimal 10 karakter)
-    char *result = (char*)malloc(10);
-    result[0] = '\0';
-    
-    // Buffer untuk menyimpan path sementara (reversed)
+    // Cari path dari root ke karakter
     char tempPath[10] = {'\0'};
     int pathIndex = 0;
-    
-    // Cari path ke karakter dalam tree
     FindCharPath(root, karakter, tempPath, &pathIndex, 0);
-    
-    // Balikkan path (karena kita mencatat dari leaf ke root)
+    // Allocasi memori sesuai panjang path
     int len = strlen(tempPath);
-    for (int i = 0; i < len; i++) {
-        result[i] = tempPath[len - i - 1];
-    }
-    result[len] = '\0';
-    
+    char *result = (char*)malloc(len + 1);
+    if (result == NULL) return NULL;
+    // Salin path langsung (root-to-leaf order)
+    memcpy(result, tempPath, len + 1);
     return result;
 }
 
@@ -295,7 +287,8 @@ char KonversiMorseKeKarakter(HashPassword *morseTree, const char *morseCode) {
     int len = strlen(morseCode);
     
     // Traversal tree berdasarkan kode Morse
-    for (int i = 0; i < len; i++) {
+    int i;
+    for (i = 0; i < len; i++) {
         if (morseCode[i] == '.') {
             if (current->kiri == NULL) {
                 return '\0';  // Kode tidak valid
@@ -315,6 +308,7 @@ char KonversiMorseKeKarakter(HashPassword *morseTree, const char *morseCode) {
 }
 
 char* KonversiStringKeMorse(HashPassword *morseTree, const char *teks) {
+	int i;
     if (morseTree == NULL || teks == NULL) {
         return NULL;
     }
@@ -324,7 +318,7 @@ char* KonversiStringKeMorse(HashPassword *morseTree, const char *teks) {
     char *result = (char*)malloc(maxLen + 1);
     result[0] = '\0';
     
-    for (int i = 0; teks[i] != '\0'; i++) {
+    for (i = 0; teks[i] != '\0'; i++) {
         char *morseCode = KonversiKarakterKeMorse(morseTree, teks[i]);
         
         if (strlen(morseCode) > 0) {
@@ -364,8 +358,9 @@ void VisualisasiTreeMorse(HashPassword *root, int level, char *path) {
     
     // Tampilkan karakter jika ada (bukan node kosong)
     if (root->info != '\0') {
+    	int i;
         // Tampilkan indentasi sesuai level
-        for (int i = 0; i < level; i++) {
+        for (i = 0; i < level; i++) {
             printf("  ");
         }
         
@@ -423,8 +418,9 @@ char* KonversiMorseKeString(HashPassword *morseTree, const char *morseCode) {
     char tempMorseCode[100]; // Buffer sementara
     int resultIndex = 0;
     int tempIndex = 0;
+    int i;
     
-    for (int i = 0; morseCode[i] != '\0'; i++) {
+    for (i = 0; morseCode[i] != '\0'; i++) {
         if (morseCode[i] == ' ') {
             // Spasi menandakan akhir kode untuk satu karakter
             tempMorseCode[tempIndex] = '\0';
@@ -468,8 +464,9 @@ char* EncodeMorse(const char *morseCode) {
     
     int len = strlen(morseCode);
     char *result = (char*)malloc(len + 1);
+    int i;
     
-    for (int i = 0; i < len; i++) {
+    for (i = 0; i < len; i++) {
         if (morseCode[i] == '.') {
             result[i] = 'X';  // Titik menjadi X
         } else if (morseCode[i] == '-') {
@@ -494,8 +491,9 @@ char* DecodeMorse(const char *encodedMorse) {
     
     int len = strlen(encodedMorse);
     char *result = (char*)malloc(len + 1);
+    int i;
     
-    for (int i = 0; i < len; i++) {
+    for (i = 0; i < len; i++) {
         if (encodedMorse[i] == 'X') {
             result[i] = '.';  // X menjadi titik
         } else if (encodedMorse[i] == 'O') {

@@ -53,7 +53,8 @@ void InisialisasiRuteKereta(Isi_Tree *pohonRute) {
 void InisialisasiJalurUtara(Isi_Tree *pohonRute) {
     // Cari indeks node Jalur Utara
     int idxJalurUtara = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, "Jalur Utara") == 0) {
             idxJalurUtara = i;
             break;
@@ -125,7 +126,8 @@ void InisialisasiJalurUtara(Isi_Tree *pohonRute) {
 void InisialisasiJalurSelatan(Isi_Tree *pohonRute) {
     // Cari indeks node Jalur Selatan
     int idxJalurSelatan = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, "Jalur Selatan") == 0) {
             idxJalurSelatan = i;
             break;
@@ -205,7 +207,8 @@ void InisialisasiJalurSelatan(Isi_Tree *pohonRute) {
 void InisialisasiJalurTengah(Isi_Tree *pohonRute) {
     // Cari indeks node Jalur Tengah
     int idxJalurTengah = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, "Jalur Tengah") == 0) {
             idxJalurTengah = i;
             break;
@@ -267,7 +270,8 @@ void InisialisasiJalurTengah(Isi_Tree *pohonRute) {
 void InisialisasiJalurCabang(Isi_Tree *pohonRute) {
     // Cari indeks node Jalur Cabang
     int idxJalurCabang = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, "Jalur Cabang") == 0) {
             idxJalurCabang = i;
             break;
@@ -324,7 +328,8 @@ int InsertRuteNodeAndGetIndex(Isi_Tree *pohonRute, const char* namaStasiun, int 
     InsertRuteNode(*pohonRute, namaStasiun, parent_idx);
     
     // Cari indeks node yang baru saja diinsert
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, namaStasiun) == 0) {
             return i;
         }
@@ -344,8 +349,9 @@ boolean IsRuteTersedia(Isi_Tree pohonRute, const char* stasiunAsal, const char* 
     boolean stasiunTujuanAda = FALSE;
     int idxStasiunAsal = 0;
     int idxStasiunTujuan = 0;
+    int i;
     
-    for (int i = 1; i <= jml_maks; i++) {
+    for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
             if (strcmp(pohonRute[i].info, stasiunAsal) == 0) {
                 stasiunAsalAda = TRUE;
@@ -378,7 +384,7 @@ boolean IsRuteTersedia(Isi_Tree pohonRute, const char* stasiunAsal, const char* 
     // Telusuri parent dari stasiunTujuan, cek apakah ada di parentAsal
     int currIdxTujuan = idxStasiunTujuan;
     while (currIdxTujuan != 0) {
-        for (int i = 0; i < countAsal; i++) {
+        for (i = 0; i < countAsal; i++) {
             if (parentAsal[i] == currIdxTujuan) {
                 return TRUE; // Ada parent yang sama
             }
@@ -391,7 +397,8 @@ boolean IsRuteTersedia(Isi_Tree pohonRute, const char* stasiunAsal, const char* 
 
 int HitungJarak(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan) {
     // Mencari rute langsung
-    for (int i = 0; i < jumlahRute; i++) {
+    int i;
+    for (i = 0; i < jumlahRute; i++) {
         if ((strcmp(infoJarak[i].stasiunAsal, stasiunAsal) == 0 && 
              strcmp(infoJarak[i].stasiunTujuan, stasiunTujuan) == 0) ||
             (strcmp(infoJarak[i].stasiunAsal, stasiunTujuan) == 0 && 
@@ -410,7 +417,8 @@ int HitungJarak(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, co
 
 int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, const char* stasiunAsal, const char* stasiunTujuan) {
     // Mencari rute langsung
-    for (int i = 0; i < jumlahRute; i++) {
+    int i;
+    for (i = 0; i < jumlahRute; i++) {
         if ((strcmp(infoJarak[i].stasiunAsal, stasiunAsal) == 0 && 
              strcmp(infoJarak[i].stasiunTujuan, stasiunTujuan) == 0) ||
             (strcmp(infoJarak[i].stasiunAsal, stasiunTujuan) == 0 && 
@@ -432,7 +440,8 @@ int HitungWaktuTempuh(InfoRute* infoJarak, int jumlahRute, const char* stasiunAs
 void TambahStasiun(Isi_Tree *pohonRute, const char* namaStasiun, const char* stasiunInduk) {
     // Cari indeks stasiun induk
     int idxStasiunInduk = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, stasiunInduk) == 0) {
             idxStasiunInduk = i;
             break;
@@ -445,7 +454,7 @@ void TambahStasiun(Isi_Tree *pohonRute, const char* namaStasiun, const char* sta
     }
     
     // Cek apakah stasiun sudah ada
-    for (int i = 1; i <= jml_maks; i++) {
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, namaStasiun) == 0) {
             printf("Stasiun \"%s\" sudah ada dalam tree.\n", namaStasiun);
             return;
@@ -481,7 +490,8 @@ void TambahInfoRute(InfoRute **infoJarak, int *jumlahRute, const char* stasiunAs
 void HapusStasiun(Isi_Tree *pohonRute, const char* namaStasiun) {
     // Cari indeks stasiun
     int idxStasiun = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL && strcmp((*pohonRute)[i].info, namaStasiun) == 0) {
             idxStasiun = i;
             break;
@@ -502,10 +512,11 @@ void HapusStasiun(Isi_Tree *pohonRute, const char* namaStasiun) {
 
 // Fungsi bantuan untuk menampilkan jalur secara rekursif
 void TampilkanJalurRekursif(Isi_Tree pohonRute, int idx, int level) {
+	int i;
     if (idx == 0 || pohonRute[idx].info == NULL) return;
     
     // Tampilkan indentasi sesuai level
-    for (int i = 0; i < level; i++) {
+    for (i = 0; i < level; i++) {
         printf("  ");
     }
     
@@ -536,7 +547,8 @@ void TampilkanStasiunTerdekat(Isi_Tree pohonRute, InfoRute* infoJarak, int jumla
     
     // Cari stasiun yang berjarak kurang dari atau sama dengan radius
     int count = 0;
-    for (int i = 0; i < jumlahRute; i++) {
+    int i;
+    for (i = 0; i < jumlahRute; i++) {
         if (strcmp(infoJarak[i].stasiunAsal, namaStasiun) == 0) {
             if (infoJarak[i].jarak <= radius) {
                 printf("%d. %s (%.1f km, %d menit)\n", 
@@ -566,7 +578,8 @@ void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlah
     // di sini kita akan menggunakan pendekatan sederhana
     
     // Cari rute langsung
-    for (int i = 0; i < jumlahRute; i++) {
+    int i;
+    for (i = 0; i < jumlahRute; i++) {
         if (strcmp(infoJarak[i].stasiunAsal, stasiunAsal) == 0 && 
             strcmp(infoJarak[i].stasiunTujuan, stasiunTujuan) == 0) {
             printf("Rute langsung: %s -> %s (%.1f km, %d menit)\n", 
@@ -590,7 +603,8 @@ void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlah
 // *** FUNGSI PEMBANTU ***
 
 int CariIndeksStasiun(Isi_Tree pohonRute, const char* namaStasiun) {
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL && strcmp(pohonRute[i].info, namaStasiun) == 0) {
             return i;
         }
@@ -601,7 +615,8 @@ int CariIndeksStasiun(Isi_Tree pohonRute, const char* namaStasiun) {
 char** DapatkanDaftarStasiun(Isi_Tree pohonRute, int *jumlahStasiun) {
     // Hitung jumlah stasiun
     *jumlahStasiun = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i, idx;
+    for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
             (*jumlahStasiun)++;
         }
@@ -611,8 +626,8 @@ char** DapatkanDaftarStasiun(Isi_Tree pohonRute, int *jumlahStasiun) {
     char** daftarStasiun = (char**)malloc(*jumlahStasiun * sizeof(char*));
     
     // Isi array dengan nama stasiun
-    int idx = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    idx = 0;
+    for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
             daftarStasiun[idx++] = (char*)pohonRute[i].info;
         }
@@ -630,7 +645,8 @@ void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, c
     
     // Simpan jumlah stasiun dan jumlah rute
     int jumlahStasiun = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
             jumlahStasiun++;
         }
@@ -638,7 +654,7 @@ void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, c
     fprintf(file, "%d %d\n", jumlahStasiun, jumlahRute);
     
     // Simpan informasi stasiun
-    for (int i = 1; i <= jml_maks; i++) {
+    for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
             fprintf(file, "%d %s %d %d %d\n", i, pohonRute[i].info, 
                     pohonRute[i].ps_pr, pohonRute[i].ps_fs, pohonRute[i].ps_nb);
@@ -646,7 +662,7 @@ void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, c
     }
     
     // Simpan informasi rute
-    for (int i = 0; i < jumlahRute; i++) {
+    for (i = 0; i < jumlahRute; i++) {
         fprintf(file, "%s %s %d %d\n", 
                 infoJarak[i].stasiunAsal, infoJarak[i].stasiunTujuan, 
                 infoJarak[i].jarak, infoJarak[i].waktuTempuh);
@@ -665,10 +681,14 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     
     // Baca jumlah stasiun dan jumlah rute
     int jumlahStasiun;
+    int i, idx, ps_pr, ps_fs, ps_nb;
+    char namaStasiun[100], stasiunAsal[100], stasiunTujuan[100];
+    int jarak, waktuTempuh;
+    
     fscanf(file, "%d %d\n", &jumlahStasiun, jumlahRute);
     
     // Bersihkan tree
-    for (int i = 1; i <= jml_maks; i++) {
+    for (i = 1; i <= jml_maks; i++) {
         if ((*pohonRute)[i].info != NULL) {
             free((void*)(*pohonRute)[i].info);
             (*pohonRute)[i].info = NULL;
@@ -679,10 +699,7 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     }
     
     // Baca informasi stasiun
-    for (int i = 0; i < jumlahStasiun; i++) {
-        int idx, ps_pr, ps_fs, ps_nb;
-        char namaStasiun[100];
-        
+    for (i = 0; i < jumlahStasiun; i++) {
         fscanf(file, "%d %s %d %d %d\n", &idx, namaStasiun, &ps_pr, &ps_fs, &ps_nb);
         
         (*pohonRute)[idx].info = strdup(namaStasiun);
@@ -695,10 +712,7 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     *infoJarak = (InfoRute*)malloc(*jumlahRute * sizeof(InfoRute));
     
     // Baca informasi rute
-    for (int i = 0; i < *jumlahRute; i++) {
-        char stasiunAsal[100], stasiunTujuan[100];
-        int jarak, waktuTempuh;
-        
+    for (i = 0; i < *jumlahRute; i++) {
         fscanf(file, "%s %s %d %d\n", stasiunAsal, stasiunTujuan, &jarak, &waktuTempuh);
         
         (*infoJarak)[i].stasiunAsal = strdup(stasiunAsal);
@@ -720,7 +734,8 @@ void InsertRuteNode(Isi_Tree P, const char* info, int parent_idx) {
     
     // Cari slot kosong
     int empty_idx = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info == NULL) {
             empty_idx = i;
             break;

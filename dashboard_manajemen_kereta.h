@@ -16,19 +16,49 @@ Politeknik Negeri Bandung
 #include "boolean.h"
 #include "clear.h"
 
-// Fungsi-fungsi implementasi untuk dashboard
 void DashboardTampilkanDaftarKereta();
+/* Tujuan : Menampilkan daftar kereta yang tersedia di sistem */
+/* IS      : tidak ada */
+/* FS      : Daftar kereta ditampilkan di layar */
+
 void DashboardTambahKereta();
+/* Tujuan : Menampilkan form untuk menambah kereta baru */
+/* IS      : tidak ada */
+/* FS      : Form input kereta baru ditampilkan */
+
 void DashboardEditKereta();
+/* Tujuan : Menampilkan form untuk mengedit data kereta */
+/* IS      : tidak ada */
+/* FS      : Form edit data kereta ditampilkan */
+
 void DashboardHapusKereta();
+/* Tujuan : Menampilkan konfirmasi dan menghapus kereta terpilih */
+/* IS      : tidak ada */
+/* FS      : Kereta terhapus dari database jika dikonfirmasi */
 
-// Fungsi-fungsi wrapper
-void ShowDaftarKereta();
-void ShowTambahKereta();
-void ShowEditKereta();
-void ShowHapusKereta();
+void TampilkanDaftarKereta();
+/* Tujuan : Menampilkan daftar kereta (wrapper) */
+/* IS      : email terdefinisi */
+/* FS      : Panggilan ke DashboardTampilkanDaftarKereta dilaksanakan */
 
-// Fungsi utama menu manajemen kereta
-void ShowKeretaManagementMenu(const char* email);
+void TampilkanFormTambahKereta();
+/* Tujuan : Menampilkan form tambah kereta (wrapper) */
+/* IS      : email terdefinisi */
+/* FS      : Panggilan ke DashboardTambahKereta dilaksanakan */
 
-#endif /* DASHBOARD_MANAJEMEN_KERETA_H */
+void TampilkanFormEditKereta();
+/* Tujuan : Menampilkan form edit kereta (wrapper) */
+/* IS      : email terdefinisi */
+/* FS      : Panggilan ke DashboardEditKereta dilaksanakan */
+
+void TampilkanFormHapusKereta();
+/* Tujuan : Menampilkan form hapus kereta (wrapper) */
+/* IS      : email terdefinisi */
+/* FS      : Panggilan ke DashboardHapusKereta dilaksanakan */
+
+void MenuManajemenKereta(const char* email);
+/* Tujuan : Menjalankan menu manajemen kereta */
+/* IS      : email terdefinisi */
+/* FS      : Menu manajemen kereta ditampilkan berulang */
+
+#endif

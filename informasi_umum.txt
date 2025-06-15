@@ -53,4 +53,5 @@ KA138|Argo Parahyangan|Eksekutif|150000.0|8
 KA139|Argo Parahyangan|Eksekutif|150000.0|8
 KA140|Argo Parahyangan|Eksekutif|150000.0|8
 KA141|Argo Parahyangan|Eksekutif|150000.0|8
-KA142|Argo Parahyangan|Eksekutif|150000.0|8
+KA142|Argo Parahyangan|Eksekutif|150000.0|8 
+KA666|Argo Ngawi|Eksekutif|200000.00|4

@@ -4,14 +4,14 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = tree_non_biner.o tree_biner.o implementasi_morse.o hash_password.o implementasi_rute_kereta.o main.o implementasi_akun_user.o implementasi_pembayaran.o implementasi_jadwal_kereta.o implementasi_informasi_kereta.o array.o clear.o implementasi_antrian_offline.o implementasi_kursi_kereta.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o linked.o queue.o stack.o time.o databases.o dashboard_authentication.o dashboard_user.o dashboard_admin.o dashboard_cashier.o dashboard_machine.o
-LINKOBJ  = tree_non_biner.o tree_biner.o implementasi_morse.o hash_password.o implementasi_rute_kereta.o main.o implementasi_akun_user.o implementasi_pembayaran.o implementasi_jadwal_kereta.o implementasi_informasi_kereta.o array.o clear.o implementasi_antrian_offline.o implementasi_kursi_kereta.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o linked.o queue.o stack.o time.o databases.o dashboard_authentication.o dashboard_user.o dashboard_admin.o dashboard_cashier.o dashboard_machine.o
+OBJ      = array.o check_biner.o clear.o dashboard_admin.o dashboard_akun_saya.o dashboard_authentication.o dashboard_cashier.o dashboard_kursi_kereta.o dashboard_lihat_jadwal.o dashboard_machine.o dashboard_manajemen_jadwal.o dashboard_manajemen_kasir.o dashboard_manajemen_kereta.o dashboard_manajemen_mesin.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_pembayaran.o dashboard_rekening_saya.o dashboard_tiket_saya.o dashboard_user.o databases.o hash_password.o implementasi_akun_user.o implementasi_antrian_offline.o implementasi_informasi_kereta.o implementasi_jadwal_kereta.o implementasi_kursi_kereta.o implementasi_morse.o implementasi_pembayaran.o implementasi_pembelian_tiket.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o implementasi_rute_kereta.o implementasi_tiket_saya.o linked.o main.o queue.o stack.o time.o tree_biner.o tree_non_biner.o
+LINKOBJ  = array.o check_biner.o clear.o dashboard_admin.o dashboard_akun_saya.o dashboard_authentication.o dashboard_cashier.o dashboard_kursi_kereta.o dashboard_lihat_jadwal.o dashboard_machine.o dashboard_manajemen_jadwal.o dashboard_manajemen_kasir.o dashboard_manajemen_kereta.o dashboard_manajemen_mesin.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_pembayaran.o dashboard_rekening_saya.o dashboard_tiket_saya.o dashboard_user.o databases.o hash_password.o implementasi_akun_user.o implementasi_antrian_offline.o implementasi_informasi_kereta.o implementasi_jadwal_kereta.o implementasi_kursi_kereta.o implementasi_morse.o implementasi_pembayaran.o implementasi_pembelian_tiket.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o implementasi_rute_kereta.o implementasi_tiket_saya.o linked.o main.o queue.o stack.o time.o tree_biner.o tree_non_biner.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = OurTrain.exe
-CXXFLAGS = $(CXXINCS) -std=c99
-CFLAGS   = $(INCS) -std=c99
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
 RM       = rm.exe -f
 
 .PHONY: all all-before all-after clean clean-custom
@@ -22,82 +22,127 @@ clean: clean-custom
 	${RM} $(OBJ) $(BIN)
 
 $(BIN): $(OBJ)
-	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
-
-tree_non_biner.o: tree_non_biner.c
-	$(CPP) -c tree_non_biner.c -o tree_non_biner.o $(CXXFLAGS)
-
-tree_biner.o: tree_biner.c
-	$(CPP) -c tree_biner.c -o tree_biner.o $(CXXFLAGS)
-
-implementasi_morse.o: implementasi_morse.c
-	$(CPP) -c implementasi_morse.c -o implementasi_morse.o $(CXXFLAGS)
-
-hash_password.o: hash_password.c
-	$(CPP) -c hash_password.c -o hash_password.o $(CXXFLAGS)
-
-implementasi_rute_kereta.o: implementasi_rute_kereta.c
-	$(CPP) -c implementasi_rute_kereta.c -o implementasi_rute_kereta.o $(CXXFLAGS)
-
-main.o: main.c
-	$(CPP) -c main.c -o main.o $(CXXFLAGS)
-
-implementasi_akun_user.o: implementasi_akun_user.c
-	$(CPP) -c implementasi_akun_user.c -o implementasi_akun_user.o $(CXXFLAGS)
-
-implementasi_pembayaran.o: implementasi_pembayaran.c
-	$(CPP) -c implementasi_pembayaran.c -o implementasi_pembayaran.o $(CXXFLAGS)
-
-implementasi_jadwal_kereta.o: implementasi_jadwal_kereta.c
-	$(CPP) -c implementasi_jadwal_kereta.c -o implementasi_jadwal_kereta.o $(CXXFLAGS)
-
-implementasi_informasi_kereta.o: implementasi_informasi_kereta.c
-	$(CPP) -c implementasi_informasi_kereta.c -o implementasi_informasi_kereta.o $(CXXFLAGS)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
 
 array.o: array.c
-	$(CPP) -c array.c -o array.o $(CXXFLAGS)
+	$(CC) -c array.c -o array.o $(CFLAGS)
+
+check_biner.o: check_biner.c
+	$(CC) -c check_biner.c -o check_biner.o $(CFLAGS)
 
 clear.o: clear.c
-	$(CPP) -c clear.c -o clear.o $(CXXFLAGS)
-
-implementasi_antrian_offline.o: implementasi_antrian_offline.c
-	$(CPP) -c implementasi_antrian_offline.c -o implementasi_antrian_offline.o $(CXXFLAGS)
-
-implementasi_kursi_kereta.o: implementasi_kursi_kereta.c
-	$(CPP) -c implementasi_kursi_kereta.c -o implementasi_kursi_kereta.o $(CXXFLAGS)
-
-implementasi_rekapitulasi_keuntungan.o: implementasi_rekapitulasi_keuntungan.c
-	$(CPP) -c implementasi_rekapitulasi_keuntungan.c -o implementasi_rekapitulasi_keuntungan.o $(CXXFLAGS)
-
-implementasi_riwayat.o: implementasi_riwayat.c
-	$(CPP) -c implementasi_riwayat.c -o implementasi_riwayat.o $(CXXFLAGS)
-
-linked.o: linked.c
-	$(CPP) -c linked.c -o linked.o $(CXXFLAGS)
-
-queue.o: queue.c
-	$(CPP) -c queue.c -o queue.o $(CXXFLAGS)
-
-stack.o: stack.c
-	$(CPP) -c stack.c -o stack.o $(CXXFLAGS)
-
-time.o: time.c
-	$(CPP) -c time.c -o time.o $(CXXFLAGS)
-
-databases.o: databases.c
-	$(CPP) -c databases.c -o databases.o $(CXXFLAGS)
-
-dashboard_authentication.o: dashboard_authentication.c
-	$(CPP) -c dashboard_authentication.c -o dashboard_authentication.o $(CXXFLAGS)
-
-dashboard_user.o: dashboard_user.c
-	$(CPP) -c dashboard_user.c -o dashboard_user.o $(CXXFLAGS)
+	$(CC) -c clear.c -o clear.o $(CFLAGS)
 
 dashboard_admin.o: dashboard_admin.c
-	$(CPP) -c dashboard_admin.c -o dashboard_admin.o $(CXXFLAGS)
+	$(CC) -c dashboard_admin.c -o dashboard_admin.o $(CFLAGS)
+
+dashboard_akun_saya.o: dashboard_akun_saya.c
+	$(CC) -c dashboard_akun_saya.c -o dashboard_akun_saya.o $(CFLAGS)
+
+dashboard_authentication.o: dashboard_authentication.c
+	$(CC) -c dashboard_authentication.c -o dashboard_authentication.o $(CFLAGS)
 
 dashboard_cashier.o: dashboard_cashier.c
-	$(CPP) -c dashboard_cashier.c -o dashboard_cashier.o $(CXXFLAGS)
+	$(CC) -c dashboard_cashier.c -o dashboard_cashier.o $(CFLAGS)
+
+dashboard_kursi_kereta.o: dashboard_kursi_kereta.c
+	$(CC) -c dashboard_kursi_kereta.c -o dashboard_kursi_kereta.o $(CFLAGS)
+
+dashboard_lihat_jadwal.o: dashboard_lihat_jadwal.c
+	$(CC) -c dashboard_lihat_jadwal.c -o dashboard_lihat_jadwal.o $(CFLAGS)
 
 dashboard_machine.o: dashboard_machine.c
-	$(CPP) -c dashboard_machine.c -o dashboard_machine.o $(CXXFLAGS)
+	$(CC) -c dashboard_machine.c -o dashboard_machine.o $(CFLAGS)
+
+dashboard_manajemen_jadwal.o: dashboard_manajemen_jadwal.c
+	$(CC) -c dashboard_manajemen_jadwal.c -o dashboard_manajemen_jadwal.o $(CFLAGS)
+
+dashboard_manajemen_kasir.o: dashboard_manajemen_kasir.c
+	$(CC) -c dashboard_manajemen_kasir.c -o dashboard_manajemen_kasir.o $(CFLAGS)
+
+dashboard_manajemen_kereta.o: dashboard_manajemen_kereta.c
+	$(CC) -c dashboard_manajemen_kereta.c -o dashboard_manajemen_kereta.o $(CFLAGS)
+
+dashboard_manajemen_mesin.o: dashboard_manajemen_mesin.c
+	$(CC) -c dashboard_manajemen_mesin.c -o dashboard_manajemen_mesin.o $(CFLAGS)
+
+dashboard_manajemen_rute.o: dashboard_manajemen_rute.c
+	$(CC) -c dashboard_manajemen_rute.c -o dashboard_manajemen_rute.o $(CFLAGS)
+
+dashboard_manajemen_user.o: dashboard_manajemen_user.c
+	$(CC) -c dashboard_manajemen_user.c -o dashboard_manajemen_user.o $(CFLAGS)
+
+dashboard_pembayaran.o: dashboard_pembayaran.c
+	$(CC) -c dashboard_pembayaran.c -o dashboard_pembayaran.o $(CFLAGS)
+
+dashboard_rekening_saya.o: dashboard_rekening_saya.c
+	$(CC) -c dashboard_rekening_saya.c -o dashboard_rekening_saya.o $(CFLAGS)
+
+dashboard_tiket_saya.o: dashboard_tiket_saya.c
+	$(CC) -c dashboard_tiket_saya.c -o dashboard_tiket_saya.o $(CFLAGS)
+
+dashboard_user.o: dashboard_user.c
+	$(CC) -c dashboard_user.c -o dashboard_user.o $(CFLAGS)
+
+databases.o: databases.c
+	$(CC) -c databases.c -o databases.o $(CFLAGS)
+
+hash_password.o: hash_password.c
+	$(CC) -c hash_password.c -o hash_password.o $(CFLAGS)
+
+implementasi_akun_user.o: implementasi_akun_user.c
+	$(CC) -c implementasi_akun_user.c -o implementasi_akun_user.o $(CFLAGS)
+
+implementasi_antrian_offline.o: implementasi_antrian_offline.c
+	$(CC) -c implementasi_antrian_offline.c -o implementasi_antrian_offline.o $(CFLAGS)
+
+implementasi_informasi_kereta.o: implementasi_informasi_kereta.c
+	$(CC) -c implementasi_informasi_kereta.c -o implementasi_informasi_kereta.o $(CFLAGS)
+
+implementasi_jadwal_kereta.o: implementasi_jadwal_kereta.c
+	$(CC) -c implementasi_jadwal_kereta.c -o implementasi_jadwal_kereta.o $(CFLAGS)
+
+implementasi_kursi_kereta.o: implementasi_kursi_kereta.c
+	$(CC) -c implementasi_kursi_kereta.c -o implementasi_kursi_kereta.o $(CFLAGS)
+
+implementasi_morse.o: implementasi_morse.c
+	$(CC) -c implementasi_morse.c -o implementasi_morse.o $(CFLAGS)
+
+implementasi_pembayaran.o: implementasi_pembayaran.c
+	$(CC) -c implementasi_pembayaran.c -o implementasi_pembayaran.o $(CFLAGS)
+
+implementasi_pembelian_tiket.o: implementasi_pembelian_tiket.c
+	$(CC) -c implementasi_pembelian_tiket.c -o implementasi_pembelian_tiket.o $(CFLAGS)
+
+implementasi_rekapitulasi_keuntungan.o: implementasi_rekapitulasi_keuntungan.c
+	$(CC) -c implementasi_rekapitulasi_keuntungan.c -o implementasi_rekapitulasi_keuntungan.o $(CFLAGS)
+
+implementasi_riwayat.o: implementasi_riwayat.c
+	$(CC) -c implementasi_riwayat.c -o implementasi_riwayat.o $(CFLAGS)
+
+implementasi_rute_kereta.o: implementasi_rute_kereta.c
+	$(CC) -c implementasi_rute_kereta.c -o implementasi_rute_kereta.o $(CFLAGS)
+
+implementasi_tiket_saya.o: implementasi_tiket_saya.c
+	$(CC) -c implementasi_tiket_saya.c -o implementasi_tiket_saya.o $(CFLAGS)
+
+linked.o: linked.c
+	$(CC) -c linked.c -o linked.o $(CFLAGS)
+
+main.o: main.c
+	$(CC) -c main.c -o main.o $(CFLAGS)
+
+queue.o: queue.c
+	$(CC) -c queue.c -o queue.o $(CFLAGS)
+
+stack.o: stack.c
+	$(CC) -c stack.c -o stack.o $(CFLAGS)
+
+time.o: time.c
+	$(CC) -c time.c -o time.o $(CFLAGS)
+
+tree_biner.o: tree_biner.c
+	$(CC) -c tree_biner.c -o tree_biner.o $(CFLAGS)
+
+tree_non_biner.o: tree_non_biner.c
+	$(CC) -c tree_non_biner.c -o tree_non_biner.o $(CFLAGS)

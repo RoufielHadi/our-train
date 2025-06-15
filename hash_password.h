@@ -73,8 +73,8 @@ void SimpanPasswordKeFile(const char *username, const char *hashedPassword, cons
 /* IS      : username, hashedPassword, hashedPin, dan filename terdefinisi */
 /* FS      : Username dan password tersimpan dalam file */
 
-boolean VerifikasiLogin(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename);
-/* Tujuan : Memverifikasi login user berdasarkan username, password, dan PIN */
+boolean VerifikasiLoginFromFile(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename);
+/* Tujuan : Memverifikasi login user berdasarkan username, password, dan PIN dari file */
 /* IS      : morseTree, username, password, pin, dan filename terdefinisi */
 /* FS      : Mengembalikan TRUE jika login berhasil, FALSE jika gagal */
 

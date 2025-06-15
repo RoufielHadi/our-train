@@ -17,6 +17,10 @@ Politeknik Negeri Bandung
 #include "boolean.h"
 #include "databases.h"
 #include "clear.h"
+#include "linked.h" // This already contains the User struct definition
+
+// External declaration for logoutFlag
+extern boolean logoutFlag;
 
 // *** PROTOTYPE FUNGSI DASHBOARD USER ***
 
@@ -46,6 +50,16 @@ void ShowUserPaymentMenu(const char* email);
 /* Tujuan : Menampilkan menu pembayaran user */
 /* IS      : email terdefinisi */
 /* FS      : Menu pembayaran user ditampilkan */
+
+void ShowTicketPurchaseMenu(const char* email);
+/* Tujuan : Menampilkan menu pembelian tiket */
+/* IS      : email terdefinisi */
+/* FS      : Menu pembelian tiket ditampilkan */
+
+void ShowTrainScheduleMenu(const char* email);
+/* Tujuan : Menampilkan menu jadwal kereta */
+/* IS      : email terdefinisi */
+/* FS      : Menu jadwal kereta ditampilkan */
 
 // *** FUNGSI UTAMA ***
 void RunUserDashboard(const char* email);

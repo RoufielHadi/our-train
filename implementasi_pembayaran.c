@@ -15,6 +15,9 @@ Politeknik Negeri Bandung
 // Deklarasi akses ke variabel global dari file lain
 extern HashPassword* morseTree;
 
+// Definisi variabel global untuk list pembayaran
+ListPayment globalListPayment;
+
 // Fungsi untuk membuat data pembayaran baru
 Payment BuatDataPembayaran(char* email, char* no_rekening, int saldo, char* pin, HashPassword *morseTree) {
     Payment payment_baru;
@@ -249,7 +252,8 @@ boolean ValidasiNomorRekening(char* no_rekening) {
     }
     
     // Cek apakah semua karakter adalah digit
-    for (int i = 0; i < panjang; i++) {
+    int i;
+    for (i = 0; i < panjang; i++) {
         if (no_rekening[i] < '0' || no_rekening[i] > '9') {
             return FALSE;
         }

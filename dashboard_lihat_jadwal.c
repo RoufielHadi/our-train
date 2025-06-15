@@ -32,7 +32,8 @@ void ShowLihatJadwalMenu() {
     BacaSemuaJadwalKereta(records, &jumlah_records, 100);
     
     // Konversi records ke JadwalHarian dan tambahkan ke list
-    for (int i = 0; i < jumlah_records; i++) {
+    int i;
+    for (i = 0; i < jumlah_records; i++) {
         JadwalHarian jadwal = KonversiRecordKeJadwalKereta(records[i]);
         TambahJadwalKeList(&daftarJadwal, jadwal);
     }

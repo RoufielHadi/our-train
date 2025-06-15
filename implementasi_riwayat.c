@@ -232,7 +232,8 @@ void TampilkanRingkasanRiwayat(StackRiwayat S) {
         if (PopRiwayat(&temp, &tiket)) {
             // Cek pengguna unik
             boolean pengguna_ada = FALSE;
-            for (int i = 0; i < jumlah_pengguna_unik; i++) {
+            int i;
+            for (i = 0; i < jumlah_pengguna_unik; i++) {
                 if (strcmp(pengguna_unik[i], tiket.riwayat_user.nama) == 0) {
                     pengguna_ada = TRUE;
                     break;
@@ -245,7 +246,7 @@ void TampilkanRingkasanRiwayat(StackRiwayat S) {
             
             // Cek kereta unik
             boolean kereta_ada = FALSE;
-            for (int i = 0; i < jumlah_kereta_unik; i++) {
+            for (i = 0; i < jumlah_kereta_unik; i++) {
                 if (strcmp(kereta_unik[i], tiket.riwayat_kereta.nama_kereta) == 0) {
                     kereta_ada = TRUE;
                     break;
@@ -289,12 +290,13 @@ void TampilkanRingkasanRiwayat(StackRiwayat S) {
     }
     
     printf("\nDaftar Pengguna yang Membeli Tiket:\n");
-    for (int i = 0; i < jumlah_pengguna_unik; i++) {
+    int i;
+    for (i = 0; i < jumlah_pengguna_unik; i++) {
         printf("- %s\n", pengguna_unik[i]);
     }
     
     printf("\nDaftar Kereta yang Dibeli Tiketnya:\n");
-    for (int i = 0; i < jumlah_kereta_unik; i++) {
+    for (i = 0; i < jumlah_kereta_unik; i++) {
         printf("- %s\n", kereta_unik[i]);
     }
 }
