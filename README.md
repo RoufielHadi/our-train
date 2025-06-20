@@ -85,11 +85,11 @@ scripts\reset_database.bat
 ```mermaid
 graph LR
   U[User] -->|Menu| M(main.c)
-  M --> Q[Queue: Antrean Offline]
-  M --> S[Stack: Riwayat Transaksi]
-  M --> A[Array Status Kursi]
-  M --> T1[Tree Non-Biner: Rute/Stasiun]
-  M --> T2[Tree Biner: Hashing Password]
+  M --> Q[Admin Side: Manajemen Jadwal, Manajemen Kereta, Manajemen Akun]
+  M --> S[User Side: Pembelian, Tiket Saya, Rekening Saya, Akun Saya]
+  M --> A[Manajemen Rute, Rekapitulasi Keuntungan]
+  M --> T1[Kasir Side: Pembelian Offline]
+  M --> T2[Mesin Side: Antrian Offline, Cek Tiket, Jadwal Kereta Stasiun]
   A --> D[data/*.txt/.dat]
   Q --> D
   S --> R[riwayat_pemesanan.txt]
