@@ -8,11 +8,10 @@ Politeknik Negeri Bandung
 */
 
 #include "dashboard_manajemen_user.h"
-#include "dashboard_manajemen_kasir.h"
-#include "dashboard_manajemen_mesin.h"
 #include "clear.h"
 #include "hash_password.h"
 #include "implementasi_morse.h"
+#include "implementasi_rute_kereta.h"
 #include <string.h>
 
 // Variable global untuk morse tree
@@ -49,15 +48,14 @@ void ShowUserManagementDashboard(const char* email) {
     printf("|            MANAJEMEN AKUN USER               |\n");
     printf("+----------------------------------------------+\n");
     printf("| Menu:                                        |\n");
-    printf("|  1. Lihat Informasi Akun User                |\n");
-    printf("|  2. Tambah Akun Kasir & Mesin                |\n");
-    printf("|  3. Edit Akun Kasir/Mesin                    |\n");
-    printf("|  4. Hapus Akun Kasir/Mesin                   |\n");
-    printf("|  5. Hapus Akun User                          |\n");
-    printf("|  6. Lihat Informasi Akun Kasir               |\n");
-    printf("|  7. Lihat Informasi Akun Mesin               |\n");
-    printf("|  8. Lihat Informasi Akun Admin               |\n");
-    printf("|  9. Kembali ke Dashboard Admin               |\n");
+    printf("|  1. Lihat Informasi Akun Admin               |\n");
+    printf("|  2. Lihat Informasi Akun Kasir               |\n");
+    printf("|  3. Lihat Informasi Akun Mesin               |\n");
+    printf("|  4. Lihat Informasi Akun User                |\n");
+    printf("|  5. Tambah Akun Kasir & Mesin                |\n");
+    printf("|  6. Edit Akun Kasir & Mesin                  |\n");
+    printf("|  7. Hapus Akun Kasir & Mesin                 |\n");
+    printf("|  8. Kembali ke Dashboard Admin               |\n");
     printf("+----------------------------------------------+\n");
     printf("Pilihan: ");
 }
@@ -432,16 +430,30 @@ void TambahAkunKasirDanMesin(const char* email, HashPassword* morseTree) {
     printf("|       TAMBAH AKUN KASIR & MESIN              |\n");
     printf("+----------------------------------------------+\n");
     
-    // Input informasi stasiun
+    // Muat data stasiun dari file untuk validasi nama
+    Isi_Tree pohonRute;
+    BacaDataStasiun(pohonRute);
+
     char nama_stasiun[100];
     char alamat_stasiun[200];
     char nomor_telepon_kasir[20];
     char nomor_telepon_mesin[20];
-    
-    printf("Masukkan Nama Stasiun: ");
-    fflush(stdin);
-    gets(nama_stasiun);
-    
+    int idxStasiun;
+    char realStationName[50];
+    do {
+        printf("Masukkan Nama Stasiun: ");
+        fflush(stdin);
+        gets(nama_stasiun);
+        idxStasiun = CariIndeksStasiun(pohonRute, nama_stasiun);
+        if (idxStasiun == 0 || !IsStationActiveAndName(idxStasiun, realStationName)) {
+            printf("Stasiun '%s' tidak valid atau tidak aktif. Silakan coba lagi.\n", nama_stasiun);
+        } else {
+            // gunakan nama stasiun yang benar sesuai file
+            strcpy(nama_stasiun, realStationName);
+            break;
+        }
+    } while (1);
+
     printf("Masukkan Alamat Stasiun: ");
     fflush(stdin);
     gets(alamat_stasiun);
@@ -562,105 +574,61 @@ void RunUserManagementDashboard(const char* email) {
         
         switch (pilihan) {
             case 1:
-                // Lihat Informasi Akun User
-                ViewUserInformation(email);
-                break;
-                
-            case 2:
-                // Tambah Akun Kasir & Mesin (berpasangan)
-                TambahAkunKasirDanMesin(email, morseTree);
-                break;
-                
-            case 3:
-                // Edit Akun Kasir/Mesin
-                printf("\n+----------------------------------------------+\n");
-                printf("| Pilih jenis akun untuk diedit:               |\n");
-                printf("|  1. Akun Kasir                               |\n");
-                printf("|  2. Akun Mesin                               |\n");
-                printf("|  3. Kembali                                  |\n");
-                printf("+----------------------------------------------+\n");
-                printf("Pilihan: ");
-                
-                int editChoice;
-                scanf("%d", &editChoice);
-                
-                switch (editChoice) {
-                    case 1:
-                        TampilkanFormEditKasir(email, morseTree);
-                        break;
-                    case 2:
-                        TampilkanFormEditMesin(email, morseTree);
-                        break;
-                    case 3:
-                        break;
-                    default:
-                        printf("\nPilihan tidak valid!\n");
-                        printf("Tekan Enter untuk melanjutkan...");
-                        getch();
-                        break;
-                }
-                break;
-                
-            case 4:
-                // Hapus Akun Kasir/Mesin
-                printf("\n+----------------------------------------------+\n");
-                printf("| Pilih jenis akun untuk dihapus:              |\n");
-                printf("|  1. Akun Kasir                               |\n");
-                printf("|  2. Akun Mesin                               |\n");
-                printf("|  3. Kembali                                  |\n");
-                printf("+----------------------------------------------+\n");
-                printf("Pilihan: ");
-                
-                int deleteChoice;
-                scanf("%d", &deleteChoice);
-                
-                switch (deleteChoice) {
-                    case 1:
-                        TampilkanFormHapusKasir(email);
-                        break;
-                    case 2:
-                        TampilkanFormHapusMesin(email);
-                        break;
-                    case 3:
-                        break;
-                    default:
-                        printf("\nPilihan tidak valid!\n");
-                        printf("Tekan Enter untuk melanjutkan...");
-                        getch();
-                        break;
-                }
-                break;
-                
-            case 5:
-                // Hapus Akun User
-                DeleteUserByIndex(email);
-                break;
-                
-            case 6:
-                // Lihat Informasi Akun Kasir
-                ViewKasirAccounts(email);
-                break;
-                
-            case 7:
-                // Lihat Informasi Akun Mesin
-                ViewMesinAccounts(email);
-                break;
-                
-            case 8:
-                // Lihat Informasi Akun Admin
                 ViewAdminAccounts(email);
                 break;
-                
-            case 9:
-                // Kembali ke Dashboard Admin
+            case 2:
+                ViewKasirAccounts(email);
+                break;
+            case 3:
+                ViewMesinAccounts(email);
+                break;
+            case 4:
+                ViewUserInformation(email);
+                break;
+            case 5:
+                TambahAkunKasirDanMesin(email, morseTree);
+                break;
+            case 6: {
+                int subChoice;
+                clearScreen();
+                printf("+----------------------------------------------+\n");
+                printf("|         EDIT AKUN KASIR & MESIN              |\n");
+                printf("+----------------------------------------------+\n");
+                printf("| 1. Edit Akun Kasir                           |\n");
+                printf("| 2. Edit Akun Mesin                           |\n");
+                printf("| 0. Batal                                     |\n");
+                printf("Pilihan: ");
+                scanf("%d", &subChoice);
+                while (getchar() != '\n');
+                if (subChoice == 1) {
+                    TampilkanFormEditKasir(email, morseTree);
+                } else if (subChoice == 2) {
+                    TampilkanFormEditMesin(email, morseTree);
+                }
+            } break;
+            case 7: {
+                int subChoice;
+                clearScreen();
+                printf("+----------------------------------------------+\n");
+                printf("|       HAPUS AKUN KASIR & MESIN               |\n");
+                printf("+----------------------------------------------+\n");
+                printf("| 1. Hapus Akun Kasir                          |\n");
+                printf("| 2. Hapus Akun Mesin                          |\n");
+                printf("| 0. Batal                                     |\n");
+                printf("Pilihan: ");
+                scanf("%d", &subChoice);
+                while (getchar() != '\n');
+                if (subChoice == 1) {
+                    TampilkanFormHapusKasir(email);
+                } else if (subChoice == 2) {
+                    TampilkanFormHapusMesin(email);
+                }
+            } break;
+            case 8:
                 keluar = TRUE;
                 break;
-                
             default:
-                printf("\nPilihan tidak valid!\n");
-                printf("Tekan Enter untuk melanjutkan...");
-                getch();
-                break;
+                printf("\nPilihan tidak valid! Tekan Enter untuk melanjutkan..."); getch(); break;
         }
     }
 }
@@ -951,4 +919,266 @@ void ViewAdminAccounts(const char* email) {
         printf("\nTekan Enter untuk kembali...");
         getch();
     }
+}
+
+// Fungsi untuk edit akun kasir
+void TampilkanFormEditKasir(const char* email, HashPassword* morseTree) {
+    clearScreen();
+    printf("+----------------------------------------------+\n");
+    printf("|             EDIT AKUN KASIR                  |\n");
+    printf("+----------------------------------------------+\n");
+    // Load semua akun user
+    Record *records;
+    int total = 0;
+    if (!BacaSemuaAkunUser(&records, &total)) {
+        printf("Gagal membaca data akun.\n");
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    // Kumpulkan dan tampilkan akun kasir
+    int kasirCount = 0;
+    int kasirIdx[100];
+    int i;
+    for (i = 0; i < total; i++) {
+        char *tipeStr = AmbilNilai(&records[i], "tipe_akun");
+        int tipe = tipeStr ? atoi(tipeStr) : 1;
+        if (tipe == 3) {
+            kasirIdx[kasirCount] = i;
+            char *userEmail = AmbilNilai(&records[i], "email");
+            char *nama = AmbilNilai(&records[i], "nama");
+            printf(" %2d. %s (%s)\n", kasirCount+1,
+                   userEmail?userEmail:"(tidak ada)", nama?nama:"(tidak ada)");
+            kasirCount++;
+        }
+    }
+    if (kasirCount == 0) {
+        printf("Tidak ada akun kasir.\n");
+        int i;
+        for (i = 0; i < total; i++) InisialisasiRecord(&records[i]); free(records);
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    printf("\nMasukkan nomor akun kasir yang ingin diedit (0 = batal): ");
+    int choice; scanf("%d", &choice); while(getchar()!='\n');
+    if (choice <= 0 || choice > kasirCount) {
+    	int i;
+        for (i = 0; i < total; i++) InisialisasiRecord(&records[i]); free(records);
+        return;
+    }
+    int recIdx = kasirIdx[choice-1];
+    // Ambil data lama
+    char *oldNama = AmbilNilai(&records[recIdx], "nama");
+    char *oldAlamat = AmbilNilai(&records[recIdx], "alamat");
+    char *oldTelp = AmbilNilai(&records[recIdx], "nomor_telepon");
+    char newNama[100] = "", newAlamat[200] = "", newTelp[20] = "";
+    printf("Nama baru [%s]: ", oldNama?oldNama:"(kosong)");
+    fgets(newNama, sizeof(newNama), stdin); newNama[strcspn(newNama, "\n")] = '\0';
+    if (strlen(newNama) == 0 && oldNama) strncpy(newNama, oldNama, sizeof(newNama)-1);
+    printf("Alamat baru [%s]: ", oldAlamat?oldAlamat:"(kosong)");
+    fgets(newAlamat, sizeof(newAlamat), stdin); newAlamat[strcspn(newAlamat, "\n")] = '\0';
+    if (strlen(newAlamat) == 0 && oldAlamat) strncpy(newAlamat, oldAlamat, sizeof(newAlamat)-1);
+    printf("No. Telepon baru [%s]: ", oldTelp?oldTelp:"(kosong)");
+    fgets(newTelp, sizeof(newTelp), stdin); newTelp[strcspn(newTelp, "\n")] = '\0';
+    if (strlen(newTelp) == 0 && oldTelp) strncpy(newTelp, oldTelp, sizeof(newTelp)-1);
+    char *selectedEmail = AmbilNilai(&records[recIdx], "email");
+    if (EditAkunKasir(selectedEmail, newNama, newAlamat, newTelp, morseTree)) {
+        printf("\nAkun kasir berhasil diupdate!\n");
+    } else {
+        printf("\nGagal mengupdate akun kasir.\n");
+    }
+    // Bebaskan memori
+    for (i = 0; i < total; i++) InisialisasiRecord(&records[i]); free(records);
+    printf("\nTekan Enter untuk kembali..."); getch();
+}
+
+// Fungsi untuk edit akun mesin
+void TampilkanFormEditMesin(const char* email, HashPassword* morseTree) {
+    clearScreen();
+    printf("+----------------------------------------------+\n");
+    printf("|             EDIT AKUN MESIN                  |\n");
+    printf("+----------------------------------------------+\n");
+    // Load semua akun user
+    Record *records;
+    int total = 0;
+    if (!BacaSemuaAkunUser(&records, &total)) {
+        printf("Gagal membaca data akun.\n");
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    // Kumpulkan dan tampilkan akun mesin
+    int mesinCount = 0;
+    int mesinIdx[100];
+    int i;
+    for (i = 0; i < total; i++) {
+        char *tipeStr = AmbilNilai(&records[i], "tipe_akun");
+        int tipe = tipeStr ? atoi(tipeStr) : 1;
+        if (tipe == 4) {
+            mesinIdx[mesinCount] = i;
+            char *userEmail = AmbilNilai(&records[i], "email");
+            char *nama = AmbilNilai(&records[i], "nama");
+            printf(" %2d. %s (%s)\n", mesinCount+1,
+                   userEmail?userEmail:"(tidak ada)", nama?nama:"(tidak ada)");
+            mesinCount++;
+        }
+    }
+    if (mesinCount == 0) {
+    	int i;
+        printf("Tidak ada akun mesin.\n");
+        for (i = 0; i < total; i++) InisialisasiRecord(&records[i]); free(records);
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    printf("\nMasukkan nomor akun mesin yang ingin diedit (0 = batal): ");
+    int choice; scanf("%d", &choice); while(getchar()!='\n');
+    if (choice <= 0 || choice > mesinCount) {
+    	int i;
+        for (i = 0; i < total; i++) InisialisasiRecord(&records[i]); free(records);
+        return;
+    }
+    int recIdx = mesinIdx[choice-1];
+    // Ambil data lama
+    char *oldNama = AmbilNilai(&records[recIdx], "nama");
+    char *oldAlamat = AmbilNilai(&records[recIdx], "alamat");
+    char *oldTelp = AmbilNilai(&records[recIdx], "nomor_telepon");
+    char newNama[100] = "", newAlamat[200] = "", newTelp[20] = "";
+    printf("Nama baru [%s]: ", oldNama?oldNama:"(kosong)");
+    fgets(newNama, sizeof(newNama), stdin); newNama[strcspn(newNama, "\n")] = '\0';
+    if (strlen(newNama) == 0 && oldNama) strncpy(newNama, oldNama, sizeof(newNama)-1);
+    printf("Alamat baru [%s]: ", oldAlamat?oldAlamat:"(kosong)");
+    fgets(newAlamat, sizeof(newAlamat), stdin); newAlamat[strcspn(newAlamat, "\n")] = '\0';
+    if (strlen(newAlamat) == 0 && oldAlamat) strncpy(newAlamat, oldAlamat, sizeof(newAlamat)-1);
+    printf("No. Telepon baru [%s]: ", oldTelp?oldTelp:"(kosong)");
+    fgets(newTelp, sizeof(newTelp), stdin); newTelp[strcspn(newTelp, "\n")] = '\0';
+    if (strlen(newTelp) == 0 && oldTelp) strncpy(newTelp, oldTelp, sizeof(newTelp)-1);
+    char *selectedEmail = AmbilNilai(&records[recIdx], "email");
+    if (EditAkunMesin(selectedEmail, newNama, newAlamat, newTelp, morseTree)) {
+        printf("\nAkun mesin berhasil diupdate!\n");
+    } else {
+        printf("\nGagal mengupdate akun mesin.\n");
+    }
+    // Bebaskan memori
+    for (i = 0; i < total; i++) InisialisasiRecord(&records[i]); free(records);
+    printf("\nTekan Enter untuk kembali..."); getch();
+}
+
+// Stub fungsi untuk hapus akun kasir
+void TampilkanFormHapusKasir(const char* email) {
+    clearScreen();
+    printf("\n=== HAPUS AKUN KASIR ===\n");
+    // Baca semua akun user
+    Record *records;
+    int total = 0;
+    if (!BacaSemuaAkunUser(&records, &total)) {
+        printf("Gagal membaca data akun.\n");
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    // Kumpulkan dan tampilkan akun kasir
+    int kasirCount = 0;
+    char kasirEmails[100][100];
+    int i;
+    for (i = 0; i < total; i++) {
+        char *tipeStr = AmbilNilai(&records[i], "tipe_akun");
+        int tipe = tipeStr ? atoi(tipeStr) : 1;
+        if (tipe == 3) {
+            char *e = AmbilNilai(&records[i], "email");
+            if (e) {
+                strcpy(kasirEmails[kasirCount], e);
+                printf(" %2d. %s\n", kasirCount+1, e);
+                kasirCount++;
+            }
+        }
+    }
+    if (kasirCount == 0) {
+        printf("Tidak ada akun kasir.\n");
+        int i;
+        for (i = 0; i < total; i++) InisialisasiRecord(&records[i]);
+        free(records);
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    // Pilih akun kasir untuk dihapus
+    printf("\nPilihan indeks kasir untuk hapus (0 untuk batal): ");
+    int choice;
+    scanf("%d", &choice); while(getchar()!='\n');
+    if (choice > 0 && choice <= kasirCount) {
+        char confirm;
+        printf("\nAnda yakin ingin menghapus akun kasir %s? (Y/N): ", kasirEmails[choice-1]);
+        scanf(" %c", &confirm); while(getchar()!='\n');
+        if (confirm == 'Y' || confirm == 'y') {
+            if (HapusAkunKasir(kasirEmails[choice-1])) {
+                HapusRekeningUser(kasirEmails[choice-1]);
+                printf("\nAkun kasir berhasil dihapus.\n");
+            } else {
+                printf("\nGagal menghapus akun kasir.\n");
+            }
+        } else {
+            printf("\nPenghapusan akun dibatalkan.\n");
+        }
+    }
+    // Bersihkan memori
+    for (i = 0; i < total; i++) InisialisasiRecord(&records[i]);
+    free(records);
+    printf("\nTekan Enter untuk kembali..."); getch();
+}
+
+// Stub fungsi untuk hapus akun mesin
+void TampilkanFormHapusMesin(const char* email) {
+    clearScreen();
+    printf("\n=== HAPUS AKUN MESIN ===\n");
+    // Baca semua akun user
+    Record *records;
+    int total = 0;
+    if (!BacaSemuaAkunUser(&records, &total)) {
+        printf("Gagal membaca data akun.\n");
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    // Kumpulkan dan tampilkan akun mesin
+    int mesinCount = 0;
+    char mesinEmails[100][100];
+    int i;
+    for (i = 0; i < total; i++) {
+        char *tipeStr = AmbilNilai(&records[i], "tipe_akun");
+        int tipe = tipeStr ? atoi(tipeStr) : 1;
+        if (tipe == 4) {
+            char *e = AmbilNilai(&records[i], "email");
+            if (e) {
+                strcpy(mesinEmails[mesinCount], e);
+                printf(" %2d. %s\n", mesinCount+1, e);
+                mesinCount++;
+            }
+        }
+    }
+    if (mesinCount == 0) {
+        printf("Tidak ada akun mesin.\n");
+        int i;
+        for (i = 0; i < total; i++) InisialisasiRecord(&records[i]);
+        free(records);
+        printf("\nTekan Enter untuk kembali..."); getch();
+        return;
+    }
+    // Pilih akun mesin untuk dihapus
+    printf("\nPilihan indeks mesin untuk hapus (0 untuk batal): ");
+    int choice;
+    scanf("%d", &choice); while(getchar()!='\n');
+    if (choice > 0 && choice <= mesinCount) {
+        char confirm;
+        printf("\nAnda yakin ingin menghapus akun mesin %s? (Y/N): ", mesinEmails[choice-1]);
+        scanf(" %c", &confirm); while(getchar()!='\n');
+        if (confirm == 'Y' || confirm == 'y') {
+            if (HapusAkunMesin(mesinEmails[choice-1])) {
+                HapusRekeningUser(mesinEmails[choice-1]);
+                printf("\nAkun mesin berhasil dihapus.\n");
+            } else {
+                printf("\nGagal menghapus akun mesin.\n");
+            }
+        } else {
+            printf("\nPenghapusan akun dibatalkan.\n");
+        }
+    }
+    // Bersihkan memori
+    for (i = 0; i < total; i++) InisialisasiRecord(&records[i]);
+    free(records);
+    printf("\nTekan Enter untuk kembali..."); getch();
 }

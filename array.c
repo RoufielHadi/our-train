@@ -114,7 +114,8 @@ void InisialisasiKursiKereta(KursiKereta *kereta, JenisKereta jenis) {
         for (k = 0; k < konfig.kolom; k++) {
             for (b = 0; b < konfig.baris; b++) {
                 for (s = 0; s < kereta->jumlah_segmen; s++) {
-                    kereta->data_kursi[g].status_kursi[k][b][s] = FALSE;
+                    // Default: kursi tersedia
+                    kereta->data_kursi[g].status_kursi[k][b][s] = TRUE;
                 }
             }
         }
@@ -127,28 +128,23 @@ boolean ReservasiKursi(KursiKereta *kereta, int gerbong, int baris, int kolom, i
         printf("Error: Nomor gerbong tidak valid\n");
         return FALSE;
     }
-    
     JenisKereta jenis = GetJenisKeretaFromString(kereta->id_kereta);
     KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(jenis);
-    
     if (baris < 0 || baris >= konfig.baris || kolom < 0 || kolom >= konfig.kolom) {
         printf("Error: Posisi kursi tidak valid\n");
         return FALSE;
     }
-    
     if (segmen_idx < 0 || segmen_idx >= kereta->jumlah_segmen) {
         printf("Error: Indeks segmen tidak valid\n");
         return FALSE;
     }
-    
-    // Cek apakah kursi sudah terisi
-    if (kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][segmen_idx]) {
+    // Cek apakah kursi tersedia
+    if (!kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][segmen_idx]) {
         printf("Error: Kursi sudah terisi\n");
         return FALSE;
     }
-    
-    // Reservasi kursi
-    kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][segmen_idx] = TRUE;
+    // Reservasi kursi (set menjadi terisi)
+    kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][segmen_idx] = FALSE;
     return TRUE;
 }
 
@@ -160,21 +156,18 @@ boolean ReservasiKursiMultiSegmen(KursiKereta *kereta, int gerbong, int baris, i
         printf("Error: Indeks segmen tidak valid\n");
         return FALSE;
     }
-    
     // Cek apakah kursi tersedia untuk semua segmen
     int s;
     for (s = segmen_awal; s <= segmen_akhir; s++) {
-        if (kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][s]) {
+        if (!kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][s]) {
             printf("Error: Kursi sudah terisi pada segmen %s\n", kereta->segmen[s].nama);
             return FALSE;
         }
     }
-    
-    // Reservasi kursi untuk semua segmen
+    // Reservasi kursi untuk semua segmen (set menjadi terisi)
     for (s = segmen_awal; s <= segmen_akhir; s++) {
-        kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][s] = TRUE;
+        kereta->data_kursi[gerbong-1].status_kursi[kolom][baris][s] = FALSE;
     }
-    
     return TRUE;
 }
 
@@ -300,42 +293,41 @@ KonfigurasiKursi GetKonfigurasiKursiByJenis(JenisKereta jenis) {
     
     switch (jenis) {
         case EKONOMI:
-            konfig.kolom = 5;
+            konfig.kolom = 4;
             konfig.baris = 20;
             break;
         case EKONOMI_PREMIUM:
             konfig.kolom = 4;
-            konfig.baris = 18;
+            konfig.baris = 20;
             break;
         case BISNIS:
             konfig.kolom = 4;
-            konfig.baris = 15;
+            konfig.baris = 20;
             break;
         case EKSEKUTIF:
-            konfig.kolom = 3;
-            konfig.baris = 12;
+            konfig.kolom = 4;
+            konfig.baris = 20;
             break;
         case LUXURY:
-            konfig.kolom = 2;
-            konfig.baris = 10;
+            konfig.kolom = 4;
+            konfig.baris = 20;
             break;
         case PRIORITY:
-            konfig.kolom = 2;
-            konfig.baris = 8;
+            konfig.kolom = 4;
+            konfig.baris = 20;
             break;
         case SLEEPER:
-            konfig.kolom = 2;
-            konfig.baris = 6;
+            konfig.kolom = 4;
+            konfig.baris = 20;
             break;
         case COMPARTMENT:
-            konfig.kolom = 2;
-            konfig.baris = 4;
+            konfig.kolom = 4;
+            konfig.baris = 20;
             break;
         default:
             konfig.kolom = 4;
-            konfig.baris = 16;
+            konfig.baris = 20;
     }
-    
     return konfig;
 }
 
@@ -423,9 +415,10 @@ float HitungPersentaseKursiTerisiSegmen(KursiKereta kereta, int segmen_idx, Jeni
 }
 
 int CariIndexSegmen(KursiKereta kereta, const char *nama_segmen) {
-	int i;
+    int i;
     for (i = 0; i < kereta.jumlah_segmen; i++) {
-        if (strcmp(kereta.segmen[i].nama, nama_segmen) == 0) {
+        // Bandingkan case-insensitive
+        if (strcasecmp(kereta.segmen[i].nama, nama_segmen) == 0) {
             return i;
         }
     }

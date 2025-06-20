@@ -28,7 +28,7 @@ Politeknik Negeri Bandung
 #include "array.h"
 #include "clear.h"
 
-// Konstanta untuk jenis layanan kereta (removed EKONOMI which conflicted with array.h)
+// Konstanta untuk jenis layanan kereta untuk menghindari konflik dengan enum di array.h
 #define STR_EKONOMI "Ekonomi"
 #define STR_BISNIS "Bisnis"
 #define STR_EKSEKUTIF "Eksekutif"
@@ -40,7 +40,7 @@ extern ListKereta globalListKereta;
 extern ArrayKereta globalArrayKereta;
 
 // UI functions for kereta management
-void TampilkanDaftarKeretaUI();
+void TampilkanDaftarKeretaDBUI();
 void TambahKeretaUI();
 void EditKereta();
 void HapusKeretaUI();
@@ -128,5 +128,8 @@ boolean MuatDataKeretaKeGlobal();
 // IS      : globalListKereta sudah diinisialisasi
 // FS      : globalListKereta berisi semua data kereta dari database
 
+
+// Prototipe: Mendapatkan enum JenisKereta berdasarkan ID kereta (menggunakan data globalListKereta)
+JenisKereta GetJenisKeretaById(const char* id_kereta);
 
 #endif /* IMPLEMENTASI_INFORMASI_KERETA_H */ 

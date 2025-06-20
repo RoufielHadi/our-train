@@ -10,13 +10,14 @@ Politeknik Negeri Bandung
 #ifndef HASH_PASSWORD_H
 #define HASH_PASSWORD_H
 
-#include "tree_biner.h"
-#include "implementasi_morse.h"
-#include "boolean.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "boolean.h"
+
+// Forward declaration
+typedef struct HashPassword HashPassword;
 
 // Konstanta untuk panjang PIN
 #define PIN_LENGTH 6

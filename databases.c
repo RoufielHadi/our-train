@@ -19,6 +19,7 @@ Keterangan File:
 */
 
 #include "databases.h"
+#include <ctype.h>
 
 // Definisi nama file database
 const char* DB_AKUN_USER = "informasi_akun_user.dat";
@@ -419,29 +420,29 @@ boolean UpdateRecordBiner(const char* namaFile, Record* record, const char* prim
     char backupFile[100];
     sprintf(backupFile, "%s.bak", namaFile);
     
-    // Hapus backup lama jika ada
-    if (CekFileAda(backupFile)) {
-        remove(backupFile);
-    }
-    
     // Buat backup file saat ini
-    if (rename(namaFile, backupFile) == 0) {
-    } else {
-        // Coba kembalikan backup jika ada
-        if (CekFileAda(backupFile)) {
-            rename(backupFile, namaFile);
+    FILE* srcFile = fopen(namaFile, "rb");
+    FILE* dstFile = fopen(backupFile, "wb");
+    if (srcFile != NULL && dstFile != NULL) {
+        char buffer[1024];
+        size_t bytesRead;
+        while ((bytesRead = fread(buffer, 1, sizeof(buffer), srcFile)) > 0) {
+            fwrite(buffer, 1, bytesRead, dstFile);
         }
-        return FALSE;
+        fclose(srcFile);
+        fclose(dstFile);
+    } else if (srcFile != NULL) {
+        fclose(srcFile);
+    } else if (dstFile != NULL) {
+        fclose(dstFile);
     }
     
     // Ganti file original dengan file sementara
-    if (rename(tempFile, namaFile) == 0) {
+    if (remove(namaFile) == 0) {
+        rename(tempFile, namaFile);
     } else {
-        // Coba kembalikan backup jika ada
-        if (CekFileAda(backupFile)) {
-            rename(backupFile, namaFile);
-        }
-        return FALSE;
+        // Jika hapus file lama gagal, coba langsung ganti
+        rename(tempFile, namaFile);
     }
     
     return TRUE;
@@ -774,19 +775,29 @@ void DaftarKereta(Record* records, int* jumlahRecord) {
 
 // 4. Jadwal Kereta
 boolean SimpanJadwalKereta(Record* record) {
-    return SimpanRecordBiner(DB_JADWAL_KERETA, record, "kodeJadwal");
+    return SimpanRecord(DB_JADWAL_KERETA, record, "kodeJadwal");
 }
 
 boolean BacaJadwalKereta(Record* record, const char* kodeJadwal) {
-    return BacaRecordBiner(DB_JADWAL_KERETA, record, "kodeJadwal", kodeJadwal);
+    return BacaRecord(DB_JADWAL_KERETA, record, "kodeJadwal", kodeJadwal);
 }
 
 boolean UpdateJadwalKereta(Record* record) {
-    return UpdateRecordBiner(DB_JADWAL_KERETA, record, "kodeJadwal");
+    return UpdateRecord(DB_JADWAL_KERETA, record, "kodeJadwal");
 }
 
 boolean HapusJadwalKereta(const char* kodeJadwal) {
-    return HapusRecordBiner(DB_JADWAL_KERETA, "kodeJadwal", kodeJadwal);
+    return HapusRecord(DB_JADWAL_KERETA, "kodeJadwal", kodeJadwal);
+}
+
+// Fungsi bantu: perbandingan string tanpa memperhatikan huruf besar/kecil
+static int equalsIgnoreCase(const char* a, const char* b) {
+    if (a == NULL || b == NULL) return 0;
+    while (*a && *b) {
+        if (tolower((unsigned char)*a) != tolower((unsigned char)*b)) return 0;
+        a++; b++;
+    }
+    return *a == '\0' && *b == '\0';
 }
 
 void CariJadwalKereta(const char* stasiunAsal, const char* stasiunTujuan, const char* tanggal, Record* records, int* jumlahRecord) {
@@ -825,9 +836,9 @@ void CariJadwalKereta(const char* stasiunAsal, const char* stasiunTujuan, const 
         char* tanggalValue = AmbilNilai(&tempRecord, "tanggal");
         
         if (asalValue != NULL && tujuanValue != NULL && tanggalValue != NULL) {
-            if ((strcmp(stasiunAsal, "") == 0 || strcmp(asalValue, stasiunAsal) == 0) &&
-                (strcmp(stasiunTujuan, "") == 0 || strcmp(tujuanValue, stasiunTujuan) == 0) &&
-                (strcmp(tanggal, "") == 0 || strcmp(tanggalValue, tanggal) == 0)) {
+            if ((strcmp(stasiunAsal, "") == 0 || equalsIgnoreCase(asalValue, stasiunAsal)) &&
+                (strcmp(stasiunTujuan, "") == 0 || equalsIgnoreCase(tujuanValue, stasiunTujuan)) &&
+                (strcmp(tanggal, "") == 0 || equalsIgnoreCase(tanggalValue, tanggal))) {
                 
                 // Jadwal sesuai dengan kriteria
                 records[*jumlahRecord] = tempRecord;
@@ -1250,16 +1261,30 @@ boolean UpdateRecord(const char* namaFile, Record* record, const char* primaryKe
     char backupFile[100];
     sprintf(backupFile, "%s.bak", namaFile);
     
-    // Hapus backup lama jika ada
-    if (CekFileAda(backupFile)) {
-        remove(backupFile);
+    // Buat backup file saat ini
+    FILE* srcFile = fopen(namaFile, "rb");
+    FILE* dstFile = fopen(backupFile, "wb");
+    if (srcFile != NULL && dstFile != NULL) {
+        char buffer[1024];
+        size_t bytesRead;
+        while ((bytesRead = fread(buffer, 1, sizeof(buffer), srcFile)) > 0) {
+            fwrite(buffer, 1, bytesRead, dstFile);
+        }
+        fclose(srcFile);
+        fclose(dstFile);
+    } else if (srcFile != NULL) {
+        fclose(srcFile);
+    } else if (dstFile != NULL) {
+        fclose(dstFile);
     }
     
-    // Buat backup file saat ini
-    rename(namaFile, backupFile);
-    
     // Ganti file original dengan file sementara
-    rename(tempFile, namaFile);
+    if (remove(namaFile) == 0) {
+        rename(tempFile, namaFile);
+    } else {
+        // Jika hapus file lama gagal, coba langsung ganti
+        rename(tempFile, namaFile);
+    }
     
     return TRUE;
 }
@@ -1340,10 +1365,29 @@ boolean HapusRecord(const char* namaFile, const char* primaryKey, const char* pr
     }
     
     // Buat backup file saat ini
-    rename(namaFile, backupFile);
+    FILE* srcFile = fopen(namaFile, "rb");
+    FILE* dstFile = fopen(backupFile, "wb");
+    if (srcFile != NULL && dstFile != NULL) {
+        char buffer[1024];
+        size_t bytesRead;
+        while ((bytesRead = fread(buffer, 1, sizeof(buffer), srcFile)) > 0) {
+            fwrite(buffer, 1, bytesRead, dstFile);
+        }
+        fclose(srcFile);
+        fclose(dstFile);
+    } else if (srcFile != NULL) {
+        fclose(srcFile);
+    } else if (dstFile != NULL) {
+        fclose(dstFile);
+    }
     
     // Ganti file original dengan file sementara
-    rename(tempFile, namaFile);
+    if (remove(namaFile) == 0) {
+        rename(tempFile, namaFile);
+    } else {
+        // Jika hapus file lama gagal, coba langsung ganti
+        rename(tempFile, namaFile);
+    }
     
     return TRUE;
 }

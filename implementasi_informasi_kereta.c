@@ -343,7 +343,7 @@ void GenerateIDKereta(ListKereta L, char* id_baru) {
     strcpy(id_baru, temp_id);
 }
 
-void TampilkanDaftarKeretaUI() {
+void TampilkanDaftarKeretaDBUI() {
 	int i;
     Record records[MAX_FIELDS];
     int jumlahRecord = 0;
@@ -361,7 +361,7 @@ void TampilkanDaftarKeretaUI() {
             char* id = AmbilNilai(&records[i], "kodeKereta");
             char* nama = AmbilNilai(&records[i], "namaKereta");
             char* layanan = AmbilNilai(&records[i], "jenisLayanan");
-            char* harga = AmbilNilai(&records[i], "harga");
+            char* harga = AmbilNilai(&records[i], "hargaTiket");
             char* gerbong = AmbilNilai(&records[i], "jumlahGerbong");
             printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", id ? id : "-", nama ? nama : "-", layanan ? layanan : "-", harga ? harga : "-", gerbong ? gerbong : "-");
         }
@@ -385,7 +385,7 @@ void TambahKeretaUI() {
     TambahField(&record, "kodeKereta", id);
     TambahField(&record, "namaKereta", nama);
     TambahField(&record, "jenisLayanan", layanan);
-    TambahField(&record, "harga", harga);
+    TambahField(&record, "hargaTiket", harga);
     TambahField(&record, "jumlahGerbong", gerbong);
 
     if (SimpanInformasiKereta(&record)) {
@@ -397,7 +397,7 @@ void TambahKeretaUI() {
 }
 
 void EditKereta() {
-    TampilkanDaftarKeretaUI();
+    TampilkanDaftarKeretaDBUI();
     char id[20];
     printf("\nMasukkan ID kereta yang ingin diedit: ");
     scanf("%s", id); while(getchar()!='\n');
@@ -414,7 +414,7 @@ void EditKereta() {
     printf("Jumlah Gerbong baru (kosongkan jika tidak diubah): "); fgets(gerbong, sizeof(gerbong), stdin); gerbong[strcspn(gerbong, "\n")] = 0;
     if (strlen(nama) > 0) UbahNilai(&record, "namaKereta", nama);
     if (strlen(layanan) > 0) UbahNilai(&record, "jenisLayanan", layanan);
-    if (strlen(harga) > 0) UbahNilai(&record, "harga", harga);
+    if (strlen(harga) > 0) UbahNilai(&record, "hargaTiket", harga);
     if (strlen(gerbong) > 0) UbahNilai(&record, "jumlahGerbong", gerbong);
     if (UpdateInformasiKereta(&record)) {
         printf("\nData kereta berhasil diupdate!\n");
@@ -425,7 +425,7 @@ void EditKereta() {
 }
 
 void HapusKeretaUI() {
-    TampilkanDaftarKeretaUI();
+    TampilkanDaftarKeretaDBUI();
     char id[20];
     printf("\nMasukkan ID kereta yang ingin dihapus: ");
     scanf("%s", id); while(getchar()!='\n');
@@ -511,7 +511,7 @@ boolean MuatDataKeretaKeGlobal() {
         char *id = AmbilNilai(&records[i], "kodeKereta");
         char *nama = AmbilNilai(&records[i], "namaKereta");
         char *layanan = AmbilNilai(&records[i], "jenisLayanan");
-        char *harga_str = AmbilNilai(&records[i], "harga");
+        char *harga_str = AmbilNilai(&records[i], "hargaTiket");
         char *gerbong = AmbilNilai(&records[i], "jumlahGerbong");
         
         if (id && nama && layanan && harga_str && gerbong) {
@@ -522,4 +522,16 @@ boolean MuatDataKeretaKeGlobal() {
     }
     
     return TRUE;
+}
+
+// Fungsi baru: Mendapatkan enum JenisKereta berdasarkan ID kereta
+JenisKereta GetJenisKeretaById(const char* id_kereta) {
+    // Cari informasi kereta global berdasarkan ID
+    InformasiKereta* info = GetInformasiKeretaById(globalListKereta, id_kereta);
+    if (info != NULL) {
+        // Konversi jenis layanan string ke enum JenisKereta
+        return GetJenisKeretaFromString(info->jenis_layanan);
+    }
+    // Default jika tidak ditemukan
+    return EKONOMI;
 } 

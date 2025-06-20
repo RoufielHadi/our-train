@@ -90,6 +90,12 @@ Waktu KonversiKeWaktu(WaktuSingkat ws) {
     return w;
 }
 
+// Alias for conversion used in dashboard_manajemen_jadwal.c
+Waktu KonversiDariWaktuSingkat(WaktuSingkat ws) {
+    // Simply call the existing conversion function
+    return KonversiKeWaktu(ws);
+}
+
 // ============== OPERASI PERBANDINGAN ================
 
 // ----- Perbandingan WaktuSingkat -----

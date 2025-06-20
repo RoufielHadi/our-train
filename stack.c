@@ -215,29 +215,33 @@ void LoadRiwayatFromFile(StackRiwayat *S, const char *filename) {
         token = strtok(NULL, "|");
         if (token) strcpy(tiket.riwayat_user.nomor_telepon, token);
         
+        // Parse kode kursi dan nomor kursi (misalnya: C2)
         token = strtok(NULL, "|");
         if (token) {
-            // Format gerbong adalah nomor (misalnya: 2, 3, dll)
-            tiket.riwayat_nomor_gerbong = atoi(token);
-        }
-        
-        token = strtok(NULL, "|");
-        if (token) {
-            // Format kursi adalah huruf+angka (misalnya: B4, C2, dll)
-            // Kita hanya ambil angkanya saja
             char kursi_str[10];
             strcpy(kursi_str, token);
-            // Cari angka pertama dalam string
             int i = 0;
             while (kursi_str[i] != '\0' && !isdigit(kursi_str[i])) {
                 i++;
             }
-            // Ambil angka setelah huruf
             if (kursi_str[i] != '\0') {
                 tiket.riwayat_nomor_kursi = atoi(&kursi_str[i]);
+                if (i > 0) {
+                    kursi_str[i] = '\0';
+                    strcpy(tiket.riwayat_kode_kursi, kursi_str);
+                } else {
+                    strcpy(tiket.riwayat_kode_kursi, "");
+                }
             } else {
-                tiket.riwayat_nomor_kursi = 0; // Default jika tidak ada angka
+                tiket.riwayat_nomor_kursi = 0;
+                strcpy(tiket.riwayat_kode_kursi, "");
             }
+        }
+        
+        // Parse nomor gerbong dari data tiket
+        token = strtok(NULL, "|");
+        if (token) {
+            tiket.riwayat_nomor_gerbong = atoi(token);
         }
         
         token = strtok(NULL, "|");

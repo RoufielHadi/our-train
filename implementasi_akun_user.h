@@ -15,8 +15,10 @@ Politeknik Negeri Bandung
 #include <string.h>
 #include "boolean.h"
 #include "linked.h"
-#include "tree_biner.h"
 #include "databases.h"
+
+// Forward declaration
+typedef struct HashPassword HashPassword;
 
 // Tipe pengguna:
 // 1 = Admin

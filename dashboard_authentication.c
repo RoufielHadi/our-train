@@ -7,6 +7,14 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include <ctype.h>
+#include "boolean.h"
+#include "tree_biner.h"
+#include "implementasi_morse.h"
 #include "dashboard_authentication.h"
 #include "dashboard_user.h"
 #include "dashboard_admin.h"
@@ -88,7 +96,6 @@ void ShowMainMenu() {
     printf("|              2. Login                        |\n");
     printf("|                                              |\n");
     printf("+----------------------------------------------+\n");
-    printf("Pilihan: ");
 }
 
 void ShowBox(const char* content) {

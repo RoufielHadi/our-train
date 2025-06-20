@@ -23,7 +23,9 @@ extern JenisKereta GetJenisKeretaById(const char* id);
 extern InformasiKereta* GetInformasiKeretaById(ListKereta L, const char* id);
 extern void InisialisasiListKeretaGlobal(void);
 extern boolean MuatDataKeretaKeGlobal(void);
-extern void MenuKursiKereta(const char* id_kereta, const char* tanggal, int* nomor_gerbong, char* kode_kursi);
+void MenuKursiKereta(const char* id_kereta, const char* tanggal, const char* stasiun_awal, const char* stasiun_akhir, int* nomor_gerbong_dipilih, char* kode_kursi_dipilih);
+
+
 
 // Forward declarations
 boolean PilihTiket(ListHasilPencarian hasil, int nomor_tiket, HasilPencarian* tiket_dipilih);
@@ -136,6 +138,8 @@ void DapatkanRuteUnik(RuteKereta** daftar_rute, int* jumlah_rute) {
     }
     
     while (fgets(line, sizeof(line), file)) {
+        // Debug: print the raw line being checked
+        printf("Debug [DapatkanRuteUnik]: memeriksa baris: %s", line);
         // Format: KodeKereta|Stasiun1,Stasiun2,...|waktu1,waktu2,...
         char* token = strtok(line, "|");
         if (token == NULL) continue;
@@ -294,20 +298,23 @@ boolean CariTiket(ListHasilPencarian* hasil, const char* stasiun_asal,
     
     char line[1024];
     while (fgets(line, sizeof(line), file)) {
+        // Debug: print the raw line being checked
+        printf("Debug [CariTiket]: memeriksa baris: %s", line);
         // Format: KodeKereta|Stasiun1,Stasiun2,...|waktu1,waktu2,...
         char kode_kereta[10] = "";
         char stasiun_list[1024] = "";
         char waktu_list[1024] = "";
-        
         // Parsing baris
         sscanf(line, "%[^|]|%[^|]|%[^\n]", kode_kereta, stasiun_list, waktu_list);
+        // Debug: show parsed train ID and stations
+        printf("Debug [CariTiket]: kode_kereta=%s, stasiun_list=%s\n", kode_kereta, stasiun_list);
         
         // Buat jadwal kereta
         JadwalHarian jadwal = BuatJadwalKereta(kode_kereta, (char*)tanggal);
         
         // Parse daftar stasiun dan waktu
-        char* stasiun_token = strtok(stasiun_list, ",");
-        char* waktu_token = strtok(waktu_list, ",");
+        char* stasiun_ptr = stasiun_list;
+        char* waktu_ptr = waktu_list;
         
         boolean asal_ditemukan = FALSE;
         boolean tujuan_ditemukan = FALSE;
@@ -316,92 +323,119 @@ boolean CariTiket(ListHasilPencarian* hasil, const char* stasiun_asal,
         int index_current = 0;
         
         // Untuk stasiun dan waktu transit
-        while (stasiun_token != NULL && waktu_token != NULL) {
-            // Trim leading/trailing whitespace
-            char* token_ptr = stasiun_token;
-            while (*token_ptr && isspace((unsigned char)*token_ptr)) token_ptr++;
+        while (stasiun_ptr && waktu_ptr && *stasiun_ptr && *waktu_ptr) {
+            // Ekstrak token stasiun
+            char* next_stasiun_comma = strchr(stasiun_ptr, ',');
+            int stasiun_len = next_stasiun_comma ? (next_stasiun_comma - stasiun_ptr) : strlen(stasiun_ptr);
+            char station_token[MAX_NAMA_SEGMEN];
+            strncpy(station_token, stasiun_ptr, (stasiun_len < MAX_NAMA_SEGMEN - 1) ? stasiun_len : (MAX_NAMA_SEGMEN - 1));
+            station_token[(stasiun_len < MAX_NAMA_SEGMEN - 1) ? stasiun_len : (MAX_NAMA_SEGMEN - 1)] = '\0';
+
+            // Trim whitespace
+            char* token_trim = station_token;
+            while (*token_trim && isspace((unsigned char)*token_trim)) token_trim++;
             char trimmed[MAX_NAMA_SEGMEN];
-            strncpy(trimmed, token_ptr, MAX_NAMA_SEGMEN - 1);
+            strncpy(trimmed, token_trim, MAX_NAMA_SEGMEN - 1);
             trimmed[MAX_NAMA_SEGMEN - 1] = '\0';
-            char* end_ptr = trimmed + strlen(trimmed) - 1;
-            while (end_ptr > trimmed && isspace((unsigned char)*end_ptr)) { *end_ptr = '\0'; end_ptr--; }
+            char* end_trim = trimmed + strlen(trimmed) - 1;
+            while (end_trim > trimmed && isspace((unsigned char)*end_trim)) { *end_trim = '\0'; end_trim--; }
             char stasiun_current_lower[MAX_NAMA_SEGMEN];
             StringToLower(trimmed, stasiun_current_lower);
-            
+
+            // Ekstrak token waktu
+            char* next_waktu_comma = strchr(waktu_ptr, ',');
+            int waktu_len = next_waktu_comma ? (next_waktu_comma - waktu_ptr) : strlen(waktu_ptr);
+            char time_token[16];
+            strncpy(time_token, waktu_ptr, (waktu_len < (int)sizeof(time_token) - 1) ? waktu_len : ((int)sizeof(time_token) - 1));
+            time_token[(waktu_len < (int)sizeof(time_token) - 1) ? waktu_len : ((int)sizeof(time_token) - 1)] = '\0';
+
+            int jam, menit;
+            sscanf(time_token, "%d:%d", &jam, &menit);
+            Waktu waktu = {0, menit, jam, 0, 0, 0};
+
             // Cek apakah stasiun ini adalah asal atau tujuan
             if (strcmp(stasiun_current_lower, asal_lower) == 0) {
                 asal_ditemukan = TRUE;
                 index_asal = index_current;
             }
-            
             if (strcmp(stasiun_current_lower, tujuan_lower) == 0) {
                 tujuan_ditemukan = TRUE;
                 index_tujuan = index_current;
             }
-            
-            // Parse waktu
-            int jam, menit;
-            sscanf(waktu_token, "%d:%d", &jam, &menit);
-            Waktu waktu = {0, menit, jam, 0, 0, 0};
-            
+
             // Tambahkan stasiun ke jadwal
-            TambahStasiunKeJadwal(&jadwal, stasiun_token, waktu);
-            
-            // Lanjut ke token berikutnya
-            stasiun_token = strtok(NULL, ",");
-            waktu_token = strtok(NULL, ",");
+            TambahStasiunKeJadwal(&jadwal, trimmed, waktu);
+
+            // Update index dan pointers
             index_current++;
+            stasiun_ptr = next_stasiun_comma ? (next_stasiun_comma + 1) : NULL;
+            waktu_ptr = next_waktu_comma ? (next_waktu_comma + 1) : NULL;
         }
+        // Debug: show indices found
+        printf("Debug [CariTiket]: %s index_asal=%d, index_tujuan=%d, asal_ditemukan=%d, tujuan_ditemukan=%d\n", kode_kereta, index_asal, index_tujuan, asal_ditemukan, tujuan_ditemukan);
         
         // Jika asal dan tujuan ditemukan dan urutan benar (asal->tujuan)
         if (asal_ditemukan && tujuan_ditemukan && index_asal < index_tujuan) {
+            printf("Debug [CariTiket]: melewati filter rute untuk %s (asal=%d, tujuan=%d)\n", kode_kereta, index_asal, index_tujuan);
             // Cek jenis layanan
             const char* jenis = GetJenisLayananById(globalListKereta, kode_kereta);
+            // Debug: cek nilai jenis layanan yang diambil dari globalListKereta
+            if (jenis != NULL) {
+                printf("Debug [CariTiket]: jenis asli untuk %s = '%s'\n", kode_kereta, jenis);
+            } else {
+                printf("Debug [CariTiket]: jenis layanan untuk %s tidak ditemukan (NULL)\n", kode_kereta);
+                // Gunakan nilai default untuk kereta yang tidak ada di database informasi
+                jenis = "Ekonomi"; // Default jenis layanan
+                printf("Debug [CariTiket]: menggunakan jenis default '%s' untuk %s\n", jenis, kode_kereta);
+            }
             char jenis_current_lower[20];
             
             if (jenis != NULL) {
-                StringToLower((char*)jenis, jenis_current_lower);
+                // Trim leading/trailing whitespace pada jenis layanan
+                char jenis_trim[20];
+                char* ptr = (char*)jenis;
+                while (*ptr && isspace((unsigned char)*ptr)) ptr++;
+                strncpy(jenis_trim, ptr, sizeof(jenis_trim) - 1);
+                jenis_trim[sizeof(jenis_trim) - 1] = '\0';
+                char* end_ptr = jenis_trim + strlen(jenis_trim) - 1;
+                while (end_ptr > jenis_trim && isspace((unsigned char)*end_ptr)) { *end_ptr = '\0'; end_ptr--; }
+                // Konversi ke lowercase
+                StringToLower(jenis_trim, jenis_current_lower);
+                printf("Debug [CariTiket]: jenis_current_lower='%s', jenis_lower(filter)='%s'\n", jenis_current_lower, jenis_lower);
                 
                 // Jika jenis layanan cocok atau kriteria jenis kosong
                 if (strlen(jenis_lower) == 0 || strcmp(jenis_current_lower, jenis_lower) == 0) {
-                    // Cek ketersediaan kursi
-                    KursiKereta kursi_kereta;
-                    boolean kursi_tersedia = BacaKeretaDariDatabase(&kursi_kereta, kode_kereta, tanggal);
-                    
-                    if (!kursi_tersedia) {
-                        printf("Debug: Kursi tidak tersedia untuk kereta %s pada tanggal %s\n", kode_kereta, tanggal);
-                    } else {
-                        printf("Debug: Kursi tersedia untuk kereta %s pada tanggal %s\n", kode_kereta, tanggal);
-                    }
-                    
-                    // Hitung jumlah kursi tersedia
-                    int g;
+                    printf("Debug [CariTiket]: Jenis layanan %s sesuai dengan filter %s\n", jenis_current_lower, jenis_lower);
+
+                    // Dapatkan jumlah kursi dari informasi kereta di database
                     int jumlah_kursi_tersedia = 0;
-                    if (kursi_tersedia) {
-                        for (g = 0; g < kursi_kereta.jumlah_gerbong; g++) {
-                            JenisKereta jenis_kereta = GetJenisKeretaById(kode_kereta);
-                            KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(jenis_kereta);
-                            
-                            int b,k,s;
-                            for (b = 0; b < konfig.baris; b++) {
-                                for (k = 0; k < konfig.kolom; k++) {
-                                    boolean kursi_kosong = TRUE;
-                                    for (s = index_asal; s < index_tujuan && kursi_kosong; s++) {
-                                        if (kursi_kereta.data_kursi[g].status_kursi[k][b][s]) {
-                                            kursi_kosong = FALSE;
-                                        }
-                                    }
-                                    
-                                    if (kursi_kosong) {
-                                        jumlah_kursi_tersedia++;
-                                    }
-                                }
-                            }
-                        }
+                    InformasiKereta* info_kereta = GetInformasiKeretaById(globalListKereta, kode_kereta);
+                    
+                    // Dapatkan jenis kereta untuk konfigurasi kursi
+                    JenisKereta jenis_kereta = GetJenisKeretaById(kode_kereta);
+                    
+                    // Dapatkan konfigurasi kursi berdasarkan jenis kereta (baris dan kolom)
+                    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(jenis_kereta);
+                    
+                    if (info_kereta != NULL) {
+                        // Ambil jumlah gerbong dari informasi kereta
+                        int jumlah_gerbong = atoi(info_kereta->jumlah_gerbong);
+                        
+                        // Hitung total kursi = jumlah gerbong * baris * kolom
+                        jumlah_kursi_tersedia = jumlah_gerbong * konfig.baris * konfig.kolom;
+                        
+                        printf("Debug [CariTiket]: Kereta %s memiliki %d gerbong, konfigurasi kursi %dx%d\n", 
+                               kode_kereta, jumlah_gerbong, konfig.baris, konfig.kolom);
+                    } else {
+                        // Jika tidak ada informasi kereta, gunakan nilai default
+                        jumlah_kursi_tersedia = 6 * konfig.baris * konfig.kolom; // Asumsi 6 gerbong
+                        
+                        printf("Debug [CariTiket]: Kereta %s tidak ditemukan di database, menggunakan default: 6 gerbong, konfigurasi kursi %dx%d\n", 
+                               kode_kereta, konfig.baris, konfig.kolom);
                     }
                     
-                    printf("Debug: Jumlah kursi tersedia: %d\n", jumlah_kursi_tersedia);
-                    
+                    printf("Debug [CariTiket]: Jumlah kursi tersedia untuk %s = %d\n", kode_kereta, jumlah_kursi_tersedia);
+
                     // Tambahkan ke hasil pencarian
                     HasilPencarian hasil_tiket;
                     strcpy(hasil_tiket.id_kereta, kode_kereta);
@@ -429,9 +463,33 @@ boolean CariTiket(ListHasilPencarian* hasil, const char* stasiun_asal,
                     strcpy(hasil_tiket.tanggal, tanggal);
                     
                     // Waktu keberangkatan dan tiba
-                    Waktu waktu_berangkat, waktu_tiba;
-                    CariWaktuKeberangkatan(jadwal, (char*)stasiun_asal, &waktu_berangkat);
-                    CariWaktuKeberangkatan(jadwal, (char*)stasiun_tujuan, &waktu_tiba);
+                    Waktu waktu_berangkat = {0}, waktu_tiba = {0};
+                    
+                    // Ekstrak waktu dari string waktu yang sudah dipisahkan
+                    char waktu_list_copy[1024];
+                    strcpy(waktu_list_copy, waktu_list);
+                    
+                    // Dapatkan array waktu
+                    char* waktu_array[50]; // Maksimal 50 stasiun
+                    int waktu_count = 0;
+                    
+                    char* waktu_token = strtok(waktu_list_copy, ",");
+                    while (waktu_token != NULL && waktu_count < 50) {
+                        waktu_array[waktu_count++] = waktu_token;
+                        waktu_token = strtok(NULL, ",");
+                    }
+                    
+                    // Ambil waktu berdasarkan indeks asal dan tujuan
+                    if (index_asal >= 0 && index_asal < waktu_count) {
+                        sscanf(waktu_array[index_asal], "%d:%d", &waktu_berangkat.jam, &waktu_berangkat.menit);
+                    }
+                    
+                    if (index_tujuan >= 0 && index_tujuan < waktu_count) {
+                        sscanf(waktu_array[index_tujuan], "%d:%d", &waktu_tiba.jam, &waktu_tiba.menit);
+                    }
+                    
+                    printf("Debug [CariTiket]: Waktu berangkat: %02d:%02d, Waktu tiba: %02d:%02d\n", 
+                           waktu_berangkat.jam, waktu_berangkat.menit, waktu_tiba.jam, waktu_tiba.menit);
                     
                     sprintf(hasil_tiket.waktu_berangkat, "%02d:%02d", waktu_berangkat.jam, waktu_berangkat.menit);
                     sprintf(hasil_tiket.waktu_tiba, "%02d:%02d", waktu_tiba.jam, waktu_tiba.menit);
@@ -458,37 +516,85 @@ void TampilkanHasilPencarian(ListHasilPencarian hasil) {
         return;
     }
     
+    // Tentukan lebar maksimum untuk setiap kolom berdasarkan konten
+    int max_id_width = 9; // "ID Kereta"
+    int max_nama_width = 11; // "Nama Kereta"
+    int max_rute_width = 4; // "Rute"
+    int max_jenis_width = 5; // "Jenis"
+    
+    // Scan semua tiket untuk menentukan lebar kolom maksimum
+    NodeHasilPencarian* scan = hasil.head;
+    while (scan != NULL) {
+        char rute[64];
+        sprintf(rute, "%s-%s", scan->tiket.stasiun_asal, scan->tiket.stasiun_tujuan);
+        
+        // Update lebar maksimum
+        int id_len = strlen(scan->tiket.id_kereta);
+        int nama_len = strlen(scan->tiket.nama_kereta);
+        int rute_len = strlen(rute);
+        int jenis_len = strlen(scan->tiket.jenis_layanan);
+        
+        if (id_len > max_id_width) max_id_width = id_len;
+        if (nama_len > max_nama_width) max_nama_width = nama_len;
+        if (rute_len > max_rute_width) max_rute_width = rute_len;
+        if (jenis_len > max_jenis_width) max_jenis_width = jenis_len;
+        
+        scan = scan->next;
+    }
+    
+    // Tambahkan padding
+    max_id_width += 2;
+    max_nama_width += 2;
+    max_rute_width += 2;
+    max_jenis_width += 2;
+    
+    // Hitung total lebar tabel
+    int total_width = 1 + 4 + 3 + max_id_width + 3 + max_nama_width + 3 + max_rute_width + 3 + 10 + 3 + 5 + 3 + 5 + 3 + max_jenis_width + 3 + 8 + 1;
+    
+    // Buat string format untuk garis horizontal
+    char horizontal_line[256];
+    memset(horizontal_line, '-', total_width);
+    horizontal_line[total_width] = '\0';
+    
     clearScreen();
-    printf("+---------------------------------------------------------------------------------------------------------------+\n");
-    printf("|                                            HASIL PENCARIAN TIKET                                              |\n");
-    printf("+---------------------------------------------------------------------------------------------------------------+\n");
-    printf("| %-4s | %-15s | %-15s | %-15s | %-10s | %-5s | %-5s | %-10s | %-8s | %-4s |\n", 
-           "No", "ID Kereta", "Nama Kereta", "Rute", "Tanggal", "Brkt", "Tiba", "Jenis", "Harga", "Kursi");
-    printf("+---------------------------------------------------------------------------------------------------------------+\n");
+    printf("+%s+\n", horizontal_line);
+    
+    // Hitung posisi tengah untuk judul
+    int title_len = strlen("HASIL PENCARIAN TIKET");
+    int padding = (total_width - title_len) / 2;
+    printf("|%*s%s%*s|\n", padding, "", "HASIL PENCARIAN TIKET", total_width - padding - title_len, "");
+    
+    printf("+%s+\n", horizontal_line);
+    
+    // Header tabel dengan lebar yang disesuaikan
+    printf("| %-4s | %-*s | %-*s | %-*s | %-10s | %-5s | %-5s | %-*s | %-8s |\n", 
+           "No", max_id_width, "ID Kereta", max_nama_width, "Nama Kereta", max_rute_width, "Rute", 
+           "Tanggal", "Brkt", "Tiba", max_jenis_width, "Jenis", "Harga");
+    
+    printf("+%s+\n", horizontal_line);
     
     NodeHasilPencarian* current = hasil.head;
     int no = 1;
     
     while (current != NULL) {
-        char rute[32];
+        char rute[64];
         sprintf(rute, "%s-%s", current->tiket.stasiun_asal, current->tiket.stasiun_tujuan);
         
-        printf("| %-4d | %-15s | %-15s | %-15s | %-10s | %-5s | %-5s | %-10s | %8.2f | %-4d |\n", 
+        printf("| %-4d | %-*s | %-*s | %-*s | %-10s | %-5s | %-5s | %-*s | %8.2f |\n", 
                no++, 
-               current->tiket.id_kereta,
-               current->tiket.nama_kereta,
-               rute,
+               max_id_width, current->tiket.id_kereta,
+               max_nama_width, current->tiket.nama_kereta,
+               max_rute_width, rute,
                current->tiket.tanggal,
                current->tiket.waktu_berangkat,
                current->tiket.waktu_tiba,
-               current->tiket.jenis_layanan,
-               current->tiket.harga_tiket,
-               current->tiket.kursi_tersedia);
+               max_jenis_width, current->tiket.jenis_layanan,
+               current->tiket.harga_tiket);
         
         current = current->next;
     }
     
-    printf("+---------------------------------------------------------------------------------------------------------------+\n");
+    printf("+%s+\n", horizontal_line);
     printf("Ditemukan %d tiket yang sesuai dengan kriteria pencarian.\n", hasil.count);
 }
 
@@ -513,6 +619,75 @@ void MenuPencarianTiket() {
     if (isEmptyKereta(globalListKereta)) {
         InisialisasiListKeretaGlobal();
         MuatDataKeretaKeGlobal();
+        printf("Debug [MenuPencarianTiket]: Status load data kereta: %s\n", 
+               isEmptyKereta(globalListKereta) ? "GAGAL (masih kosong)" : "BERHASIL");
+        
+        // Tambahkan proses untuk menambahkan data kereta yang ada di jadwal_kereta.txt
+        // tetapi tidak ada di informasi_umum.txt ke globalListKereta
+        printf("Debug [MenuPencarianTiket]: Menambahkan kereta yang belum terdaftar ke globalListKereta...\n");
+        FILE* jadwal_file = fopen(DB_JADWAL_KERETA, "r");
+        if (jadwal_file != NULL) {
+            char line[1024];
+            while (fgets(line, sizeof(line), jadwal_file)) {
+                char kode_kereta[20] = {0};
+                // Format: KodeKereta|Stasiun1,Stasiun2,...|waktu1,waktu2,...
+                char* token = strtok(line, "|");
+                if (token != NULL) {
+                    strncpy(kode_kereta, token, sizeof(kode_kereta) - 1);
+                    // Cek apakah kereta ada di database global
+                    if (GetJenisLayananById(globalListKereta, kode_kereta) == NULL) {
+                        // Tambahkan kereta dengan nilai default jika tidak ada
+                        printf("Debug [MenuPencarianTiket]: Menambahkan kereta %s yang tidak ada di database\n", kode_kereta);
+                        
+                        // Buat nama kereta berdasarkan informasi dari file informasi_umum.txt
+                        char nama_kereta[50];
+                        
+                        // Coba cari kereta dengan ID yang mirip untuk mendapatkan nama yang sesuai
+                        boolean nama_ditemukan = FALSE;
+                        FILE* info_file = fopen("informasi_umum.txt", "r");
+                        if (info_file != NULL) {
+                            char line[256];
+                            while (fgets(line, sizeof(line), info_file)) {
+                                char id_info[10], nama_info[50];
+                                // Format: ID|Nama|JenisLayanan|Harga|JumlahGerbong
+                                if (sscanf(line, "%[^|]|%[^|]", id_info, nama_info) == 2) {
+                                    // Jika ID sama dengan kode kereta yang dicari
+                                    if (strncmp(id_info, kode_kereta, 4) == 0) {
+                                        strcpy(nama_kereta, nama_info);
+                                        nama_ditemukan = TRUE;
+                                        printf("Debug [MenuPencarianTiket]: Nama kereta untuk %s ditemukan: %s\n", 
+                                               kode_kereta, nama_kereta);
+                                        break;
+                                    }
+                                }
+                            }
+                            fclose(info_file);
+                        }
+                        
+                        // Jika tidak ditemukan nama yang sesuai, gunakan nama default
+                        if (!nama_ditemukan) {
+                            // Buat nama default berdasarkan ID kereta
+                            if (strncmp(kode_kereta, "KA", 2) == 0) {
+                                sprintf(nama_kereta, "Kereta %s", kode_kereta);
+                            } else {
+                                strcpy(nama_kereta, kode_kereta);
+                            }
+                            printf("Debug [MenuPencarianTiket]: Nama kereta untuk %s tidak ditemukan, menggunakan default: %s\n", 
+                                   kode_kereta, nama_kereta);
+                        }
+                        
+                        InformasiKereta kereta_baru = BuatInformasiKereta(
+                            kode_kereta,                   // ID
+                            nama_kereta,                   // Nama yang lebih deskriptif
+                            "Ekonomi",                    // Jenis layanan default
+                            10000.0,                      // Harga default
+                            "6");                         // Jumlah gerbong default
+                        TambahInformasiKereta(&globalListKereta, kereta_baru);
+                    }
+                }
+            }
+            fclose(jadwal_file);
+        }
     }
     
     // Inisialisasi list hasil pencarian
@@ -556,6 +731,15 @@ void MenuPencarianTiket() {
     printf("Masukkan tanggal keberangkatan (DD-MM-YYYY): ");
     fgets(tanggal, sizeof(tanggal), stdin);
     tanggal[strcspn(tanggal, "\n")] = '\0';
+    // Normalisasi format tanggal ke DD-MM-YYYY jika user memasukkan dengan spasi atau tanda lain
+    {
+        int d, m, y;
+        if (sscanf(tanggal, "%d-%d-%d", &d, &m, &y) == 3 || sscanf(tanggal, "%d %d %d", &d, &m, &y) == 3) {
+            char tanggal_norm[11];
+            sprintf(tanggal_norm, "%02d-%02d-%04d", d, m, y);
+            strcpy(tanggal, tanggal_norm);
+        }
+    }
 
     // Dapatkan input jenis layanan
     printf("Masukkan jenis layanan (Ekonomi/Bisnis/Eksekutif): ");
@@ -646,64 +830,52 @@ void GenerateKodePembelian(char* kode_pembelian) {
             random_num);
 }
 
-// Simpan data pembelian ke dalam file riwayat pembelian
+// Simpan data pembelian ke dalam file riwayat_pemesanan.txt
 boolean SimpanRiwayatPembelianTiket(PembelianTiket pembelian) {
     // Validasi status pembelian
     if (pembelian.status != SELESAI) {
         printf("Error: Pembelian belum selesai\n");
         return FALSE;
     }
-    
-    // Konversi data pembelian ke Record
-    Record record;
-    InisialisasiRecord(&record);
-    
-    // Tambahkan informasi pembelian
-    TambahField(&record, "kode_pembelian", pembelian.kode_pembelian);
-    TambahField(&record, "id_kereta", pembelian.tiket_dipilih.id_kereta);
-    TambahField(&record, "nama_kereta", pembelian.tiket_dipilih.nama_kereta);
-    TambahField(&record, "stasiun_asal", pembelian.tiket_dipilih.stasiun_asal);
-    TambahField(&record, "stasiun_tujuan", pembelian.tiket_dipilih.stasiun_tujuan);
-    TambahField(&record, "tanggal", pembelian.tiket_dipilih.tanggal);
-    TambahField(&record, "waktu_berangkat", pembelian.tiket_dipilih.waktu_berangkat);
-    TambahField(&record, "waktu_tiba", pembelian.tiket_dipilih.waktu_tiba);
-    TambahField(&record, "jenis_layanan", pembelian.tiket_dipilih.jenis_layanan);
-    
-    // Konversi harga tiket ke string
-    char harga_str[20];
-    sprintf(harga_str, "%.2f", pembelian.tiket_dipilih.harga_tiket);
-    TambahField(&record, "harga_tiket", harga_str);
-    
-    // Tambahkan informasi kursi
-    char nomor_gerbong_str[5];
-    sprintf(nomor_gerbong_str, "%d", pembelian.nomor_gerbong);
-    TambahField(&record, "nomor_gerbong", nomor_gerbong_str);
-    TambahField(&record, "kode_kursi", pembelian.kode_kursi);
-    
-    // Tambahkan informasi penumpang
-    TambahField(&record, "nama_penumpang", pembelian.nama_penumpang);
-    TambahField(&record, "nomor_identitas", pembelian.nomor_identitas);
-    
-    // Konversi total bayar ke string
-    char total_bayar_str[20];
-    sprintf(total_bayar_str, "%.2f", pembelian.total_bayar);
-    TambahField(&record, "total_bayar", total_bayar_str);
-    
-    // Tambahkan waktu pembelian
+    // Buka file riwayat_pemesanan.txt untuk append
+    FILE *f = fopen("riwayat_pemesanan.txt", "a");
+    if (!f) {
+        printf("Warning: Gagal membuka riwayat_pemesanan.txt\n");
+        return FALSE;
+    }
+    // Ambil timestamp saat ini
     time_t now = time(NULL);
     struct tm *tm_now = localtime(&now);
-    char waktu_pembelian[20];
-    sprintf(waktu_pembelian, "%04d-%02d-%02d %02d:%02d:%02d", 
-            tm_now->tm_year + 1900, 
-            tm_now->tm_mon + 1, 
+    char waktu_real[20];
+    sprintf(waktu_real, "%04d-%02d-%02d %02d:%02d:%02d",
+            tm_now->tm_year + 1900,
+            tm_now->tm_mon + 1,
             tm_now->tm_mday,
             tm_now->tm_hour,
             tm_now->tm_min,
             tm_now->tm_sec);
-    TambahField(&record, "waktu_pembelian", waktu_pembelian);
-    
-    // Simpan record ke file
-    return SimpanRecord(DB_RIWAYAT_PEMBELIAN, &record, "kode_pembelian");
+    // Tulis data dengan format:
+    // id_kereta|nama_kereta|stasiun_asal|stasiun_tujuan|waktu_berangkat|
+    // waktu_tiba|tanggal|jenis_layanan|nama_penumpang|email|nomor_telepon|
+    // kode_kursi|nomor_gerbong|waktu_real
+    fprintf(f, "%s|%s|%s|%s|%s|%s|%s|%.2f|%s|%s|%s|%s|%s|%d|%s\n",
+            pembelian.tiket_dipilih.id_kereta,
+            pembelian.tiket_dipilih.nama_kereta,
+            pembelian.tiket_dipilih.stasiun_asal,
+            pembelian.tiket_dipilih.stasiun_tujuan,
+            pembelian.tiket_dipilih.waktu_berangkat,
+            pembelian.tiket_dipilih.waktu_tiba,
+            pembelian.tiket_dipilih.tanggal,
+            pembelian.tiket_dipilih.harga_tiket,
+            pembelian.tiket_dipilih.jenis_layanan,
+            pembelian.nama_penumpang,
+            pembelian.email_penumpang,
+            pembelian.nomor_telepon,
+            pembelian.kode_kursi,
+            pembelian.nomor_gerbong,
+            waktu_real);
+    fclose(f);
+    return TRUE;
 }
 
 // Fungsi untuk pemilihan kursi pada proses pembelian tiket
@@ -722,34 +894,68 @@ void MenuPemilihanKursi(PembelianTiket* pembelian) {
            pembelian->tiket_dipilih.stasiun_tujuan);
     printf("Tanggal: %s\n\n", pembelian->tiket_dipilih.tanggal);
     
-    printf("Tekan Enter untuk melanjutkan ke pemilihan kursi...");
-    getchar();
-    
-    // Konversi format tanggal dari DD-MM-YYYY menjadi YYYY-MM-DD untuk database
-    char tanggal_db[11];
-    if (strlen(pembelian->tiket_dipilih.tanggal) == 10 && 
-        pembelian->tiket_dipilih.tanggal[2] == '-' && 
-        pembelian->tiket_dipilih.tanggal[5] == '-') {
-        // Format tanggal input: DD-MM-YYYY
-        sprintf(tanggal_db, "%c%c%c%c-%c%c-%c%c", 
-                pembelian->tiket_dipilih.tanggal[6], pembelian->tiket_dipilih.tanggal[7], 
-                pembelian->tiket_dipilih.tanggal[8], pembelian->tiket_dipilih.tanggal[9], // YYYY
-                pembelian->tiket_dipilih.tanggal[3], pembelian->tiket_dipilih.tanggal[4], // MM
-                pembelian->tiket_dipilih.tanggal[0], pembelian->tiket_dipilih.tanggal[1]); // DD
-        tanggal_db[10] = '\0';
-    } else {
-        // Jika format tidak sesuai, gunakan tanggal asli
-        strcpy(tanggal_db, pembelian->tiket_dipilih.tanggal);
+    // Pemilihan kursi: loop hingga user memilih kursi atau memilih kembali
+    {
+        char choice_buf[4];
+        while (1) {
+            printf("Tekan Enter untuk melanjutkan ke pemilihan kursi atau 0 untuk kembali: ");
+            if (fgets(choice_buf, sizeof(choice_buf), stdin) && choice_buf[0] == '0') {
+                // Kembali ke menu sebelumnya
+                return;
+            }
+
+            // Konversi tanggal ke format database YYYY-MM-DD
+            char tanggal_db[11];
+            if (strlen(pembelian->tiket_dipilih.tanggal) == 10 &&
+                pembelian->tiket_dipilih.tanggal[2] == '-' &&
+                pembelian->tiket_dipilih.tanggal[5] == '-') {
+                sprintf(tanggal_db, "%c%c%c%c-%c%c-%c%c",
+                        pembelian->tiket_dipilih.tanggal[6], pembelian->tiket_dipilih.tanggal[7],
+                        pembelian->tiket_dipilih.tanggal[8], pembelian->tiket_dipilih.tanggal[9],
+                        pembelian->tiket_dipilih.tanggal[3], pembelian->tiket_dipilih.tanggal[4],
+                        pembelian->tiket_dipilih.tanggal[0], pembelian->tiket_dipilih.tanggal[1]);
+                tanggal_db[10] = '\0';
+            } else {
+                strcpy(tanggal_db, pembelian->tiket_dipilih.tanggal);
+            }
+
+            // Reset pilihan kursi
+            pembelian->nomor_gerbong = 0;
+            strcpy(pembelian->kode_kursi, "");
+
+            // Siapkan data kursi (baca atau inisialisasi)
+            KursiKereta kereta;
+            strcpy(kereta.id_kereta, pembelian->tiket_dipilih.id_kereta);
+            strcpy(kereta.tanggal, tanggal_db);
+            if (!MuatDataKursiDariFile(&kereta, "kursi_kereta.txt")) {
+                // ... existing default setup ...
+            } else {
+                // ... existing reload/append logic ...
+            }
+
+            // Panggil menu pemilihan kursi
+            MenuKursiKereta(pembelian->tiket_dipilih.id_kereta,
+                            tanggal_db,
+                            pembelian->tiket_dipilih.stasiun_asal,
+                            pembelian->tiket_dipilih.stasiun_tujuan,
+                            &pembelian->nomor_gerbong,
+                            pembelian->kode_kursi);
+
+            // Periksa apakah kursi telah dipilih
+            if (pembelian->nomor_gerbong > 0 && pembelian->kode_kursi[0] != '\0') {
+                break;
+            }
+
+            // Jika belum memilih, tanyakan ulang atau kembali
+            printf("\nAnda belum memilih kursi.\n");
+            printf("Tekan Enter untuk mencoba lagi atau 0 untuk kembali: ");
+            if (fgets(choice_buf, sizeof(choice_buf), stdin) && choice_buf[0] == '0') {
+                return;
+            }
+            // else ulangi loop
+        }
     }
-    
-    printf("Debug: Menggunakan tanggal database: %s\n", tanggal_db);
-    
-    // Panggil MenuKursiKereta dengan parameter output dan tanggal yang sudah dikonversi
-    MenuKursiKereta(pembelian->tiket_dipilih.id_kereta, 
-                   tanggal_db,
-                   &pembelian->nomor_gerbong,
-                   pembelian->kode_kursi);
-    
+
     // Update status pembelian
     pembelian->status = PEMILIHAN_KURSI;
     
@@ -820,6 +1026,11 @@ void MenuDataPenumpang(PembelianTiket* pembelian) {
                 strcpy(user_aktif.alamat, AmbilNilai(&record, "alamat"));
                 strcpy(user_aktif.nomor_telepon, AmbilNilai(&record, "nomor_telepon"));
                 
+                // Tampilkan data penumpang yang diambil dari akun
+                printf("\nEmail           : %s\n", user_aktif.email);
+                printf("Nama            : %s\n", user_aktif.nama);
+                printf("Nomor Telepon   : %s\n\n", user_aktif.nomor_telepon);
+                
                 // Isi data penumpang dari akun
                 IsiDataPenumpangDariAkun(pembelian, user_aktif);
                 printf("\nData penumpang berhasil diisi dari akun.\n");
@@ -856,6 +1067,11 @@ void MenuDataPenumpang(PembelianTiket* pembelian) {
                 strcpy(user_aktif.nama, AmbilNilai(&record, "nama"));
                 strcpy(user_aktif.alamat, AmbilNilai(&record, "alamat"));
                 strcpy(user_aktif.nomor_telepon, AmbilNilai(&record, "nomor_telepon"));
+                
+                // Tampilkan data penumpang yang diambil dari akun
+                printf("\nEmail           : %s\n", user_aktif.email);
+                printf("Nama            : %s\n", user_aktif.nama);
+                printf("Nomor Telepon   : %s\n\n", user_aktif.nomor_telepon);
                 
                 // Isi data penumpang dari akun
                 IsiDataPenumpangDariAkun(pembelian, user_aktif);
@@ -913,7 +1129,6 @@ void MenuDataPenumpang(PembelianTiket* pembelian) {
     printf("Email           : %s\n", pembelian->email_penumpang);
     printf("Nama            : %s\n", pembelian->nama_penumpang);
     printf("Nomor Telepon   : %s\n", pembelian->nomor_telepon);
-    printf("Nomor Identitas : %s\n\n", pembelian->nomor_identitas);
     
     // Lanjut ke pembayaran
     printf("Lanjut ke pembayaran? (y/n): ");
@@ -937,11 +1152,6 @@ boolean IsiDataPenumpangDariAkun(PembelianTiket* pembelian, User user_aktif) {
     strcpy(pembelian->nama_penumpang, user_aktif.nama);
     strcpy(pembelian->nomor_telepon, user_aktif.nomor_telepon);
     
-    // Nomor identitas perlu diisi manual karena tidak ada di User
-    printf("Nomor Identitas (KTP/SIM/Paspor): ");
-    fgets(pembelian->nomor_identitas, sizeof(pembelian->nomor_identitas), stdin);
-    pembelian->nomor_identitas[strcspn(pembelian->nomor_identitas, "\n")] = '\0';
-    
     return TRUE;
 }
 
@@ -964,13 +1174,7 @@ boolean ValidasiDataPenumpang(PembelianTiket pembelian) {
         printf("Error: Format nomor telepon tidak valid.\n");
         return FALSE;
     }
-    
-    // Validasi nomor identitas (minimal 10 karakter)
-    if (strlen(pembelian.nomor_identitas) < 10) {
-        printf("Error: Nomor identitas minimal 10 karakter.\n");
-        return FALSE;
-    }
-    
+        
     return TRUE;
 }
 

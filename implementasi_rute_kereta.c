@@ -12,6 +12,14 @@ Politeknik Negeri Bandung
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <ctype.h> // needed for tolower
+
+// Define maximum number of adjacency connections per node
+#define MAX_ADJ 10
+
+// Add graph adjacency for station connectivity
+static int adjCount[jml_maks+1];
+static int adjList[jml_maks+1][MAX_ADJ];
 
 // *** OPERASI DASAR RUTE KERETA ***
 
@@ -602,10 +610,20 @@ void TampilkanJalurTerpendek(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlah
 
 // *** FUNGSI PEMBANTU ***
 
+// Case-insensitive string equality
+boolean StrCaseEqual(const char *a, const char *b) {
+    while (*a && *b) {
+        if (tolower((unsigned char)*a) != tolower((unsigned char)*b)) return FALSE;
+        a++; b++;
+    }
+    return *a == *b;
+}
+
+// Cari indeks stasiun dengan case-insensitive match
 int CariIndeksStasiun(Isi_Tree pohonRute, const char* namaStasiun) {
     int i;
     for (i = 1; i <= jml_maks; i++) {
-        if (pohonRute[i].info != NULL && strcmp(pohonRute[i].info, namaStasiun) == 0) {
+        if (pohonRute[i].info != NULL && StrCaseEqual(pohonRute[i].info, namaStasiun)) {
             return i;
         }
     }
@@ -653,11 +671,11 @@ void SimpanRuteKeFile(Isi_Tree pohonRute, InfoRute* infoJarak, int jumlahRute, c
     }
     fprintf(file, "%d %d\n", jumlahStasiun, jumlahRute);
     
-    // Simpan informasi stasiun
+    // Simpan informasi stasiun dengan indext
     for (i = 1; i <= jml_maks; i++) {
         if (pohonRute[i].info != NULL) {
-            fprintf(file, "%d %s %d %d %d\n", i, pohonRute[i].info, 
-                    pohonRute[i].ps_pr, pohonRute[i].ps_fs, pohonRute[i].ps_nb);
+            fprintf(file, "%d %s %d %d %d %d\n", i, pohonRute[i].info, 
+                    pohonRute[i].ps_pr, pohonRute[i].ps_fs, pohonRute[i].ps_nb, i);
         }
     }
     
@@ -681,7 +699,7 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     
     // Baca jumlah stasiun dan jumlah rute
     int jumlahStasiun;
-    int i, idx, ps_pr, ps_fs, ps_nb;
+    int i, idx, ps_pr, ps_fs, ps_nb, indext;
     char namaStasiun[100], stasiunAsal[100], stasiunTujuan[100];
     int jarak, waktuTempuh;
     
@@ -700,12 +718,12 @@ void BacaRuteDariFile(Isi_Tree *pohonRute, InfoRute** infoJarak, int *jumlahRute
     
     // Baca informasi stasiun
     for (i = 0; i < jumlahStasiun; i++) {
-        fscanf(file, "%d %s %d %d %d\n", &idx, namaStasiun, &ps_pr, &ps_fs, &ps_nb);
+        fscanf(file, "%d %s %d %d %d %d\n", &idx, namaStasiun, &ps_pr, &ps_fs, &ps_nb, &indext);
         
-        (*pohonRute)[idx].info = strdup(namaStasiun);
-        (*pohonRute)[idx].ps_pr = ps_pr;
-        (*pohonRute)[idx].ps_fs = ps_fs;
-        (*pohonRute)[idx].ps_nb = ps_nb;
+        (*pohonRute)[indext].info = strdup(namaStasiun);
+        (*pohonRute)[indext].ps_pr = ps_pr;
+        (*pohonRute)[indext].ps_fs = ps_fs;
+        (*pohonRute)[indext].ps_nb = ps_nb;
     }
     
     // Alokasi memori untuk infoJarak
@@ -765,4 +783,365 @@ void InsertRuteNode(Isi_Tree P, const char* info, int parent_idx) {
         }
         P[current].ps_nb = empty_idx;
     }
+}
+
+// *** FUNCTIONS MOVED FROM DASHBOARD_MANAJEMEN_JADWAL.C ***
+
+boolean IsStationActiveAndName(int idx, char *outName) {
+    FILE *file = fopen("rute_kereta.txt", "r");
+    if (!file) return FALSE;
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), file)) {
+        char nameBuf[50], statusBuf[10];
+        int idBuf, nbBuf, prBuf, fsBuf, indextBuf;
+        // Format: "nama"='Banjar' | "status"=TRUE | parent | nextBrother | firstSon | indext
+        if (sscanf(buffer,
+            "\"nama\"='%[^']' | \"status\"=%s | %d | %d | %d | %d",
+            nameBuf, statusBuf, &prBuf, &nbBuf, &fsBuf, &indextBuf) == 6) {
+            if (indextBuf == idx && strcmp(statusBuf, "TRUE") == 0) {
+                strcpy(outName, nameBuf);
+                fclose(file);
+                return TRUE;
+            }
+        }
+    }
+    fclose(file);
+    return FALSE;
+}
+
+void BacaDataStasiun(Isi_Tree tree) {
+    // Inisialisasi tree
+    int i;
+    for (i = 0; i <= jml_maks; i++) {
+        tree[i].info = NULL;
+        tree[i].ps_fs = 0;
+        tree[i].ps_nb = 0;
+        tree[i].ps_pr = 0;
+        
+        // Inisialisasi adjacency list
+        adjCount[i] = 0;
+    }
+    
+    FILE *file = fopen("rute_kereta.txt", "r");
+    if (file == NULL) {
+        printf("Error: Gagal membuka file rute kereta!\n");
+        return;
+    }
+    
+    // Pass pertama: baca semua node dan simpan info dan parent
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), file)) {
+        char name[50], status[10];
+        int parent = 0, nb = 0, fs = 0, indext = 0;
+        // Parse line: "nama"='Banjar' | "status"=TRUE | parent | nextBrother | firstSon | indext
+        if (sscanf(buffer,
+            "\"nama\"='%[^']' | \"status\"=%s | %d | %d | %d | %d",
+            name, status, &parent, &nb, &fs, &indext) == 6) {
+            if (indext >= 0 && indext <= jml_maks) {
+                tree[indext].info = strdup(name);
+                tree[indext].ps_nb = nb;
+                tree[indext].ps_fs = fs;
+                tree[indext].ps_pr = parent;
+            }
+        }
+    }
+    
+    // Reset file pointer untuk pass kedua
+    fseek(file, 0, SEEK_SET);
+    
+    // Pass kedua: set first son pada parent (tidak diperlukan lagi karena data firstSon sudah ada di file)
+    
+    fclose(file);
+    
+    // Build adjacency list untuk BFS - Gunakan struktur tree yang sebenarnya
+    for (i = 0; i <= jml_maks; i++) {
+        if (tree[i].info != NULL) {
+            // Tambahkan parent ke adjacency list
+            if (tree[i].ps_pr > 0 && tree[i].ps_pr <= jml_maks && tree[tree[i].ps_pr].info != NULL) {
+                // Cek apakah koneksi sudah ada
+                boolean alreadyConnected = FALSE;
+                int j;
+                for (j = 0; j < adjCount[i]; j++) {
+                    if (adjList[i][j] == tree[i].ps_pr) {
+                        alreadyConnected = TRUE;
+                        break;
+                    }
+                }
+                if (!alreadyConnected && adjCount[i] < MAX_ADJ) {
+                    adjList[i][adjCount[i]++] = tree[i].ps_pr;
+                }
+                
+                // Tambahkan koneksi balik (parent -> child)
+                alreadyConnected = FALSE;
+                for (j = 0; j < adjCount[tree[i].ps_pr]; j++) {
+                    if (adjList[tree[i].ps_pr][j] == i) {
+                        alreadyConnected = TRUE;
+                        break;
+                    }
+                }
+                if (!alreadyConnected && adjCount[tree[i].ps_pr] < MAX_ADJ) {
+                    adjList[tree[i].ps_pr][adjCount[tree[i].ps_pr]++] = i;
+                }
+            }
+            
+            // Tambahkan next brother ke adjacency list
+            if (tree[i].ps_nb > 0 && tree[i].ps_nb <= jml_maks && tree[tree[i].ps_nb].info != NULL) {
+                // Cek apakah koneksi sudah ada
+                boolean alreadyConnected = FALSE;
+                int j;
+                for (j = 0; j < adjCount[i]; j++) {
+                    if (adjList[i][j] == tree[i].ps_nb) {
+                        alreadyConnected = TRUE;
+                        break;
+                    }
+                }
+                if (!alreadyConnected && adjCount[i] < MAX_ADJ) {
+                    adjList[i][adjCount[i]++] = tree[i].ps_nb;
+                }
+                
+                // Tambahkan koneksi balik (brother -> this)
+                alreadyConnected = FALSE;
+                for (j = 0; j < adjCount[tree[i].ps_nb]; j++) {
+                    if (adjList[tree[i].ps_nb][j] == i) {
+                        alreadyConnected = TRUE;
+                        break;
+                    }
+                }
+                if (!alreadyConnected && adjCount[tree[i].ps_nb] < MAX_ADJ) {
+                    adjList[tree[i].ps_nb][adjCount[tree[i].ps_nb]++] = i;
+                }
+            }
+            
+            // Tambahkan first son ke adjacency list
+            if (tree[i].ps_fs > 0 && tree[i].ps_fs <= jml_maks && tree[tree[i].ps_fs].info != NULL) {
+                // Cek apakah koneksi sudah ada
+                boolean alreadyConnected = FALSE;
+                int j;
+                for (j = 0; j < adjCount[i]; j++) {
+                    if (adjList[i][j] == tree[i].ps_fs) {
+                        alreadyConnected = TRUE;
+                        break;
+                    }
+                }
+                if (!alreadyConnected && adjCount[i] < MAX_ADJ) {
+                    adjList[i][adjCount[i]++] = tree[i].ps_fs;
+                }
+                
+                // Tambahkan koneksi balik (son -> parent)
+                alreadyConnected = FALSE;
+                for (j = 0; j < adjCount[tree[i].ps_fs]; j++) {
+                    if (adjList[tree[i].ps_fs][j] == i) {
+                        alreadyConnected = TRUE;
+                        break;
+                    }
+                }
+                if (!alreadyConnected && adjCount[tree[i].ps_fs] < MAX_ADJ) {
+                    adjList[tree[i].ps_fs][adjCount[tree[i].ps_fs]++] = i;
+                }
+            }
+        }
+    }
+}
+
+void AddDirectConnection(Isi_Tree tree, int idx1, int idx2) {
+    if (idx1 >= 0 && idx1 <= jml_maks && idx2 >= 0 && idx2 <= jml_maks &&
+        tree[idx1].info != NULL && tree[idx2].info != NULL) {
+        
+        // Tambahkan idx2 ke adjacency list idx1
+        boolean alreadyConnected = FALSE;
+        int j;
+        for (j = 0; j < adjCount[idx1]; j++) {
+            if (adjList[idx1][j] == idx2) {
+                alreadyConnected = TRUE;
+                break;
+            }
+        }
+        if (!alreadyConnected && adjCount[idx1] < MAX_ADJ) {
+            adjList[idx1][adjCount[idx1]++] = idx2;
+        }
+        
+        // Tambahkan idx1 ke adjacency list idx2
+        alreadyConnected = FALSE;
+        for (j = 0; j < adjCount[idx2]; j++) {
+            if (adjList[idx2][j] == idx1) {
+                alreadyConnected = TRUE;
+                break;
+            }
+        }
+        if (!alreadyConnected && adjCount[idx2] < MAX_ADJ) {
+            adjList[idx2][adjCount[idx2]++] = idx1;
+        }
+    }
+}
+
+int GetActiveStationsBetween(Isi_Tree tree, const char *origin, const char *destination, StationInfo *stations, int maxStations) {
+    // Cari indeks stasiun asal dan tujuan (case-insensitive)
+    int originIdx = -1, destIdx = -1;
+    int i;
+    for (i = 0; i <= jml_maks; i++) {
+        if (tree[i].info && StrCaseEqual(tree[i].info, origin)) originIdx = i;
+        if (tree[i].info && StrCaseEqual(tree[i].info, destination)) destIdx = i;
+    }
+    if (originIdx < 0 || destIdx < 0) return 0;
+
+    // BFS untuk menemukan jalur antara originIdx dan destIdx
+    boolean visited[jml_maks+1];
+    int parent[jml_maks+1];
+    for (i = 0; i <= jml_maks; i++) {
+        visited[i] = FALSE;
+        parent[i] = -1;
+    }
+    int queue[jml_maks+1];
+    int front = 0, rear = 0;
+    visited[originIdx] = TRUE;
+    queue[rear++] = originIdx;
+    boolean found = FALSE;
+    while (front < rear) {
+        int curr = queue[front++];
+        if (curr == destIdx) { found = TRUE; break; }
+        // Traverse undirected adjacency list
+        int k;
+        for (k = 0; k < adjCount[curr]; k++) {
+            int nxt = adjList[curr][k];
+            if (nxt > 0 && !visited[nxt]) {
+                visited[nxt] = TRUE;
+                parent[nxt] = curr;
+                queue[rear++] = nxt;
+            }
+        }
+    }
+    if (!found) {
+        printf("DEBUG: Tidak ditemukan jalur antara %s dan %s (idx %d -> %d)\n", origin, destination, originIdx, destIdx);
+        return 0;
+    }
+    
+    // Rekonstruksi path
+    int path[jml_maks+1];
+    int pathLen = 0;
+    int at;
+    for (at = destIdx; at != -1; at = parent[at]) {
+        path[pathLen++] = at;
+    }
+
+    // Ambil stasiun di antara origin dan destination
+    int count = 0;
+    for (i = pathLen - 2; i > 0 && count < maxStations; i--) {
+        int idx = path[i];
+        char nameBuf[50];
+        if (IsStationActiveAndName(idx, nameBuf)) {
+            strcpy(stations[count].name, nameBuf);
+            stations[count].active = TRUE;
+            stations[count].index = idx;
+            count++;
+        }
+    }
+    return count;
+}
+
+int GetPathToRoot(Isi_Tree tree, int stationIdx, int path[], int maxPath) {
+    int pathLen = 0;
+    int current = stationIdx;
+    
+    // Telusuri dari stasiun sampai ke root (parent = 0)
+    while (current >= 0 && pathLen < maxPath) {
+        path[pathLen++] = current;
+        
+        // Jika sudah sampai root (idx=0 atau parent=0), berhenti
+        if (current == 0 || tree[current].ps_pr == 0) break;
+        
+        current = tree[current].ps_pr; // Naik ke parent
+    }
+    
+    return pathLen;
+}
+
+int GetRouteStations(const char *origin, const char *destination, char routeNames[][50], int maxStations) {
+    Isi_Tree tree;
+    BacaDataStasiun(tree);
+    
+    // Cari indeks stasiun origin dan destination (case-insensitive)
+    int originIdx = -1, destIdx = -1;
+    int i;
+    for (i = 0; i <= jml_maks; i++) {
+        if (tree[i].info && StrCaseEqual(tree[i].info, origin)) originIdx = i;
+        if (tree[i].info && StrCaseEqual(tree[i].info, destination)) destIdx = i;
+    }
+    if (originIdx < 0 || destIdx < 0) {
+        return 0;
+    }
+    
+    // Jika origin dan destination sama
+    if (originIdx == destIdx) {
+        if (maxStations > 0 && tree[originIdx].info) {
+            strncpy(routeNames[0], tree[originIdx].info, 49);
+            routeNames[0][49] = '\0';
+            return 1;
+        }
+        return 0;
+    }
+    
+    // Gunakan algoritma BFS untuk mencari jalur terpendek
+    boolean visited[jml_maks+1];
+    int parent[jml_maks+1];
+    int distance[jml_maks+1];
+    
+    for (i = 0; i <= jml_maks; i++) {
+        visited[i] = FALSE;
+        parent[i] = -1;
+        distance[i] = 999999; // Infinity
+    }
+    
+    // BFS
+    int queue[jml_maks+1];
+    int front = 0, rear = 0;
+    
+    queue[rear++] = originIdx;
+    visited[originIdx] = TRUE;
+    distance[originIdx] = 0;
+    
+    boolean found = FALSE;
+    while (front < rear && !found) {
+        int curr = queue[front++];
+        
+        if (curr == destIdx) {
+            found = TRUE;
+            break;
+        }
+        
+        // Periksa semua tetangga
+        int i;
+        for (i = 0; i < adjCount[curr]; i++) {
+            int next = adjList[curr][i];
+            if (!visited[next]) {
+                visited[next] = TRUE;
+                parent[next] = curr;
+                distance[next] = distance[curr] + 1;
+                queue[rear++] = next;
+            }
+        }
+    }
+    
+    if (!found) {
+        return 0;
+    }
+    
+    // Rekonstruksi jalur
+    int path[jml_maks+1];
+    int pathLen = 0;
+    int at;
+    for (at = destIdx; at != -1; at = parent[at]) {
+        path[pathLen++] = at;
+    }
+    
+    // Balik jalur (dari origin ke destination)
+    int routeLen = 0;
+    for (i = pathLen - 1; i >= 0 && routeLen < maxStations; i--) {
+        int idx = path[i];
+        if (tree[idx].info) {
+            strncpy(routeNames[routeLen++], tree[idx].info, 49);
+            routeNames[routeLen-1][49] = '\0';
+        }
+    }
+    
+    return routeLen;
 } 

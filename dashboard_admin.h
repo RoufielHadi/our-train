@@ -17,6 +17,10 @@ Politeknik Negeri Bandung
 #include "boolean.h"
 #include "databases.h"
 #include "clear.h"
+
+// Forward declaration
+typedef struct HashPassword HashPassword;
+
 #include "hash_password.h"
 
 // *** PROTOTYPE FUNGSI DASHBOARD ADMIN ***
@@ -58,16 +62,6 @@ void TampilkanMenuManajemenAkunUser(const char* email);
 /* Tujuan : Menampilkan menu manajemen akun user */
 /* IS      : email terdefinisi */
 /* FS      : Menu manajemen akun user ditampilkan */
-
-void TampilkanMenuManajemenAkunKasir(const char* email, HashPassword* morseTree);
-/* Tujuan : Menampilkan menu manajemen akun kasir */
-/* IS      : email terdefinisi, morseTree terdefinisi */
-/* FS      : Menu manajemen akun kasir ditampilkan */
-
-void TampilkanMenuManajemenAkunMesin(const char* email, HashPassword* morseTree);
-/* Tujuan : Menampilkan menu manajemen akun mesin */
-/* IS      : email terdefinisi, morseTree terdefinisi */
-/* FS      : Menu manajemen akun mesin ditampilkan */
 
 // Tambahkan prototype untuk menu gabungan kereta dan jadwal
 void TampilkanMenuManajemenKeretaDanJadwal(const char* email);

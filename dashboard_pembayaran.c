@@ -10,11 +10,29 @@ Politeknik Negeri Bandung
 #include "dashboard_pembayaran.h"
 #include "hash_password.h"
 #include "tree_biner.h"
+#include "databases.h"
+#include "implementasi_pembayaran.h"
+#include "linked.h"
+#include "dashboard_kursi_kereta.h"
 
 // Variabel global untuk menyimpan pohon hash
-extern HashPassword morseTree;
-// Variabel global untuk menyimpan list pembayaran
-extern ListPayment globalListPayment;
+extern HashPassword* morseTree;
+
+// Helper: baca data pembayaran langsung dari database
+static boolean BacaPaymentEmail(const char* email, Payment* hasil) {
+    Record rec; InisialisasiRecord(&rec);
+    if (BacaRekeningUser(&rec, email)) {
+        char* nr = AmbilNilai(&rec, "nomorRekening");
+        char* saldo_str = AmbilNilai(&rec, "saldo");
+        char* pin_str = AmbilNilai(&rec, "pin");
+        strcpy(hasil->email, email);
+        strcpy(hasil->no_rekening, nr ? nr : "");
+        hasil->saldo = saldo_str ? atoi(saldo_str) : 0;
+        strcpy(hasil->pin, pin_str ? pin_str : "");
+        return TRUE;
+    }
+    return FALSE;
+}
 
 // *** FUNGSI UTAMA DASHBOARD PEMBAYARAN ***
 boolean MenuPembayaran(PembelianTiket* pembelian, const char* email_user) {
@@ -30,20 +48,36 @@ boolean MenuPembayaran(PembelianTiket* pembelian, const char* email_user) {
         getchar();
         return FALSE;
     }
+
     
     // Tampilkan detail pembayaran
     TampilkanDetailPembayaran(*pembelian);
     
-    // Tampilkan saldo user
-    TampilkanSaldoUser(email_user);
+    // Tampilkan saldo user (baca langsung DB)
+    {
+        Payment p; 
+        if (BacaPaymentEmail(email_user, &p)) {
+            printf("\n--- INFORMASI SALDO ---\n");
+            printf("Email           : %s\n", p.email);
+            printf("Nomor Rekening  : %s\n", p.no_rekening);
+            printf("Saldo           : Rp %d\n", p.saldo);
+        } else {
+            printf("\nData pembayaran untuk email %s tidak ditemukan.\n", email_user);
+            printf("Silakan isi saldo terlebih dahulu.\n");
+            printf("Tekan Enter untuk kembali..."); getchar();
+            return FALSE;
+        }
+    }
     
-    // Cek kecukupan saldo
-    if (!CekSaldoCukup(email_user, pembelian->tiket_dipilih.harga_tiket)) {
-        printf("\nSaldo Anda tidak mencukupi untuk melakukan pembayaran.\n");
-        printf("Silakan isi saldo terlebih dahulu.\n");
-        printf("Tekan Enter untuk kembali...");
-        getchar();
-        return FALSE;
+    // Cek kecukupan saldo langsung DB
+    {
+        Payment p; BacaPaymentEmail(email_user, &p);
+        if (p.saldo < (int)pembelian->tiket_dipilih.harga_tiket) {
+            printf("\nSaldo Anda tidak mencukupi untuk melakukan pembayaran.\n");
+            printf("Silakan isi saldo terlebih dahulu.\n");
+            printf("Tekan Enter untuk kembali..."); getchar();
+            return FALSE;
+        }
     }
     
     // Konfirmasi pembayaran
@@ -86,38 +120,80 @@ boolean MenuPembayaran(PembelianTiket* pembelian, const char* email_user) {
         }
     }
     
-    // Proses pembayaran
-    if (ProsesPembayaran(email_user, pembelian->tiket_dipilih.harga_tiket)) {
-        // Update total bayar dan status pembelian
-        pembelian->total_bayar = pembelian->tiket_dipilih.harga_tiket;
-        pembelian->status = SELESAI;
-        
-        // Simpan riwayat pembelian
-        if (SimpanRiwayatPembelianTiket(*pembelian)) {
-            clearScreen();
-            printf("+----------------------------------------------+\n");
-            printf("|           PEMBAYARAN BERHASIL               |\n");
-            printf("+----------------------------------------------+\n");
-            printf("Kode Pembelian: %s\n", pembelian->kode_pembelian);
-            printf("Total Pembayaran: Rp %.2f\n", pembelian->total_bayar);
-            printf("\nTiket berhasil dibeli!\n");
-            printf("Terima kasih telah menggunakan layanan OurTrain.\n");
-            printf("\nTekan Enter untuk kembali...");
-            getchar();
-            return TRUE;
-        } else {
-            printf("\nPembayaran berhasil, tetapi gagal menyimpan riwayat pembelian.\n");
-            printf("Silakan hubungi customer service dengan kode pembelian: %s\n", pembelian->kode_pembelian);
-            printf("\nTekan Enter untuk kembali...");
-            getchar();
-            return TRUE;
+    // Proses pembayaran: langsung update DB
+    {
+        // Baca record
+        Record rec; InisialisasiRecord(&rec);
+        if (!BacaRekeningUser(&rec, email_user)) {
+            return FALSE;
         }
+        // Kurangi saldo di record
+        int newSaldo;
+        {
+            char* saldo_str = AmbilNilai(&rec, "saldo");
+            newSaldo = saldo_str ? atoi(saldo_str) - (int)pembelian->tiket_dipilih.harga_tiket : 0;
+        }
+        char buf[20]; sprintf(buf, "%d", newSaldo);
+        UbahNilai(&rec, "saldo", buf);
+        // Update DB
+        if (!UpdateRekeningUser(&rec)) return FALSE;
+    }
+    
+    // Proses berhasil: update status pembelian dan simpan riwayat
+    pembelian->total_bayar = pembelian->tiket_dipilih.harga_tiket;
+    pembelian->status = SELESAI;
+    // Reserve seat in database now that payment succeeded
+    {
+        KursiKereta kereta;
+        strcpy(kereta.id_kereta, pembelian->tiket_dipilih.id_kereta);
+        strcpy(kereta.tanggal, pembelian->tiket_dipilih.tanggal);
+        // Determine jumlah_gerbong from existing DB
+        kereta.jumlah_gerbong = HitungJumlahGerbongDariFile(kereta.id_kereta,
+                                                          kereta.tanggal,
+                                                          DB_KURSI_KERETA);
+        if (kereta.jumlah_gerbong <= 0) kereta.jumlah_gerbong = 1;
+        JenisKereta jenis = GetJenisKeretaById(kereta.id_kereta);
+        // Initialize and load current seat data
+        InisialisasiKursiDenganJadwal(&kereta, jenis);
+        MuatDataKursiDariFile(&kereta, DB_KURSI_KERETA);
+        // Mark the purchased seat as reserved
+        PilihKursi(&kereta,
+                   pembelian->nomor_gerbong,
+                   pembelian->kode_kursi,
+                   pembelian->tiket_dipilih.stasiun_asal,
+                   pembelian->tiket_dipilih.stasiun_tujuan);
+        // Save updates to the database file
+        if (!SimpanDataKursiKeFile(&kereta, DB_KURSI_KERETA)) {
+            printf("\nWarning: Gagal menyimpan status kursi ke database setelah pembayaran.\n");
+        }
+    }
+    // Simpan riwayat pembelian
+    if (SimpanRiwayatPembelianTiket(*pembelian)) {
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|           PEMBAYARAN BERHASIL               |\n");
+        printf("+----------------------------------------------+\n");
+        // Tampilkan kode dan total
+        printf("Kode Pembelian : %s\n", pembelian->kode_pembelian);
+        printf("Total Bayar     : Rp %.2f\n\n", pembelian->total_bayar);
+        // Tampilkan detail tiket
+        TampilkanDetailPembayaran(*pembelian);
+        // Pesan terima kasih
+        printf("\nTiket berhasil dibeli!\n");
+        printf("Terima kasih telah menggunakan layanan OurTrain.\n");
+        // Tunggu sekali tekan Enter
+        printf("Tekan Enter untuk kembali..."); getchar();
+        return TRUE;
     } else {
-        printf("\nTerjadi kesalahan dalam proses pembayaran.\n");
-        printf("Silakan coba lagi nanti.\n");
-        printf("Tekan Enter untuk kembali...");
-        getchar();
-        return FALSE;
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|         PEMBAYARAN TIDAK TERSIMPAN          |\n");
+        printf("+----------------------------------------------+\n");
+        printf("Pembayaran berhasil, tetapi gagal menyimpan riwayat.\n");
+        printf("Kode Pembelian : %s\n", pembelian->kode_pembelian);
+        printf("Silakan hubungi customer service.\n");
+        printf("Tekan Enter untuk kembali..."); getchar();
+        return TRUE;
     }
 }
 
@@ -138,56 +214,25 @@ void TampilkanDetailPembayaran(PembelianTiket pembelian) {
            pembelian.kode_kursi,
            pembelian.nomor_gerbong);
     printf("Penumpang       : %s\n", pembelian.nama_penumpang);
-    printf("Nomor Identitas : %s\n", pembelian.nomor_identitas);
     printf("Jenis Layanan   : %s\n", pembelian.tiket_dipilih.jenis_layanan);
     printf("Harga Tiket     : Rp %.2f\n", pembelian.tiket_dipilih.harga_tiket);
 }
 
-boolean ProsesPembayaran(const char* email_user, float total_bayar) {
-	
-    // Konversi float ke int (dalam sen)
-    int jumlah_bayar = (int)(total_bayar * 100);
-    
-    // Gunakan fungsi KurangiSaldo dari implementasi_pembayaran.h
-    // Karena PIN sudah divalidasi sebelumnya, kita bisa menggunakan PIN kosong
-    char empty_pin[] = "";
-    return KurangiSaldo(&globalListPayment, (char*)email_user, empty_pin, jumlah_bayar / 100);
-
-}
-
-void TampilkanSaldoUser(const char* email_user) {
-    // Cari data pembayaran user
-    Payment payment_user;
-    char email_copy[100];
-    strcpy(email_copy, email_user);
-    if (CariDataPembayaran(globalListPayment, email_copy, &payment_user)) {
-        printf("\n--- INFORMASI SALDO ---\n");
-        printf("Email           : %s\n", payment_user.email);
-        printf("Nomor Rekening  : %s\n", payment_user.no_rekening);
-        printf("Saldo           : Rp %d\n", payment_user.saldo);
-    } else {
-        printf("\nData pembayaran untuk email %s tidak ditemukan.\n", email_user);
-    }
-}
-
 boolean ValidasiPinPembayaran(const char* email_user, const char* pin) {
-    // Gunakan fungsi ValidasiPIN dari implementasi_pembayaran.h
-    // Buat salinan parameter konstan ke non-konstan
-    char email_copy[100];
-    char pin_copy[10];
-    
-    strcpy(email_copy, email_user);
-    strcpy(pin_copy, pin);
-    
-    return ValidasiPIN(globalListPayment, email_copy, pin_copy, &morseTree);
+    // Baca langsung record untuk validasi
+    Record rec; InisialisasiRecord(&rec);
+    if (!BacaRekeningUser(&rec, email_user)) return FALSE;
+    char* pin_str = AmbilNilai(&rec, "pin");
+    char* hashed = HashPasswordWithMorse(morseTree, pin);
+    boolean ok = pin_str && strcmp(pin_str, hashed) == 0;
+    free(hashed);
+    return ok;
 }
 
 boolean CekSaldoCukup(const char* email_user, float total_bayar) {
-    // Konversi float ke int (dalam sen)
-    int jumlah_bayar = (int)(total_bayar * 100);
-    
-    // Gunakan fungsi CekKecukupanSaldo dari implementasi_pembayaran.h
-    char email_copy[100];
-    strcpy(email_copy, email_user);
-    return CekKecukupanSaldo(globalListPayment, email_copy, jumlah_bayar / 100);
+    Record rec; InisialisasiRecord(&rec);
+    if (!BacaRekeningUser(&rec, email_user)) return FALSE;
+    char* saldo_str = AmbilNilai(&rec, "saldo");
+    int saldo = saldo_str ? atoi(saldo_str):0;
+    return saldo >= (int)total_bayar;
 }

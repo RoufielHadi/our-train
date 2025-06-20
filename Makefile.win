@@ -4,14 +4,14 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = array.o check_biner.o clear.o dashboard_admin.o dashboard_akun_saya.o dashboard_authentication.o dashboard_cashier.o dashboard_kursi_kereta.o dashboard_lihat_jadwal.o dashboard_machine.o dashboard_manajemen_jadwal.o dashboard_manajemen_kasir.o dashboard_manajemen_kereta.o dashboard_manajemen_mesin.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_pembayaran.o dashboard_rekening_saya.o dashboard_tiket_saya.o dashboard_user.o databases.o hash_password.o implementasi_akun_user.o implementasi_antrian_offline.o implementasi_informasi_kereta.o implementasi_jadwal_kereta.o implementasi_kursi_kereta.o implementasi_morse.o implementasi_pembayaran.o implementasi_pembelian_tiket.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o implementasi_rute_kereta.o implementasi_tiket_saya.o linked.o main.o queue.o stack.o time.o tree_biner.o tree_non_biner.o
-LINKOBJ  = array.o check_biner.o clear.o dashboard_admin.o dashboard_akun_saya.o dashboard_authentication.o dashboard_cashier.o dashboard_kursi_kereta.o dashboard_lihat_jadwal.o dashboard_machine.o dashboard_manajemen_jadwal.o dashboard_manajemen_kasir.o dashboard_manajemen_kereta.o dashboard_manajemen_mesin.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_pembayaran.o dashboard_rekening_saya.o dashboard_tiket_saya.o dashboard_user.o databases.o hash_password.o implementasi_akun_user.o implementasi_antrian_offline.o implementasi_informasi_kereta.o implementasi_jadwal_kereta.o implementasi_kursi_kereta.o implementasi_morse.o implementasi_pembayaran.o implementasi_pembelian_tiket.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o implementasi_rute_kereta.o implementasi_tiket_saya.o linked.o main.o queue.o stack.o time.o tree_biner.o tree_non_biner.o
+OBJ      = array.o check_biner.o clear.o dashboard_admin.o dashboard_akun_saya.o dashboard_authentication.o dashboard_cashier.o dashboard_kursi_kereta.o dashboard_lihat_jadwal.o dashboard_machine.o dashboard_manajemen_jadwal.o dashboard_manajemen_kereta.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_pembayaran.o dashboard_rekening_saya.o dashboard_tiket_saya.o dashboard_user.o databases.o hash_password.o implementasi_akun_user.o implementasi_antrian_offline.o implementasi_informasi_kereta.o implementasi_jadwal_kereta.o implementasi_kursi_kereta.o implementasi_morse.o implementasi_pembayaran.o implementasi_pembelian_tiket.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o implementasi_rute_kereta.o implementasi_tiket_saya.o linked.o main.o queue.o stack.o time.o tree_biner.o tree_non_biner.o
+LINKOBJ  = array.o check_biner.o clear.o dashboard_admin.o dashboard_akun_saya.o dashboard_authentication.o dashboard_cashier.o dashboard_kursi_kereta.o dashboard_lihat_jadwal.o dashboard_machine.o dashboard_manajemen_jadwal.o dashboard_manajemen_kereta.o dashboard_manajemen_rute.o dashboard_manajemen_user.o dashboard_pembayaran.o dashboard_rekening_saya.o dashboard_tiket_saya.o dashboard_user.o databases.o hash_password.o implementasi_akun_user.o implementasi_antrian_offline.o implementasi_informasi_kereta.o implementasi_jadwal_kereta.o implementasi_kursi_kereta.o implementasi_morse.o implementasi_pembayaran.o implementasi_pembelian_tiket.o implementasi_rekapitulasi_keuntungan.o implementasi_riwayat.o implementasi_rute_kereta.o implementasi_tiket_saya.o linked.o main.o queue.o stack.o time.o tree_biner.o tree_non_biner.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = OurTrain.exe
-CXXFLAGS = $(CXXINCS) 
-CFLAGS   = $(INCS) 
+CXXFLAGS = $(CXXINCS) -std=c99
+CFLAGS   = $(INCS) -std=c99
 RM       = rm.exe -f
 
 .PHONY: all all-before all-after clean clean-custom
@@ -57,14 +57,8 @@ dashboard_machine.o: dashboard_machine.c
 dashboard_manajemen_jadwal.o: dashboard_manajemen_jadwal.c
 	$(CC) -c dashboard_manajemen_jadwal.c -o dashboard_manajemen_jadwal.o $(CFLAGS)
 
-dashboard_manajemen_kasir.o: dashboard_manajemen_kasir.c
-	$(CC) -c dashboard_manajemen_kasir.c -o dashboard_manajemen_kasir.o $(CFLAGS)
-
 dashboard_manajemen_kereta.o: dashboard_manajemen_kereta.c
 	$(CC) -c dashboard_manajemen_kereta.c -o dashboard_manajemen_kereta.o $(CFLAGS)
-
-dashboard_manajemen_mesin.o: dashboard_manajemen_mesin.c
-	$(CC) -c dashboard_manajemen_mesin.c -o dashboard_manajemen_mesin.o $(CFLAGS)
 
 dashboard_manajemen_rute.o: dashboard_manajemen_rute.c
 	$(CC) -c dashboard_manajemen_rute.c -o dashboard_manajemen_rute.o $(CFLAGS)

@@ -7,6 +7,8 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include "tree_biner.h"
+#include "implementasi_morse.h"
 #include "hash_password.h"
 
 // *** VALIDASI PASSWORD ***

@@ -33,16 +33,6 @@ void TampilkanDetailPembayaran(PembelianTiket pembelian);
 // IS      : pembelian terdefinisi
 // FS      : Detail pembayaran ditampilkan ke layar
 
-boolean ProsesPembayaran(const char* email_user, float total_bayar);
-// Tujuan  : Memproses pembayaran dengan mengurangi saldo user
-// IS      : email_user terdefinisi, total_bayar > 0
-// FS      : Saldo user berkurang, return TRUE jika berhasil
-
-void TampilkanSaldoUser(const char* email_user);
-// Tujuan  : Menampilkan saldo user
-// IS      : email_user terdefinisi
-// FS      : Saldo user ditampilkan ke layar
-
 boolean ValidasiPinPembayaran(const char* email_user, const char* pin);
 // Tujuan  : Memvalidasi PIN user untuk pembayaran
 // IS      : email_user dan pin terdefinisi

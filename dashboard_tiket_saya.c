@@ -50,22 +50,36 @@ void MenuTiketSaya(User user_aktif) {
                 break;
                 
             case 2:
-                // Lihat detail tiket
-                clearScreen();
-                TampilkanTiketSaya(tiketSaya, user_aktif);
-                
-                if (!isEmptyStackRiwayat(tiketSaya.tiket_user)) {
-                    printf("\nMasukkan nomor tiket yang ingin dilihat detailnya: ");
-                    scanf("%d", &indeks);
-                    
-                    if (!TampilkanDetailTiket(tiketSaya, user_aktif, indeks)) {
-                        printf("Gagal menampilkan detail tiket!\n");
-                    }
+                // Mode lihat detail: loop hingga user input 0 untuk kembali
+                if (isEmptyStackRiwayat(tiketSaya.tiket_user)) {
+                    // Jika tidak ada tiket
+                    clearScreen();
+                    printf("\n===== TIKET SAYA =====\n");
+                    printf("%-8s: %s\n", "Email", user_aktif.email);
+                    printf("========================================\n");
+                    printf("Anda belum memiliki tiket!\n");
+                    printf("========================================\n");
+                    printf("\nTekan ENTER untuk kembali...");
+                    getchar(); getchar();
+                } else {
+                    int pilihanDetail;
+                    do {
+                        // Tampilkan kembali daftar tiket
+                        clearScreen();
+                        TampilkanTiketSaya(tiketSaya, user_aktif);
+                        // Minta indeks detail
+                        printf("\nMasukkan nomor tiket untuk detail (0 untuk kembali): ");
+                        scanf("%d", &pilihanDetail);
+                        getchar(); // buang newline
+                        if (pilihanDetail > 0) {
+                            // Tampilkan detail tiket
+                            clearScreen();
+                            TampilkanDetailTiketSaya(tiketSaya, user_aktif, pilihanDetail);
+                            printf("\nTekan ENTER untuk kembali ke daftar...");
+                            getchar();
+                        }
+                    } while (pilihanDetail != 0);
                 }
-                
-                printf("\nTekan ENTER untuk kembali...");
-                getchar(); // Ambil karakter enter dari pilihan sebelumnya
-                getchar(); // Tunggu hingga user menekan ENTER
                 break;
                 
             case 0:

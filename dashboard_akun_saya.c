@@ -7,6 +7,13 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include "boolean.h"
+#include "tree_biner.h"
+#include "implementasi_morse.h"
 #include "dashboard_akun_saya.h"
 
 // *** TAMPILAN DASHBOARD AKUN SAYA ***

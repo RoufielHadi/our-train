@@ -17,11 +17,13 @@ Politeknik Negeri Bandung
 #include <ctype.h>
 #include "boolean.h"
 #include "databases.h"
+
+// Forward declaration
+typedef struct HashPassword HashPassword;
+
 #include "implementasi_akun_user.h"
 #include "hash_password.h"
 #include "clear.h"
-#include "dashboard_manajemen_kasir.h"
-#include "dashboard_manajemen_mesin.h"
 
 // Deklarasi variabel global eksternal
 extern HashPassword* morseTree;
@@ -79,6 +81,14 @@ void ViewMesinAccounts(const char* email);
 
 // Fungsi untuk melihat informasi akun admin
 void ViewAdminAccounts(const char* email);
+
+// Tambahkan stub untuk edit akun kasir dan mesin
+void TampilkanFormEditKasir(const char* email, HashPassword* morseTree);
+void TampilkanFormEditMesin(const char* email, HashPassword* morseTree);
+
+// Tambahkan stub untuk delete akun kasir dan mesin
+void TampilkanFormHapusKasir(const char* email);
+void TampilkanFormHapusMesin(const char* email);
 
 // Fungsi utama untuk manajemen user
 void RunUserManagementDashboard(const char* email);

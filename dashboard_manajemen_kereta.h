@@ -15,6 +15,21 @@ Politeknik Negeri Bandung
 #include <string.h>
 #include "boolean.h"
 #include "clear.h"
+#include "array.h"
+#include "implementasi_informasi_kereta.h"
+#include "databases.h"
+#include "dashboard_manajemen_jadwal.h"
+#include "implementasi_jadwal_kereta.h"
+
+// Konstanta untuk jenis layanan
+#define STR_EKONOMI "Ekonomi"
+#define STR_BISNIS "Bisnis"
+#define STR_EKSEKUTIF "Eksekutif"
+#define STR_LUXURY "Luxury"
+
+// Fungsi validasi menggunakan implementasi dari implementasi_informasi_kereta.h
+/* Fungsi ValidasiIDKereta sudah diimplementasikan di implementasi_informasi_kereta.h */
+/* Fungsi ValidasiJenisLayanan sudah diimplementasikan di implementasi_informasi_kereta.h */
 
 void DashboardTampilkanDaftarKereta();
 /* Tujuan : Menampilkan daftar kereta yang tersedia di sistem */
@@ -36,24 +51,24 @@ void DashboardHapusKereta();
 /* IS      : tidak ada */
 /* FS      : Kereta terhapus dari database jika dikonfirmasi */
 
-void TampilkanDaftarKereta();
+void TampilkanDaftarKeretaUI(void);
 /* Tujuan : Menampilkan daftar kereta (wrapper) */
-/* IS      : email terdefinisi */
+/* IS      : tidak ada */
 /* FS      : Panggilan ke DashboardTampilkanDaftarKereta dilaksanakan */
 
 void TampilkanFormTambahKereta();
 /* Tujuan : Menampilkan form tambah kereta (wrapper) */
-/* IS      : email terdefinisi */
+/* IS      : tidak ada */
 /* FS      : Panggilan ke DashboardTambahKereta dilaksanakan */
 
 void TampilkanFormEditKereta();
 /* Tujuan : Menampilkan form edit kereta (wrapper) */
-/* IS      : email terdefinisi */
+/* IS      : tidak ada */
 /* FS      : Panggilan ke DashboardEditKereta dilaksanakan */
 
 void TampilkanFormHapusKereta();
 /* Tujuan : Menampilkan form hapus kereta (wrapper) */
-/* IS      : email terdefinisi */
+/* IS      : tidak ada */
 /* FS      : Panggilan ke DashboardHapusKereta dilaksanakan */
 
 void MenuManajemenKereta(const char* email);

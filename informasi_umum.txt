@@ -54,4 +54,44 @@ KA139|Argo Parahyangan|Eksekutif|150000.0|8
 KA140|Argo Parahyangan|Eksekutif|150000.0|8
 KA141|Argo Parahyangan|Eksekutif|150000.0|8
 KA142|Argo Parahyangan|Eksekutif|150000.0|8 
-KA666|Argo Ngawi|Eksekutif|200000.00|4
+KA999|Garut Bandung|Ekonomi|10000.00|10
+KA998|BAndung Cimahi|Ekonomi|2000.00|2
+KA898|Bandung|Ekonomi|100.00|9
+KA90|b|Ekonomi|1000.00|1
+KA888|Bandung|Ekonomi|10000.00|9
+KA001|Argoo|Eksekutif|10000.00|9
+KA002|Argooo|Luxury|100000.00|1
+KA003|Argooo|Bisnis|150000.00|1
+KA004|Dimas|Ekonomi|100.00|1
+KA005|Argoo|Eksekutif|1000.00|10
+KA006|lklklk|Ekonomi|10.00|1
+KA007|AS|Ekonomi|10.00|1
+KA009|Jak|Ekonomi|1000.00|1
+KA010|kl|Bisnis|100000.00|10
+KA011|kl|Bisnis|10000.00|10
+KA012|kl|Ekonomi|10000.00|1
+KA013|sad|Ekonomi|1000.00|4
+KA014|Pajajaran|Ekonomi|10000.00|7
+KA015|Pasa|Luxury|1000.00|1
+KA090|kl|Bisnis|100000.00|4
+KA016|kllj|Ekonomi|10190.00|2
+KA080|jkhjjk|Bisnis|9090.00|1
+KA017|klkj|Bisnis|1090.00|2
+KA018|kjkjh|Bisnis|100000.00|12
+KA020|Akskja|Eksekutif|121.00|1
+KA021|jkjh|Ekonomi|10000.00|2
+KA022|jklkj|Ekonomi|10000.00|10
+KA024|jhkj|Bisnis|1000.00|12
+KA025|jhksdj|Ekonomi|21.00|1
+KA026|jkhkjh|Bisnis|10000.00|10
+KA027|kjlkj|Bisnis|9000.00|2
+KA028|kjlsdka|Bisnis|10000.00|10
+KA029|kjlak|Bisnis|10000.00|9
+KA030|jkhsdk|Bisnis|1000.00|1
+KA031|khdkj|Bisnis|10000.00|1
+KA050|ksdjal|Bisnis|10000.00|1
+KA087|jhsd|Bisnis|100000.00|3
+KA777|abc|Ekonomi|100.00|2
+KA555|Argo Wilis|Eksekutif|100000.00|4
+KA995|Turangga|Eksekutif|100000.00|4
+KA887|Sakapeung|Eksekutif|110000.00|4

@@ -7,15 +7,28 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include "clear.h"
+#include "boolean.h"
+#include "time.h"
+#include "tree_non_biner.h"
+#include "dashboard_manajemen_jadwal.h"
 #include "dashboard_admin.h"
 #include "dashboard_manajemen_kereta.h"
-#include "dashboard_manajemen_jadwal.h"
+#include "dashboard_manajemen_rute.h"
 #include "dashboard_manajemen_user.h"
-#include "dashboard_manajemen_kasir.h"
-#include "dashboard_manajemen_mesin.h"
 #include "hash_password.h"
 #include "implementasi_rekapitulasi_keuntungan.h"
 #include "stack.h"
+#include "implementasi_informasi_kereta.h"
+#include "tree_biner.h"
+#include "implementasi_rute_kereta.h"
+
+//Maksimal node yang dapat ditampung dalam array
+#define jml_maks 200
 
 // Variable global untuk morse tree
 extern HashPassword* morseTree;
@@ -51,23 +64,7 @@ void TampilkanDashboardAdmin(const char* email) {
 
 // *** MENU ADMIN ***
 void TampilkanMenuManajemenUser(const char* email) {
-    // Langsung tampilkan menu manajemen akun user
-    TampilkanMenuManajemenAkunUser(email);
-}
-
-// Implementasi fungsi-fungsi baru
-void TampilkanMenuManajemenAkunUser(const char* email) {
-    // Pastikan header file dashboard_manajemen_user.h sudah diinclude
-    // Panggil fungsi RunUserManagementDashboard dari dashboard_manajemen_user.c
     RunUserManagementDashboard(email);
-}
-
-void TampilkanMenuManajemenAkunKasir(const char* email, HashPassword* morseTree) {
-    JalankanDashboardManajemenKasir(email, morseTree);
-}
-
-void TampilkanMenuManajemenAkunMesin(const char* email, HashPassword* morseTree) {
-    JalankanDashboardManajemenMesin(email, morseTree);
 }
 
 void TampilkanMenuManajemenKereta(const char* email) {
@@ -79,15 +76,7 @@ void TampilkanMenuManajemenJadwal(const char* email) {
 }
 
 void TampilkanMenuManajemenRute(const char* email) {
-    clearScreen();
-    printf("+----------------------------------------------+\n");
-    printf("|              MANAJEMEN RUTE                  |\n");
-    printf("+----------------------------------------------+\n");
-    printf("| Fitur ini akan tersedia pada versi mendatang |\n");
-    printf("+----------------------------------------------+\n");
-    
-    printf("\nTekan Enter untuk kembali ke menu utama...");
-    getch();
+    MenuManajemenRuteAdmin(email);
 }
 
 void TampilkanMenuRekapitulasiKeuntungan(const char* email) {
@@ -499,11 +488,12 @@ void TampilkanMenuRekapitulasiKeuntungan(const char* email) {
                 printf("Harga          : Rp %d\n", selectedTicket.riwayat_kereta.harga);
                 
                 printf("\nInformasi Kursi:\n");
-                // Tentukan huruf berdasarkan nomor gerbong (1=A, 2=B, dst)
-                char kursi_huruf = 'A' + selectedTicket.riwayat_nomor_gerbong - 1;
-                if (kursi_huruf < 'A') kursi_huruf = 'A'; // Pastikan tidak negatif
                 printf("Nomor Gerbong  : %d\n", selectedTicket.riwayat_nomor_gerbong);
-                printf("Nomor Kursi    : %c%d\n", kursi_huruf, selectedTicket.riwayat_nomor_kursi);
+                if (selectedTicket.riwayat_kode_kursi[0] != '\0') {
+                    printf("Nomor Kursi    : %s%d\n", selectedTicket.riwayat_kode_kursi, selectedTicket.riwayat_nomor_kursi);
+                } else {
+                    printf("Nomor Kursi    : C%d\n", selectedTicket.riwayat_nomor_kursi);
+                }
                 
                 printf("\nInformasi Pemesanan:\n");
                 printf("Waktu Pemesanan: %02d/%02d/%04d %02d:%02d:%02d\n", 
@@ -576,7 +566,7 @@ void TampilkanMenuManajemenKeretaDanJadwal(const char* email) {
 // Fungsi pendukung untuk manajemen kereta dan jadwal
 void LihatInformasiKereta(const char* email) {
     clearScreen();
-    TampilkanDaftarKereta();
+    TampilkanDaftarKeretaUI();
     printf("\nTekan Enter untuk kembali...");
     getch();
 }
@@ -588,9 +578,6 @@ void LihatInformasiJadwal(const char* email) {
 void TambahKeretaDanJadwal(const char* email) {
     clearScreen();
     TampilkanFormTambahKereta();
-    printf("\nTekan Enter untuk lanjut tambah jadwal...");
-    getch();
-    TambahJadwal();
 }
 
 void EditKeretaAtauJadwal(const char* email) {
@@ -671,7 +658,8 @@ void JalankanDashboardAdmin(const char* email) {
                 break;
                 
             case 3:
-                TampilkanMenuManajemenRute(email);
+                // Manajemen Rute (Admin menu)
+                MenuManajemenRuteAdmin(email);
                 break;
                 
             case 4:

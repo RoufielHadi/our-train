@@ -13,6 +13,7 @@ Politeknik Negeri Bandung
 #include "dashboard_tiket_saya.h"
 #include "implementasi_akun_user.h"
 #include "implementasi_pembelian_tiket.h"
+#include "dashboard_lihat_jadwal.h"
 
 // *** TAMPILAN DASHBOARD ***
 void ShowUserDashboard(const char* email) {
@@ -57,26 +58,22 @@ void ShowTicketPurchaseMenu(const char* email) {
 }
 
 void ShowTrainScheduleMenu(const char* email) {
+    // Bersihkan layar dan tampilkan menu lihat jadwal
     clearScreen();
-    printf("+----------------------------------------------+\n");
-    printf("|             JADWAL KERETA API                |\n");
-    printf("+----------------------------------------------+\n");
-    printf("| Fitur ini akan tersedia pada versi mendatang |\n");
-    printf("+----------------------------------------------+\n");
-    
-    printf("\nTekan Enter untuk kembali ke menu utama...");
-    getch();
+    ShowLihatJadwalMenu();
+    // Tunggu user menekan ENTER sebelum kembali
+    printf("\nTekan ENTER untuk kembali ke menu utama...");
+    getchar(); // buang sisa input
+    getchar(); // tunggu ENTER
 }
 
 // *** FUNGSI UTAMA ***
 void RunUserDashboard(const char* email) {
     int choice;
     User user_aktif;
-    
-    // Ambil data user untuk digunakan di beberapa menu
-    ListUser L;
-    CreateListUser(&L);
-    CariAkun(L, (char*)email, &user_aktif);
+    // Set current user's email for ticket retrieval
+    memset(&user_aktif, 0, sizeof(User));
+    strcpy(user_aktif.email, email);
     
     do {
         ShowUserDashboard(email);

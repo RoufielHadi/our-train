@@ -41,56 +41,84 @@ void AmbilTiketSaya(const char *filename, User user_aktif, TiketSaya *hasil) {
     StackRiwayat tempStack;
     CreateStackRiwayat(&tempStack);
     
-    // Baca data dari file
+    // Baca data dari file dan split berdasarkan '|'
     while (fgets(buffer, sizeof(buffer), file) != NULL) {
-        if (sscanf(buffer, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^\n]",
-                kode_kereta, nama_kereta, stasiun_asal, stasiun_tujuan, 
-                jam_berangkat, jam_tiba, tanggal_berangkat, harga, kelas,
-                nama_penumpang, email, telepon, gerbong, kursi, waktu_pemesanan) == 15) {
-            
-            // Cek apakah tiket ini milik user yang sedang login
-            if (strcmp(email, user_aktif.email) == 0) {
-                // Buat objek RiwayatTiket
-                RiwayatTiket tiket;
-                
-                // Data user
-                strcpy(tiket.riwayat_user.nama, nama_penumpang);
-                strcpy(tiket.riwayat_user.email, email);
-                strcpy(tiket.riwayat_user.nomor_telepon, telepon);
-                
-                // Data kereta
-                strcpy(tiket.riwayat_kereta.kode_kereta, kode_kereta);
-                strcpy(tiket.riwayat_kereta.nama_kereta, nama_kereta);
-                strcpy(tiket.riwayat_kereta.stasiun_asal, stasiun_asal);
-                strcpy(tiket.riwayat_kereta.stasiun_tujuan, stasiun_tujuan);
-                strcpy(tiket.riwayat_kereta.jam_berangkat, jam_berangkat);
-                strcpy(tiket.riwayat_kereta.jam_tiba, jam_tiba);
-                strcpy(tiket.riwayat_kereta.tanggal_berangkat, tanggal_berangkat);
-                strcpy(tiket.riwayat_kereta.kelas, kelas);
-                tiket.riwayat_kereta.harga = atoi(harga);
-                
-                // Data gerbong dan kursi
-                // Mengabaikan huruf di depan (misalnya: B5 -> 5)
-                tiket.riwayat_nomor_gerbong = atoi(gerbong+1);
-                tiket.riwayat_nomor_kursi = atoi(kursi);
-                
-                // Data waktu pemesanan
-                // Parsing waktu pemesanan (format: 2025-06-04 23:01:12)
-                int tahun, bulan, hari, jam, menit, detik;
-                sscanf(waktu_pemesanan, "%d-%d-%d %d:%d:%d", 
-                      &tahun, &bulan, &hari, &jam, &menit, &detik);
-                
-                tiket.riwayat_waktu_pemesanan.tahun = tahun;
-                tiket.riwayat_waktu_pemesanan.bulan = bulan;
-                tiket.riwayat_waktu_pemesanan.hari = hari;
-                tiket.riwayat_waktu_pemesanan.jam = jam;
-                tiket.riwayat_waktu_pemesanan.menit = menit;
-                tiket.riwayat_waktu_pemesanan.detik = detik;
-                
-                // Tambahkan ke stack
-                PushRiwayat(&tempStack, tiket);
-            }
+        // Hapus newline di akhir
+        buffer[strcspn(buffer, "\n")] = '\0';
+        // Split line ke tokens
+        char* tokens[16];
+        int count = 0;
+        char* p = strtok(buffer, "|");
+        while (p != NULL && count < 16) {
+            tokens[count++] = p;
+            p = strtok(NULL, "|");
         }
+        // Minimal 14 field dibutuhkan
+        if (count < 14) continue;
+        // Ambil field yang fixed
+        char* kode_kereta_f = tokens[0];
+        char* nama_kereta_f = tokens[1];
+        char* stasiun_asal_f = tokens[2];
+        char* stasiun_tujuan_f = tokens[3];
+        char* jam_berangkat_f = tokens[4];
+        char* jam_tiba_f = tokens[5];
+        char* tanggal_berangkat_f = tokens[6];
+        char* harga_str;
+        char* kelas_str;
+        int idx = 7;
+        // Jika 15 field, field[7]=harga, field[8]=kelas
+        if (count == 15) {
+            harga_str = tokens[7];
+            kelas_str = tokens[8];
+            idx = 9;
+        } else {
+            harga_str = "0";  // default harga
+            kelas_str = tokens[7];
+            idx = 8;
+        }
+        // Ambil field selanjutnya
+        char* nama_penumpang_f = tokens[idx++];
+        char* email_f         = tokens[idx++];
+        char* telepon_f       = tokens[idx++];
+        char* gerbong_f       = tokens[idx++];
+        char* kursi_f         = tokens[idx++];
+        char* waktu_pesan_f   = tokens[idx];
+        // Cek kecocokan email
+        if (strcmp(email_f, user_aktif.email) != 0) continue;
+        // Buat object tiket dan isi data
+                RiwayatTiket tiket;
+                // Data user
+        strcpy(tiket.riwayat_user.nama, nama_penumpang_f);
+        strcpy(tiket.riwayat_user.email, email_f);
+        strcpy(tiket.riwayat_user.nomor_telepon, telepon_f);
+                // Data kereta
+        strcpy(tiket.riwayat_kereta.kode_kereta, kode_kereta_f);
+        strcpy(tiket.riwayat_kereta.nama_kereta, nama_kereta_f);
+        strcpy(tiket.riwayat_kereta.stasiun_asal, stasiun_asal_f);
+        strcpy(tiket.riwayat_kereta.stasiun_tujuan, stasiun_tujuan_f);
+        strcpy(tiket.riwayat_kereta.jam_berangkat, jam_berangkat_f);
+        strcpy(tiket.riwayat_kereta.jam_tiba, jam_tiba_f);
+        strcpy(tiket.riwayat_kereta.tanggal_berangkat, tanggal_berangkat_f);
+        strcpy(tiket.riwayat_kereta.kelas, kelas_str);
+        tiket.riwayat_kereta.harga = atoi(harga_str);
+                // Data gerbong dan kursi
+        tiket.riwayat_nomor_gerbong = atoi(kursi_f);  // nomor gerbong
+        tiket.riwayat_nomor_kursi   = atoi(gerbong_f + 1);  // nomor kursi
+        // Simpan kode huruf kursi (misalnya 'B' dari 'B5')
+        tiket.riwayat_kode_kursi[0] = gerbong_f[0];
+        tiket.riwayat_kode_kursi[1] = '\0';
+                // Data waktu pemesanan
+        int _tahun, _bulan, _hari, _jam, _menit, _detik;
+        if (sscanf(waktu_pesan_f, "%d-%d-%d %d:%d:%d", &_tahun, &_bulan, &_hari, &_jam, &_menit, &_detik) == 6) {
+            tiket.riwayat_waktu_pemesanan.tahun = _tahun;
+            tiket.riwayat_waktu_pemesanan.bulan = _bulan;
+            tiket.riwayat_waktu_pemesanan.hari  = _hari;
+            tiket.riwayat_waktu_pemesanan.jam   = _jam;
+            tiket.riwayat_waktu_pemesanan.menit = _menit;
+            tiket.riwayat_waktu_pemesanan.detik = _detik;
+        }
+        // Push ke stack sementara
+                PushRiwayat(&tempStack, tiket);
     }
     
     // Pindahkan dari stack sementara ke stack hasil agar urutan tetap benar
@@ -106,43 +134,44 @@ void AmbilTiketSaya(const char *filename, User user_aktif, TiketSaya *hasil) {
 
 // Fungsi untuk menampilkan semua tiket user yang sedang login
 void TampilkanTiketSaya(TiketSaya T, User user_aktif) {
+    // Jika tidak ada tiket, tampilkan pesan
     if (isEmptyStackRiwayat(T.tiket_user)) {
         printf("\n===== TIKET SAYA =====\n");
-        printf("Email: %s\n", user_aktif.email);
-        printf("------------------------\n");
+        printf("%-8s: %s\n", "Email", user_aktif.email);
+        printf("========================================\n");
         printf("Anda belum memiliki tiket!\n");
-        printf("========================\n");
+        printf("========================================\n");
         return;
     }
 
-    // Buat stack sementara untuk menyimpan elemen yang di-pop
+    // Buat stack sementara untuk menyimpan elemen yang di-pop agar urutan tetap
     StackRiwayat tempStack;
     CreateStackRiwayat(&tempStack);
     RiwayatTiket tiket;
     
+    // Header tampilan tiket
     printf("\n===== TIKET SAYA =====\n");
-    printf("Email: %s\n", user_aktif.email);
-    printf("------------------------\n");
+    printf("%-8s: %s\n", "Email", user_aktif.email);
+    printf("========================================\n\n");
     
+    // Tampilkan setiap tiket secara rapi
     int nomor = 1;
     addressRiwayat P = T.tiket_user.top;
-    
-    // Salin elemen ke stack sementara dan tampilkan
     while (P != NULL) {
         tiket = P->info;
-        
-        printf("%d. Kereta: %s\n", nomor++, tiket.riwayat_kereta.nama_kereta);
-        printf("   Rute: %s -> %s\n", tiket.riwayat_kereta.stasiun_asal, tiket.riwayat_kereta.stasiun_tujuan);
-        printf("   Tanggal: %s\n", tiket.riwayat_kereta.tanggal_berangkat);
-        printf("   Jam: %s - %s\n", tiket.riwayat_kereta.jam_berangkat, tiket.riwayat_kereta.jam_tiba);
-        printf("------------------------\n");
-        
+        printf("Tiket #%d\n", nomor++);
+        printf("----------------------------------------\n");
+        printf("%-8s: %s\n", "Kereta", tiket.riwayat_kereta.nama_kereta);
+        printf("%-8s: %s -> %s\n", "Rute", tiket.riwayat_kereta.stasiun_asal, tiket.riwayat_kereta.stasiun_tujuan);
+        printf("%-8s: %s\n", "Tanggal", tiket.riwayat_kereta.tanggal_berangkat);
+        printf("%-8s: %s - %s\n", "Jam", tiket.riwayat_kereta.jam_berangkat, tiket.riwayat_kereta.jam_tiba);
+        printf("\n");
         // Simpan ke stack sementara dan lanjut ke node berikutnya
         PushRiwayat(&tempStack, tiket);
         P = P->next;
     }
-    
-    printf("========================\n");
+    // Footer tampilan
+    printf("========================================\n");
     
     // Kembalikan elemen ke stack asli
     StackRiwayat tempStack2;
@@ -162,7 +191,7 @@ void TampilkanTiketSaya(TiketSaya T, User user_aktif) {
 }
 
 // Fungsi untuk menampilkan detail tiket berdasarkan indeks
-boolean TampilkanDetailTiketPembelian(TiketSaya T, User user_aktif, int indeks) {
+boolean TampilkanDetailTiketSaya(TiketSaya T, User user_aktif, int indeks) {
     if (isEmptyStackRiwayat(T.tiket_user)) {
         printf("Anda belum memiliki tiket!\n");
         return FALSE;
@@ -202,8 +231,8 @@ boolean TampilkanDetailTiketPembelian(TiketSaya T, User user_aktif, int indeks) 
             printf("Jam Tiba: %s\n", tiket.riwayat_kereta.jam_tiba);
             printf("Kelas: %s\n", tiket.riwayat_kereta.kelas);
             printf("Harga: Rp%d\n", tiket.riwayat_kereta.harga);
-            printf("Gerbong: %d\n", tiket.riwayat_nomor_gerbong);
-            printf("Kursi: %d\n", tiket.riwayat_nomor_kursi);
+            printf("%-8s: %d\n", "Gerbong", tiket.riwayat_nomor_gerbong);
+            printf("%-8s: %s%d\n", "Kursi", tiket.riwayat_kode_kursi, tiket.riwayat_nomor_kursi);
             printf("------------------------\n");
             printf("Waktu Pemesanan: %02d-%02d-%04d %02d:%02d:%02d\n", 
                    tiket.riwayat_waktu_pemesanan.hari,
@@ -280,7 +309,7 @@ void LihatDetailTiketByIndex(User user_aktif) {
         printf("\nMasukkan nomor tiket yang ingin dilihat detailnya: ");
         scanf("%d", &indeks);
         
-        if (!TampilkanDetailTiket(tiketSaya, user_aktif, indeks)) {
+        if (!TampilkanDetailTiketSaya(tiketSaya, user_aktif, indeks)) {
             printf("Gagal menampilkan detail tiket!\n");
         }
     }

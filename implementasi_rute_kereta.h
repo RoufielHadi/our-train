@@ -16,6 +16,13 @@ Politeknik Negeri Bandung
 #include <stdlib.h>
 #include <string.h>
 
+// Struktur data untuk menyimpan informasi stasiun dengan status
+typedef struct {
+    char name[50];
+    boolean active;
+    int index;
+} StationInfo;
+
 // Struktur data untuk menyimpan informasi jarak antar stasiun dalam rute
 typedef struct {
     char* stasiunAsal;
@@ -138,5 +145,43 @@ void InsertRuteNode(Isi_Tree P, const char* info, int parent_idx);
 /* Tujuan : Menambahkan node baru ke dalam tree */
 /* IS      : P terdefinisi, info dan parent_idx terdefinisi */
 /* FS      : Node baru ditambahkan ke dalam tree */
+
+// *** FUNGSI YANG DIPINDAHKAN DARI DASHBOARD_MANAJEMEN_JADWAL.H ***
+
+// Helper to check if a station index is active and get its name
+boolean IsStationActiveAndName(int idx, char *outName);
+/* Tujuan : Mengecek apakah stasiun aktif dan mengambil namanya */
+/* IS      : idx terdefinisi */
+/* FS      : outName diisi dengan nama stasiun jika aktif, return TRUE jika berhasil */
+
+// Fungsi untuk mendapatkan daftar stasiun yang aktif di antara stasiun asal dan tujuan
+int GetActiveStationsBetween(Isi_Tree tree, const char *origin, const char *destination, StationInfo *stations, int maxStations);
+/* Tujuan : Mendapatkan daftar stasiun aktif di antara stasiun asal dan tujuan */
+/* IS      : tree, origin, destination terdefinisi */
+/* FS      : Mengisi stations dengan stasiun yang ditemukan, return jumlah stasiun */
+
+// Fungsi untuk membaca data stasiun dari file ke struktur tree
+void BacaDataStasiun(Isi_Tree tree);
+/* Tujuan : Membaca data stasiun dari file rute_kereta.txt */
+/* IS      : tree terdefinisi */
+/* FS      : tree terisi dengan data stasiun dari file */
+
+// Fungsi untuk mendapatkan jalur dari stasiun ke root
+int GetPathToRoot(Isi_Tree tree, int stationIdx, int path[], int maxPath);
+/* Tujuan : Mendapatkan jalur dari stasiun ke root */
+/* IS      : tree, stationIdx terdefinisi */
+/* FS      : path terisi dengan jalur, return panjang jalur */
+
+// Fungsi untuk mendapatkan rute lengkap (termasuk origin & destination) antara dua stasiun
+int GetRouteStations(const char *origin, const char *destination, char routeNames[][50], int maxStations);
+/* Tujuan : Mendapatkan rute lengkap antara dua stasiun */
+/* IS      : origin, destination terdefinisi */
+/* FS      : routeNames terisi dengan nama stasiun, return jumlah stasiun dalam rute */
+
+// Fungsi untuk menambahkan koneksi langsung antara dua stasiun
+void AddDirectConnection(Isi_Tree tree, int idx1, int idx2);
+/* Tujuan : Menambahkan koneksi langsung antara dua stasiun */
+/* IS      : tree, idx1, idx2 terdefinisi */
+/* FS      : Koneksi ditambahkan ke adjacency list */
 
 #endif /* IMPLEMENTASI_RUTE_KERETA_H */ 

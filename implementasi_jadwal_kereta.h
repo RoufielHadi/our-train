@@ -7,6 +7,15 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung  
 */
 
+/*
+Author:Devi maulani
+NIM: 241524007
+Kelas: 1A  
+Prodi: Sarjana Terapan Teknik Informatika  
+Jurusan: Teknik Komputer dan Informatika  
+Politeknik Negeri Bandung  
+*/
+
 #ifndef IMPLEMENTASI_JADWAL_KERETA_H
 #define IMPLEMENTASI_JADWAL_KERETA_H
 
@@ -33,6 +42,17 @@ typedef struct NodeJadwal {
 typedef struct {
     NodeJadwal* First;
 } ListJadwal;
+
+// Fungsi bantuan untuk file IO
+boolean BacaJadwalDariFile(FILE* fp, JadwalHarian* jadwal);
+/* Tujuan : Membaca jadwal dari file */
+/* IS      : fp terdefinisi, jadwal siap menerima data */
+/* FS      : jadwal terisi dengan data dari file, return TRUE jika berhasil */
+
+void SimpanJadwalKeFile(FILE* fp, JadwalHarian* jadwal);
+/* Tujuan : Menyimpan jadwal ke file */
+/* IS      : fp terdefinisi, jadwal berisi data */
+/* FS      : jadwal tertulis ke file */
 
 // Fungsi untuk membuat jadwal kereta baru
 JadwalHarian BuatJadwalKereta(char* id_kereta, char* tanggal);
@@ -159,5 +179,11 @@ boolean ValidasiTanggal(char* tanggal);
 /* Tujuan : Memeriksa format tanggal valid */
 /* IS      : tanggal terdefinisi */
 /* FS      : Mengembalikan TRUE jika valid */
+
+// Fungsi untuk menghapus jadwal berdasarkan ID kereta
+boolean HapusSemuaJadwalByKereta(const char* idKereta);
+/* Tujuan : Menghapus semua jadwal untuk kereta tertentu */
+/* IS      : idKereta terdefinisi */
+/* FS      : Mengembalikan TRUE jika berhasil menghapus jadwal */
 
 #endif /* IMPLEMENTASI_JADWAL_KERETA_H */

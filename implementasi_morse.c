@@ -7,6 +7,7 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include "tree_biner.h"
 #include "implementasi_morse.h"
 #include <ctype.h>
 

@@ -148,7 +148,7 @@ void InisialisasiPembelianTiket(PembelianTiket* pembelian, HasilPencarian tiket_
 // FS      : pembelian terisi dengan data awal dari tiket_dipilih
 
 // Tampilkan detail tiket yang dipilih
-void TampilkanDetailTiketPembelian(PembelianTiket pembelian);
+void TampilkanDetailTiket(PembelianTiket pembelian);
 // Tujuan  : Menampilkan detail tiket yang dipilih
 // IS      : pembelian terdefinisi
 // FS      : Detail tiket ditampilkan ke layar

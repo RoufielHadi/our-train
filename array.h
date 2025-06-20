@@ -20,7 +20,7 @@ Politeknik Negeri Bandung
 #define MAX_BARIS 20 // Maksimum baris (kursi ke belakang)
 #define MAX_GERBONG 10 // Maksimum jumlah gerbong per kereta
 #define MAX_KERETA 50 // Maksimum jumlah kereta yang dapat disimpan
-#define MAX_SEGMEN 10 // Maksimum jumlah segmen perjalanan
+#define MAX_SEGMEN 25 // Maksimum jumlah segmen perjalanan, diperbesar untuk mendukung rute panjang
 #define MAX_NAMA_SEGMEN 50 // Panjang maksimum nama segmen
 
 // Definisi jenis-jenis kereta

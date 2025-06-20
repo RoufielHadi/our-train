@@ -18,7 +18,11 @@ Politeknik Negeri Bandung
 #include "databases.h"
 #include "clear.h"
 
-// *** PROTOTYPE FUNGSI DASHBOARD CASHIER ***
+// Helper function to extract station name from cashier email
+void ExtractStationNameFromEmail(const char* email, char* station);
+/* Tujuan : Mengekstrak nama stasiun dari email kasir */
+/* IS      : email terdefinisi (contoh: cashier.bandung@ourtrain.id) */
+/* FS      : station diisi dengan nama stasiun (contoh: Bandung) */
 
 // *** TAMPILAN DASHBOARD ***
 void ShowCashierDashboard(const char* email);
@@ -27,20 +31,20 @@ void ShowCashierDashboard(const char* email);
 /* FS      : Dashboard kasir ditampilkan */
 
 // *** MENU KASIR ***
-void ShowTicketSalesMenu(const char* email);
-/* Tujuan : Menampilkan menu penjualan tiket */
+void ShowCallNextQueueMenu(const char* email);
+/* Tujuan : Memanggil nomor antrian berikutnya */
 /* IS      : email terdefinisi */
-/* FS      : Menu penjualan tiket ditampilkan */
+/* FS      : Nomor antrian berikutnya dipanggil */
 
-void ShowTicketVerificationMenu(const char* email);
-/* Tujuan : Menampilkan menu verifikasi tiket */
+void ShowSkipQueueMenu(const char* email);
+/* Tujuan : Melewati nomor antrian saat ini */
 /* IS      : email terdefinisi */
-/* FS      : Menu verifikasi tiket ditampilkan */
+/* FS      : Nomor antrian saat ini dilewati */
 
-void ShowSalesReportMenu(const char* email);
-/* Tujuan : Menampilkan menu laporan penjualan */
+void ShowQueueStatusMenu(const char* email);
+/* Tujuan : Menampilkan status antrian */
 /* IS      : email terdefinisi */
-/* FS      : Menu laporan penjualan ditampilkan */
+/* FS      : Status antrian ditampilkan */
 
 // *** FUNGSI UTAMA ***
 void RunCashierDashboard(const char* email);

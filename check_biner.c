@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "databases.h"
+#include <conio.h>
 
 // Function to check database format
 int check_biner_main() {

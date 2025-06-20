@@ -60,3 +60,15 @@ KA047|Argo Bromo Anggrek|Gambir|Surabaya Gubeng|08:00|15:30|2025-06-14|325000|Ek
 KA048|Gajayana|Malang|Gambir|19:00|09:00|2025-06-14|310000|Eksekutif|Indah Permata|indah@mail.com|083345678901|B2|4|2025-06-14 17:35:20
 KA049|Taksaka|Yogyakarta|Gambir|08:00|14:30|2025-06-15|250000|Eksekutif|Jaya Kusuma|jaya@mail.com|084456789012|C2|2|2025-06-15 07:25:45
 KA050|Argo Dwipangga|Solo Balapan|Gambir|07:00|13:00|2025-06-15|280000|Eksekutif|Kartika Sari|kartika@mail.com|085567890123|A2|3|2025-06-15 06:50:10 
+KA367|Commuter Line Garut|padalarang|bandung|16:30|17:00|20-06-2025|Ekonomi|Devi|devi@gmail.com|08123456789|B1|3|2025-06-19 19:54:00
+KA367|Commuter Line Garut|padalarang|bandung|15:30|16:00|20-06-2025|Ekonomi|Devi|devi@gmail.com|08123456789|A3|3|2025-06-19 20:08:29
+KA367|Commuter Line Garut|padalarang|cimahi|15:30|15:45|20-06-2025|Ekonomi|Devi|devi@gmail.com|08123456789|A1|2|2025-06-19 20:31:42
+KA378|Commuter Line Garut|padalarang|cimahi|18:30|18:45|20-06-2025|Ekonomi|Devi|devi@gmail.com|08123456789|B1|2|2025-06-19 20:47:02
+KA127|Pangandaran|Banjar|Tasikmalaya|17:00|17:50|20-06-2025|Eksekutif|Devi|devi@gmail.com|08123456789|A1|1|2025-06-20 07:02:36
+KA127|Pangandaran|Banjar|Tasikmalaya|17:00|17:50|20-06-2025|Eksekutif|Devi|devi@gmail.com|08123456789|D20|1|2025-06-20 07:06:15
+KA127|Pangandaran|Banjar|Tasikmalaya|17:00|17:50|20-06-2025|Eksekutif|Devi|devi@gmail.com|08123456789|D1|1|2025-06-20 07:28:07
+KA367|Commuter Line Garut|bandung|kiaracondong|17:00|17:15|20-06-2025|6000.00|Ekonomi|Devi|devi@gmail.com|08123456789|A1|4|2025-06-20 11:28:21
+KA350|Commuter Line Garut|bandung|kiaracondong|18:05|18:15|20-06-2025|6000.00|Ekonomi|Devi|devi@gmail.com|08123456789|A1|2|2025-06-20 11:33:04
+KA350|Commuter Line Garut|bandung|kiaracondong|18:05|18:15|20-06-2025|6000.00|Ekonomi|Devi|devi@gmail.com|08123456789|A20|2|2025-06-20 11:38:09
+KA127|Pangandaran|Banjar|Tasikmalaya|17:00|17:50|20-06-2025|370000.00|Eksekutif|Devi|devi@gmail.com|08123456789|D3|1|2025-06-20 13:59:04
+KA127|Pangandaran|banjar|tasikmalaya|17:00|17:50|20-06-2025|370000.00|Eksekutif|Devi|devi@gmail.com|08123456789|A1|2|2025-06-20 14:49:50
