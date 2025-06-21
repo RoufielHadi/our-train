@@ -267,8 +267,8 @@ void printHashTreeRecursive(HashPassword *root, int level) {
 }
 
 boolean SearchHash(HashPassword *root, infotype X) {
-    if (root == NULL) return false;
-    if (root->info == X) return true;
+    if (root == NULL) return FALSE;
+    if (root->info == X) return TRUE;
     return SearchHash(root->kiri, X) || SearchHash(root->kanan, X);
 }
 
@@ -430,7 +430,7 @@ int GetHashChild(HashPassword *root, addressHash node, int k) {
 }
 
 boolean IsHashLeaf(HashPassword *root, addressHash node) {
-    return (node == NULL) ? false : (node->kiri == NULL && node->kanan == NULL);
+    return (node == NULL) ? FALSE : (node->kiri == NULL && node->kanan == NULL);
 }
 
 boolean IsHashRoot(HashPassword *root, addressHash node) {
@@ -460,8 +460,8 @@ void CopyHashTree(HashPassword *root, HashPassword **dest) {
 }
 
 boolean CompareHashTrees(HashPassword *root1, HashPassword *root2) {
-    if (root1 == NULL && root2 == NULL) return true;
-    if (root1 == NULL || root2 == NULL) return false;
+    if (root1 == NULL && root2 == NULL) return TRUE;
+    if (root1 == NULL || root2 == NULL) return FALSE;
     return (root1->info == root2->info) && 
            CompareHashTrees(root1->kiri, root2->kiri) && 
            CompareHashTrees(root1->kanan, root2->kanan);
@@ -483,7 +483,7 @@ void getMorseCodeRecursive(HashPassword *root, char target, char *path, char *re
     
     if (root->info == target) {
         strcpy(result, path);
-        *found = true;
+        *found = TRUE;
         return;
     }
     
@@ -507,7 +507,7 @@ char* EncodeToMorse(HashPassword *root, char character) {
     char *result = (char*)malloc(100 * sizeof(char));
     result[0] = '\0'; // Empty string
     
-    boolean found = false;
+    boolean found = FALSE;
     getMorseCodeRecursive(root, character, path, result, &found);
     
     if (!found) {
@@ -524,7 +524,8 @@ char* GenerateHashFromPassword(HashPassword *root, const char* password) {
     char *hashResult = (char*)malloc(1000 * sizeof(char)); // Cukup besar untuk menampung hash
     hashResult[0] = '\0'; // Empty string
     
-    for (int i = 0; i < len; i++) {
+    int i;
+    for (i = 0; i < len; i++) {
         char *morseCode = EncodeToMorse(root, password[i]);
         
         if (morseCode != NULL && strlen(morseCode) > 0) {

@@ -10,13 +10,14 @@ Politeknik Negeri Bandung
 #ifndef HASH_PASSWORD_H
 #define HASH_PASSWORD_H
 
-#include "tree_biner.h"
-#include "implementasi_morse.h"
-#include "boolean.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "boolean.h"
+
+// Forward declaration
+typedef struct HashPassword HashPassword;
 
 // Konstanta untuk panjang PIN
 #define PIN_LENGTH 6
@@ -73,8 +74,8 @@ void SimpanPasswordKeFile(const char *username, const char *hashedPassword, cons
 /* IS      : username, hashedPassword, hashedPin, dan filename terdefinisi */
 /* FS      : Username dan password tersimpan dalam file */
 
-boolean VerifikasiLogin(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename);
-/* Tujuan : Memverifikasi login user berdasarkan username, password, dan PIN */
+boolean VerifikasiLoginFromFile(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename);
+/* Tujuan : Memverifikasi login user berdasarkan username, password, dan PIN dari file */
 /* IS      : morseTree, username, password, pin, dan filename terdefinisi */
 /* FS      : Mengembalikan TRUE jika login berhasil, FALSE jika gagal */
 

@@ -12,7 +12,7 @@ Politeknik Negeri Bandung
 #include "boolean.h"
 
 //Maksimal node yang dapat ditampung dalam array
-#define jml_maks 20
+#define jml_maks 200
 
 //Arah traversal
 #define kebawah 1

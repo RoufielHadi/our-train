@@ -105,7 +105,8 @@ void PostOrder(Isi_Tree P) {
 void Level_order(Isi_Tree X, int Maks_node) {
     if (IsEmpty(X)) return;
     
-    for (int i = 1; i <= Maks_node; i++) {
+    int i;
+    for (i = 1; i <= Maks_node; i++) {
         if (X[i].info != NULL) {
             printf("%s ", X[i].info);
         }
@@ -119,15 +120,17 @@ void PrintTree(Isi_Tree P) {
 }
 
 boolean Search(Isi_Tree P, infotype X) {
-    for (int i = 1; i <= jml_maks; i++) {
-        if (P[i].info != NULL && strcmp(P[i].info, X) == 0) return true;
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
+        if (P[i].info != NULL && strcmp(P[i].info, X) == 0) return TRUE;
     }
-    return false;
+    return FALSE;
 }
 
 int nbElmt(Isi_Tree P) {
     int count = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info != NULL) count++;
     }
     return count;
@@ -135,14 +138,16 @@ int nbElmt(Isi_Tree P) {
 
 int nbDaun(Isi_Tree P) {
     int count = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info != NULL && P[i].ps_fs == 0) count++;
     }
     return count;
 }
 
 int Level(Isi_Tree P, infotype X) {
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info != NULL && strcmp(P[i].info, X) == 0) {
             int level = 0;
             int pr = P[i].ps_pr;
@@ -158,7 +163,8 @@ int Level(Isi_Tree P, infotype X) {
 
 int Depth(Isi_Tree P) {
     int maxDepth = 0;
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info != NULL) {
             int depth = 0;
             int pr = P[i].ps_pr;
@@ -177,7 +183,8 @@ int Max(int Data1, int Data2) {
 }
 
 int FindEmptySlot(Isi_Tree P) {
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info == NULL) return i;
     }
     return 0;
@@ -241,7 +248,8 @@ int GetParent(Isi_Tree P, int idx) {
 
 int GetChild(Isi_Tree P, int idx, int k) {
     int child = P[idx].ps_fs;
-    for (int i = 1; i < k && child != 0; i++) {
+    int i;
+    for (i = 1; i < k && child != 0; i++) {
         child = P[child].ps_nb;
     }
     return child;
@@ -256,7 +264,8 @@ boolean IsRoot(Isi_Tree P, int idx) {
 }
 
 void CopyTree(Isi_Tree P, Isi_Tree Q) {
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         if (P[i].info != NULL) {
             Q[i].info = strdup(P[i].info);
         } else {
@@ -269,25 +278,26 @@ void CopyTree(Isi_Tree P, Isi_Tree Q) {
 }
 
 boolean CompareTrees(Isi_Tree P1, Isi_Tree P2) {
-    for (int i = 1; i <= jml_maks; i++) {
+    int i;
+    for (i = 1; i <= jml_maks; i++) {
         // Periksa jika salah satu NULL dan yang lain tidak
         if ((P1[i].info == NULL && P2[i].info != NULL) || 
             (P1[i].info != NULL && P2[i].info == NULL)) {
-            return false;
+            return FALSE;
         }
         // Jika keduanya tidak NULL, bandingkan string
         if (P1[i].info != NULL && P2[i].info != NULL && 
             strcmp(P1[i].info, P2[i].info) != 0) {
-            return false;
+            return FALSE;
         }
         // Bandingkan pointer
         if (P1[i].ps_fs != P2[i].ps_fs ||
             P1[i].ps_nb != P2[i].ps_nb ||
             P1[i].ps_pr != P2[i].ps_pr) {
-            return false;
+            return FALSE;
         }
     }
-    return true;
+    return TRUE;
 }
 
 int Degree(Isi_Tree P, int idx) {

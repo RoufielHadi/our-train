@@ -12,7 +12,7 @@ MakeIncludes=
 Compiler=
 CppCompiler=
 Linker=
-IsCpp=1
+IsCpp=0
 Icon=
 ExeOutput=
 ObjectOutput=
@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=52
+UnitCount=78
 
 [VersionInfo]
 Major=1
@@ -40,19 +40,19 @@ LanguageID=1033
 CharsetID=1252
 CompanyName=
 FileVersion=1.0.0.0
-FileDescription=OurTrain - Train Ticket Booking System
+FileDescription=Developed using the Dev-C++ IDE
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=OurTrain
+ProductName=
 ProductVersion=1.0.0.0
 AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=boolean.h
-CompileCpp=1
+FileName=array.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -61,8 +61,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=tree_non_biner.h
-CompileCpp=1
+FileName=check_biner.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -71,8 +71,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=tree_non_biner.c
-CompileCpp=1
+FileName=clear.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -81,8 +81,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=tree_biner.h
-CompileCpp=1
+FileName=dashboard_admin.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -91,8 +91,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=tree_biner.c
-CompileCpp=1
+FileName=dashboard_akun_saya.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -101,8 +101,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=implementasi_morse.h
-CompileCpp=1
+FileName=dashboard_authentication.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -111,8 +111,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=implementasi_morse.c
-CompileCpp=1
+FileName=dashboard_cashier.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -121,8 +121,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=hash_password.h
-CompileCpp=1
+FileName=dashboard_kursi_kereta.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -131,8 +131,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=hash_password.c
-CompileCpp=1
+FileName=dashboard_lihat_jadwal.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -141,8 +141,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=implementasi_rute_kereta.h
-CompileCpp=1
+FileName=dashboard_machine.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -151,8 +151,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=implementasi_rute_kereta.c
-CompileCpp=1
+FileName=dashboard_manajemen_jadwal.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -161,8 +161,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=main.c
-CompileCpp=1
+FileName=dashboard_manajemen_kereta.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -171,8 +171,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=implementasi_akun_user.h
-CompileCpp=1
+FileName=dashboard_manajemen_rute.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -181,8 +181,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=implementasi_akun_user.c
-CompileCpp=1
+FileName=dashboard_manajemen_user.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -191,8 +191,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit15]
-FileName=implementasi_pembayaran.h
-CompileCpp=1
+FileName=dashboard_pembayaran.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -201,8 +201,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=implementasi_pembayaran.c
-CompileCpp=1
+FileName=dashboard_rekening_saya.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -211,8 +211,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=implementasi_jadwal_kereta.h
-CompileCpp=1
+FileName=dashboard_tiket_saya.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -221,8 +221,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=implementasi_jadwal_kereta.c
-CompileCpp=1
+FileName=dashboard_user.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -231,8 +231,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=implementasi_informasi_kereta.h
-CompileCpp=1
+FileName=databases.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -241,8 +241,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=implementasi_informasi_kereta.c
-CompileCpp=1
+FileName=hash_password.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -251,8 +251,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=array.h
-CompileCpp=1
+FileName=implementasi_akun_user.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -261,8 +261,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=array.c
-CompileCpp=1
+FileName=implementasi_antrian_offline.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -271,8 +271,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=clear.h
-CompileCpp=1
+FileName=implementasi_informasi_kereta.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -281,8 +281,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=clear.c
-CompileCpp=1
+FileName=implementasi_jadwal_kereta.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -291,8 +291,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=implementasi_antrian_offline.h
-CompileCpp=1
+FileName=implementasi_kursi_kereta.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -301,8 +301,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=implementasi_antrian_offline.c
-CompileCpp=1
+FileName=implementasi_morse.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -311,8 +311,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit27]
-FileName=implementasi_kursi_kereta.h
-CompileCpp=1
+FileName=implementasi_pembayaran.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -321,8 +321,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit28]
-FileName=implementasi_kursi_kereta.c
-CompileCpp=1
+FileName=implementasi_pembelian_tiket.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -331,8 +331,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit29]
-FileName=implementasi_rekapitulasi_keuntungan.h
-CompileCpp=1
+FileName=implementasi_rekapitulasi_keuntungan.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -341,8 +341,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit30]
-FileName=implementasi_rekapitulasi_keuntungan.c
-CompileCpp=1
+FileName=implementasi_riwayat.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -351,8 +351,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=implementasi_riwayat.h
-CompileCpp=1
+FileName=implementasi_rute_kereta.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -361,8 +361,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit32]
-FileName=implementasi_riwayat.c
-CompileCpp=1
+FileName=implementasi_tiket_saya.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -371,8 +371,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=linked.h
-CompileCpp=1
+FileName=linked.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -381,8 +381,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit34]
-FileName=linked.c
-CompileCpp=1
+FileName=main.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -391,8 +391,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit35]
-FileName=queue.h
-CompileCpp=1
+FileName=queue.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -401,8 +401,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=queue.c
-CompileCpp=1
+FileName=stack.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -411,8 +411,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=stack.h
-CompileCpp=1
+FileName=time.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -421,8 +421,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=stack.c
-CompileCpp=1
+FileName=tree_biner.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -431,8 +431,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=time.h
-CompileCpp=1
+FileName=tree_non_biner.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -441,8 +441,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit40]
-FileName=time.c
-CompileCpp=1
+FileName=array.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -451,8 +451,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit41]
-FileName=databases.h
-CompileCpp=1
+FileName=boolean.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -461,8 +461,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=databases.c
-CompileCpp=1
+FileName=clear.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -471,8 +471,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit43]
-FileName=dashboard_authentication.h
-CompileCpp=1
+FileName=dashboard_admin.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -481,8 +481,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=dashboard_authentication.c
-CompileCpp=1
+FileName=dashboard_akun_saya.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -491,8 +491,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit45]
-FileName=dashboard_user.h
-CompileCpp=1
+FileName=dashboard_authentication.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -501,8 +501,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit46]
-FileName=dashboard_user.c
-CompileCpp=1
+FileName=dashboard_cashier.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -511,8 +511,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit47]
-FileName=dashboard_admin.h
-CompileCpp=1
+FileName=dashboard_kursi_kereta.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -521,8 +521,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit48]
-FileName=dashboard_admin.c
-CompileCpp=1
+FileName=dashboard_lihat_jadwal.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -531,8 +531,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit49]
-FileName=dashboard_cashier.h
-CompileCpp=1
+FileName=dashboard_machine.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -541,8 +541,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit50]
-FileName=dashboard_cashier.c
-CompileCpp=1
+FileName=dashboard_manajemen_jadwal.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -551,8 +551,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit51]
-FileName=dashboard_machine.h
-CompileCpp=1
+FileName=dashboard_manajemen_kereta.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
@@ -561,11 +561,312 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit52]
-FileName=dashboard_machine.c
-CompileCpp=1
+FileName=dashboard_manajemen_rute.h
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
-BuildCmd= 
+BuildCmd=
+
+[Unit53]
+FileName=dashboard_manajemen_user.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit54]
+FileName=dashboard_pembayaran.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit55]
+FileName=dashboard_rekening_saya.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit56]
+FileName=dashboard_tiket_saya.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit57]
+FileName=dashboard_user.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit58]
+FileName=databases.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit59]
+FileName=hash_password.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit60]
+FileName=implementasi_akun_user.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit61]
+FileName=implementasi_antrian_offline.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit62]
+FileName=implementasi_informasi_kereta.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit63]
+FileName=implementasi_jadwal_kereta.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit64]
+FileName=implementasi_kursi_kereta.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit65]
+FileName=implementasi_morse.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit66]
+FileName=implementasi_pembayaran.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit67]
+FileName=implementasi_pembelian_tiket.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit68]
+FileName=implementasi_rekapitulasi_keuntungan.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit69]
+FileName=implementasi_riwayat.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit70]
+FileName=implementasi_rute_kereta.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit71]
+FileName=implementasi_tiket_saya.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit72]
+FileName=linked.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit73]
+FileName=queue.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit74]
+FileName=stack.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit75]
+FileName=time.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit76]
+FileName=tree_biner.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit77]
+FileName=tree_non_biner.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit78]
+FileName=check_biner.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit79]
+FileName=time.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit80]
+FileName=tree_biner.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit81]
+FileName=tree_non_biner.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit82]
+FileName=check_biner.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+

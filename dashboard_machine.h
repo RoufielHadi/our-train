@@ -20,6 +20,12 @@ Politeknik Negeri Bandung
 
 // *** PROTOTYPE FUNGSI DASHBOARD MACHINE ***
 
+// Helper function to extract station name from machine email
+void ExtractStationFromEmail(const char* email, char* station);
+/* Tujuan : Mengekstrak nama stasiun dari email mesin */
+/* IS      : email terdefinisi (contoh: machine.bandung@ourtrain.id) */
+/* FS      : station diisi dengan nama stasiun (contoh: Bandung) */
+
 // *** TAMPILAN DASHBOARD ***
 void ShowMachineDashboard(const char* email);
 /* Tujuan : Menampilkan dashboard untuk mesin */
@@ -27,20 +33,20 @@ void ShowMachineDashboard(const char* email);
 /* FS      : Dashboard mesin ditampilkan */
 
 // *** MENU MESIN ***
-void ShowTicketPrintingMenu(const char* email);
-/* Tujuan : Menampilkan menu cetak tiket */
+void TakeQueueNumber(const char* email);
+/* Tujuan : Mengambil nomor antrian baru */
 /* IS      : email terdefinisi */
-/* FS      : Menu cetak tiket ditampilkan */
+/* FS      : Nomor antrian baru diambil dan disimpan */
 
 void ShowTicketScanningMenu(const char* email);
 /* Tujuan : Menampilkan menu pemindaian tiket */
 /* IS      : email terdefinisi */
-/* FS      : Menu pemindaian tiket ditampilkan */
+/* FS      : Menu pemindaian tiket ditampilkan dan tiket dalam 24 jam ditampilkan */
 
-void ShowMachineStatusMenu(const char* email);
-/* Tujuan : Menampilkan menu status mesin */
+void ShowTrainsForTodayMenu(const char* email);
+/* Tujuan : Menampilkan jadwal kereta hari ini */
 /* IS      : email terdefinisi */
-/* FS      : Menu status mesin ditampilkan */
+/* FS      : Jadwal kereta hari ini ditampilkan */
 
 // *** FUNGSI UTAMA ***
 void RunMachineDashboard(const char* email);

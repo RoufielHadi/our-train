@@ -12,65 +12,72 @@ Politeknik Negeri Bandung
 #include <string.h>
 #include "dashboard_lihat_jadwal.h"
 #include "implementasi_jadwal_kereta.h"
+#include "clear.h"
+#include <ctype.h>
+#include "implementasi_pembelian_tiket.h"
 
 // Fungsi untuk dashboard lihat jadwal (navigasi interface)
 void ShowLihatJadwalMenu() {
+    ListHasilPencarian hasil;
+    InisialisasiListHasilPencarian(&hasil);
     char asal[50], tujuan[50];
-    printf("=== LIHAT JADWAL KERETA ===\n");
+    char tanggal[11];
+    clearScreen();
+    printf("+-----------------------------------------+\n");
+    printf("|           LIHAT JADWAL KERETA           |\n");
+    printf("+-----------------------------------------+\n");
     printf("Masukkan Stasiun Asal  : ");
-    scanf(" %[^\n]", asal);
+    fgets(asal, sizeof(asal), stdin);
+    asal[strcspn(asal, "\r\n")] = '\0';
+    // Normalisasi input: uppercase pertama, lowercase sisanya
+    int i;
+    for (i = 0; asal[i]; i++) asal[i] = tolower((unsigned char)asal[i]);
+    if (asal[0]) asal[0] = toupper((unsigned char)asal[0]);
     printf("Masukkan Stasiun Tujuan: ");
-    scanf(" %[^\n]", tujuan);
+    fgets(tujuan, sizeof(tujuan), stdin);
+    tujuan[strcspn(tujuan, "\r\n")] = '\0';
+    // Normalisasi input: uppercase pertama, lowercase sisanya
+    for (i = 0; tujuan[i]; i++) tujuan[i] = tolower((unsigned char)tujuan[i]);
+    if (tujuan[0]) tujuan[0] = toupper((unsigned char)tujuan[0]);
 
-    // Buat list jadwal kosong
-    ListJadwal daftarJadwal;
-    CreateListJadwal(&daftarJadwal);
-    
-    // Muat data jadwal dari database
-    Record records[100];
-    int jumlah_records = 0;
-    BacaSemuaJadwalKereta(records, &jumlah_records, 100);
-    
-    // Konversi records ke JadwalHarian dan tambahkan ke list
-    for (int i = 0; i < jumlah_records; i++) {
-        JadwalHarian jadwal = KonversiRecordKeJadwalKereta(records[i]);
-        TambahJadwalKeList(&daftarJadwal, jadwal);
+    // Tambahkan input tanggal sebelum pencarian jadwal
+    printf("Masukkan Tanggal (dd-mm-yyyy): ");
+    fgets(tanggal, sizeof(tanggal), stdin);
+    tanggal[strcspn(tanggal, "\r\n")] = '\0';
+
+    // Pastikan data kereta telah dimuat untuk mendapatkan jenis dan harga
+    if (isEmptyKereta(globalListKereta)) {
+        InisialisasiListKeretaGlobal();
+        MuatDataKeretaKeGlobal();
+        // Tambahkan kereta dari jadwal_kereta.txt jika belum ada di daftar
+        FILE* fileKereta = BukaFile(DB_JADWAL_KERETA, "r");
+        if (fileKereta) {
+            char line[1024];
+            while (fgets(line, sizeof(line), fileKereta)) {
+                char kode[20] = "";
+                char* token = strtok(line, "|");
+                if (token) strncpy(kode, token, sizeof(kode)-1);
+                if (kode[0] && GetJenisLayananById(globalListKereta, kode) == NULL) {
+                    // Tambahkan dengan data default
+                    char namaDef[50]; sprintf(namaDef, "Kereta %s", kode);
+                    InformasiKereta ker = BuatInformasiKereta(kode, namaDef, STR_EKONOMI, 0.0, "0");
+                    TambahInformasiKereta(&globalListKereta, ker);
+                }
+            }
+            TutupFile(fileKereta);
+        }
     }
-    
-    // Cari jadwal menggunakan fungsi dari implementasi_jadwal_kereta
-    NodeJadwal* hasil = CariJadwalByRute(daftarJadwal, asal, tujuan);
-
-    if (hasil == NULL) {
-        printf("\nTidak ditemukan jadwal untuk rute %s ke %s.\n", asal, tujuan);
+    // Cari jadwal berdasarkan rute dengan logika pembelian tiket
+    if (CariTiket(&hasil, asal, tujuan, tanggal, "")) {
+        clearScreen();
+        TampilkanHasilPencarian(hasil);
     } else {
-        // Buat list baru untuk hasil pencarian
-        ListJadwal hasilPencarian;
-        CreateListJadwal(&hasilPencarian);
-        
-        // Salin hasil ke list baru
-        NodeJadwal* current = hasil;
-        while (current != NULL) {
-            TambahJadwalKeList(&hasilPencarian, current->jadwal);
-            current = current->next;
-        }
-        
-        printf("\nJadwal ditemukan:\n");
-        TampilkanSemuaJadwal(hasilPencarian);
-        
-        // Bersihkan list hasil pencarian
-        NodeJadwal* temp = hasilPencarian.First;
-        while (temp != NULL) {
-            NodeJadwal* hapus = temp;
-            temp = temp->next;
-            free(hapus);
-        }
+        printf("\nTidak ditemukan jadwal untuk rute %s ke %s.\n", asal, tujuan);
     }
-    
-    // Bersihkan list daftar jadwal
-    NodeJadwal* temp = daftarJadwal.First;
-    while (temp != NULL) {
-        NodeJadwal* hapus = temp;
-        temp = temp->next;
-        free(hapus);
-    }
+
+    // Tunggu ENTER sebelum kembali
+    printf("\nTekan ENTER untuk kembali ke menu utama...");
+    getchar();
+
+    HapusListHasilPencarian(&hasil);
 }

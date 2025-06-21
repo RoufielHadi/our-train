@@ -7,8 +7,25 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung  
 */
 
+/*
+Author fungsi antar modul : Devi Maulani
+NIM: 241524007  
+Kelas: 1A  
+Prodi: Sarjana Terapan Teknik Informatika  
+Jurusan: Teknik Komputer dan Informatika  
+Politeknik Negeri Bandung  
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "implementasi_informasi_kereta.h"
 #include "databases.h"
+
+// Variabel global untuk list kereta
+ListKereta globalListKereta;
+// Variabel global untuk array kereta
+ArrayKereta globalArrayKereta;
 
 // Fungsi untuk membuat informasi kereta baru
 InformasiKereta BuatInformasiKereta(char* id_kereta, char* nama_kereta, char* jenis_layanan, float harga_tiket, char* jumlah_gerbong) {
@@ -178,6 +195,7 @@ void FilterKeretaBerdasarkanHarga(ListKereta L, float harga_min, float harga_max
 
 // Fungsi untuk mengurutkan kereta berdasarkan harga (ascending)
 ListKereta UrutkanKeretaBerdasarkanHarga(ListKereta L, boolean ascending) {
+	int i,j;
     if (isEmptyKereta(L) || NbElmtKereta(L) == 1) {
         return L; // List kosong atau hanya memiliki 1 elemen
     }
@@ -188,11 +206,11 @@ ListKereta UrutkanKeretaBerdasarkanHarga(ListKereta L, boolean ascending) {
     int n = NbElmtKereta(L);
     boolean swapped;
     
-    for (int i = 0; i < n - 1; i++) {
+    for (i = 0; i < n - 1; i++) {
         swapped = FALSE;
         temp_current = L.First;
         
-        for (int j = 0; j < n - i - 1; j++) {
+        for (j = 0; j < n - i - 1; j++) {
             temp_next = temp_current->next;
             
             boolean should_swap;
@@ -223,6 +241,7 @@ ListKereta UrutkanKeretaBerdasarkanHarga(ListKereta L, boolean ascending) {
 
 // Fungsi untuk mengurutkan kereta berdasarkan nama (alphabetical)
 ListKereta UrutkanKeretaBerdasarkanNama(ListKereta L) {
+	int i,j;
     if (isEmptyKereta(L) || NbElmtKereta(L) == 1) {
         return L; // List kosong atau hanya memiliki 1 elemen
     }
@@ -233,11 +252,11 @@ ListKereta UrutkanKeretaBerdasarkanNama(ListKereta L) {
     int n = NbElmtKereta(L);
     boolean swapped;
     
-    for (int i = 0; i < n - 1; i++) {
+    for (i = 0; i < n - 1; i++) {
         swapped = FALSE;
         temp_current = L.First;
         
-        for (int j = 0; j < n - i - 1; j++) {
+        for (j = 0; j < n - i - 1; j++) {
             temp_next = temp_current->next;
             
             if (strcmp(temp_current->kereta_info.nama_kereta, temp_next->kereta_info.nama_kereta) > 0) {
@@ -262,6 +281,7 @@ ListKereta UrutkanKeretaBerdasarkanNama(ListKereta L) {
 // Fungsi untuk validasi ID kereta
 boolean ValidasiIDKereta(char* id_kereta) {
     // Cek panjang ID kereta (umumnya 3-8 karakter)
+    int i;
     int panjang = strlen(id_kereta);
     if (panjang < 3 || panjang > 8) {
         return FALSE;
@@ -273,7 +293,7 @@ boolean ValidasiIDKereta(char* id_kereta) {
     }
     
     // Cek karakter lainnya (hanya huruf dan angka)
-    for (int i = 0; i < panjang; i++) {
+    for (i = 0; i < panjang; i++) {
         if (!((id_kereta[i] >= 'A' && id_kereta[i] <= 'Z') || 
               (id_kereta[i] >= '0' && id_kereta[i] <= '9'))) {
             return FALSE;
@@ -285,10 +305,10 @@ boolean ValidasiIDKereta(char* id_kereta) {
 
 // Fungsi untuk validasi jenis layanan
 boolean ValidasiJenisLayanan(char* jenis_layanan) {
-    return (strcmp(jenis_layanan, EKONOMI) == 0 || 
-            strcmp(jenis_layanan, BISNIS) == 0 || 
-            strcmp(jenis_layanan, EKSEKUTIF) == 0 || 
-            strcmp(jenis_layanan, LUXURY) == 0);
+    return (strcmp(jenis_layanan, STR_EKONOMI) == 0 || 
+            strcmp(jenis_layanan, STR_BISNIS) == 0 || 
+            strcmp(jenis_layanan, STR_EKSEKUTIF) == 0 || 
+            strcmp(jenis_layanan, STR_LUXURY) == 0);
 }
 
 // Fungsi untuk menghitung jumlah kereta berdasarkan jenis layanan
@@ -323,7 +343,8 @@ void GenerateIDKereta(ListKereta L, char* id_baru) {
     strcpy(id_baru, temp_id);
 }
 
-void TampilkanDaftarKereta() {
+void TampilkanDaftarKeretaDBUI() {
+	int i;
     Record records[MAX_FIELDS];
     int jumlahRecord = 0;
     DaftarKereta(records, &jumlahRecord);
@@ -336,11 +357,11 @@ void TampilkanDaftarKereta() {
     } else {
         printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", "ID", "Nama", "Layanan", "Harga", "Gerbong");
         printf("+------------+-----------------+------------+----------+--------+\n");
-        for (int i = 0; i < jumlahRecord; i++) {
+        for (i = 0; i < jumlahRecord; i++) {
             char* id = AmbilNilai(&records[i], "kodeKereta");
             char* nama = AmbilNilai(&records[i], "namaKereta");
             char* layanan = AmbilNilai(&records[i], "jenisLayanan");
-            char* harga = AmbilNilai(&records[i], "harga");
+            char* harga = AmbilNilai(&records[i], "hargaTiket");
             char* gerbong = AmbilNilai(&records[i], "jumlahGerbong");
             printf("| %-10s | %-15s | %-10s | %-8s | %-6s |\n", id ? id : "-", nama ? nama : "-", layanan ? layanan : "-", harga ? harga : "-", gerbong ? gerbong : "-");
         }
@@ -348,7 +369,7 @@ void TampilkanDaftarKereta() {
     printf("+----------------------------------------------+\n");
 }
 
-void TambahKereta() {
+void TambahKeretaUI() {
     clearScreen();
     printf("+----------------------------------------------+\n");
     printf("|               TAMBAH KERETA                 |\n");
@@ -364,7 +385,7 @@ void TambahKereta() {
     TambahField(&record, "kodeKereta", id);
     TambahField(&record, "namaKereta", nama);
     TambahField(&record, "jenisLayanan", layanan);
-    TambahField(&record, "harga", harga);
+    TambahField(&record, "hargaTiket", harga);
     TambahField(&record, "jumlahGerbong", gerbong);
 
     if (SimpanInformasiKereta(&record)) {
@@ -376,7 +397,7 @@ void TambahKereta() {
 }
 
 void EditKereta() {
-    TampilkanDaftarKereta();
+    TampilkanDaftarKeretaDBUI();
     char id[20];
     printf("\nMasukkan ID kereta yang ingin diedit: ");
     scanf("%s", id); while(getchar()!='\n');
@@ -393,7 +414,7 @@ void EditKereta() {
     printf("Jumlah Gerbong baru (kosongkan jika tidak diubah): "); fgets(gerbong, sizeof(gerbong), stdin); gerbong[strcspn(gerbong, "\n")] = 0;
     if (strlen(nama) > 0) UbahNilai(&record, "namaKereta", nama);
     if (strlen(layanan) > 0) UbahNilai(&record, "jenisLayanan", layanan);
-    if (strlen(harga) > 0) UbahNilai(&record, "harga", harga);
+    if (strlen(harga) > 0) UbahNilai(&record, "hargaTiket", harga);
     if (strlen(gerbong) > 0) UbahNilai(&record, "jumlahGerbong", gerbong);
     if (UpdateInformasiKereta(&record)) {
         printf("\nData kereta berhasil diupdate!\n");
@@ -403,8 +424,8 @@ void EditKereta() {
     printf("Tekan Enter untuk kembali..."); getchar();
 }
 
-void HapusKereta() {
-    TampilkanDaftarKereta();
+void HapusKeretaUI() {
+    TampilkanDaftarKeretaDBUI();
     char id[20];
     printf("\nMasukkan ID kereta yang ingin dihapus: ");
     scanf("%s", id); while(getchar()!='\n');
@@ -420,4 +441,97 @@ void HapusKereta() {
         printf("\nPenghapusan dibatalkan.\n");
     }
     printf("Tekan Enter untuk kembali..."); getchar();
+}
+
+// Implementasi fungsi-fungsi helper untuk integrasi
+// ==================================================
+
+// Mendapatkan pointer ke informasi kereta berdasarkan ID
+InformasiKereta* GetInformasiKeretaById(ListKereta L, const char* id_kereta) {
+    DataInformasiKereta *kereta_node = SearchKeretaById(L, (char*)id_kereta);
+    if (kereta_node != NULL) {
+        return &(kereta_node->kereta_info);
+    }
+    return NULL;
+}
+
+// Mendapatkan jenis layanan kereta berdasarkan ID
+const char* GetJenisLayananById(ListKereta L, const char* id_kereta) {
+    InformasiKereta *kereta = GetInformasiKeretaById(L, id_kereta);
+    if (kereta != NULL) {
+        return kereta->jenis_layanan;
+    }
+    return NULL; // Kereta tidak ditemukan
+}
+
+// Mendapatkan harga tiket kereta berdasarkan ID
+float GetHargaTiketById(ListKereta L, const char* id_kereta) {
+    InformasiKereta *kereta = GetInformasiKeretaById(L, id_kereta);
+    if (kereta != NULL) {
+        return kereta->harga_tiket;
+    }
+    return 0; // Kereta tidak ditemukan
+}
+
+// Mendapatkan jumlah gerbong kereta berdasarkan ID
+int GetJumlahGerbongById(ListKereta L, const char* id_kereta) {
+    InformasiKereta *kereta = GetInformasiKeretaById(L, id_kereta);
+    if (kereta != NULL) {
+        return atoi(kereta->jumlah_gerbong);
+    }
+    return 0; // Kereta tidak ditemukan
+}
+
+// Inisialisasi list kereta global
+void InisialisasiListKeretaGlobal() {
+    CreateListKereta(&globalListKereta);
+}
+
+// Memuat semua data kereta dari database ke list global
+boolean MuatDataKeretaKeGlobal() {
+	int i;
+    // Pastikan list kosong terlebih dahulu
+    DeleteListKereta(&globalListKereta);
+    CreateListKereta(&globalListKereta);
+    
+    // Muat data dari database
+    Record records[100]; // Asumsi maksimal 100 kereta
+    int jumlah_record = 0;
+    
+    // Panggil DaftarKereta tanpa memeriksa nilai return
+    DaftarKereta(records, &jumlah_record);
+    
+    // Jika tidak ada record yang dimuat, kembalikan FALSE
+    if (jumlah_record == 0) {
+        return FALSE;
+    }
+    
+    // Konversi setiap record ke InformasiKereta dan tambahkan ke list global
+    for (i = 0; i < jumlah_record; i++) {
+        char *id = AmbilNilai(&records[i], "kodeKereta");
+        char *nama = AmbilNilai(&records[i], "namaKereta");
+        char *layanan = AmbilNilai(&records[i], "jenisLayanan");
+        char *harga_str = AmbilNilai(&records[i], "hargaTiket");
+        char *gerbong = AmbilNilai(&records[i], "jumlahGerbong");
+        
+        if (id && nama && layanan && harga_str && gerbong) {
+            float harga = atof(harga_str);
+            InformasiKereta kereta = BuatInformasiKereta(id, nama, layanan, harga, gerbong);
+            TambahInformasiKereta(&globalListKereta, kereta);
+        }
+    }
+    
+    return TRUE;
+}
+
+// Fungsi baru: Mendapatkan enum JenisKereta berdasarkan ID kereta
+JenisKereta GetJenisKeretaById(const char* id_kereta) {
+    // Cari informasi kereta global berdasarkan ID
+    InformasiKereta* info = GetInformasiKeretaById(globalListKereta, id_kereta);
+    if (info != NULL) {
+        // Konversi jenis layanan string ke enum JenisKereta
+        return GetJenisKeretaFromString(info->jenis_layanan);
+    }
+    // Default jika tidak ditemukan
+    return EKONOMI;
 } 

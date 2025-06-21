@@ -63,6 +63,11 @@ void BuatFileJikaBelumAda(const char* namaFile);
 /* IS      : namaFile terdefinisi */
 /* FS      : File dengan nama namaFile dibuat jika belum ada */
 
+void HapusFileLama();
+/* Tujuan : Menghapus file informasi_akun_user.dat dan informasi_rekening_user.dat yang lama */
+/* IS      : - */
+/* FS      : File .dat dan .bak lama dihapus jika ada */
+
 // Fungsi operasi record
 void InisialisasiRecord(Record* record);
 /* Tujuan : Menginisialisasi record baru */
@@ -93,6 +98,14 @@ void CetakRecord(Record* record);
 /* Tujuan : Mencetak seluruh isi record ke layar */
 /* IS      : record terdefinisi */
 /* FS      : Isi record dicetak ke layar */
+
+void TampilkanRecord(Record* record, const char* title);
+/* Tujuan : Mencetak seluruh isi record ke layar dengan judul untuk debug */
+/* IS      : record dan title terdefinisi */
+/* FS      : Isi record dicetak ke layar dengan judul */
+
+// Fungsi untuk debugging
+void TampilkanIsiFile(const char* namaFile);
 
 // Fungsi konversi dan serialisasi
 void RecordKeString(Record* record, char* output, int maxLength);
@@ -126,6 +139,27 @@ boolean HapusRecord(const char* namaFile, const char* primaryKey, const char* pr
 /* IS      : namaFile, primaryKey, dan primaryValue terdefinisi */
 /* FS      : Record dengan primary key yang sesuai dihapus, mengembalikan TRUE jika berhasil */
 
+// Fungsi operasi biner khusus untuk akun dan rekening
+boolean SimpanRecordBiner(const char* namaFile, Record* record, const char* primaryKey);
+/* Tujuan : Menyimpan record ke file database dalam format biner */
+/* IS      : namaFile, record, dan primaryKey terdefinisi */
+/* FS      : Record disimpan ke file database dalam format biner, mengembalikan TRUE jika berhasil */
+
+boolean BacaRecordBiner(const char* namaFile, Record* record, const char* primaryKey, const char* primaryValue);
+/* Tujuan : Membaca record dari file database biner berdasarkan primary key */
+/* IS      : namaFile, record, primaryKey, dan primaryValue terdefinisi */
+/* FS      : Record dengan primary key yang sesuai dibaca dari file biner dan disimpan di record, mengembalikan TRUE jika berhasil */
+
+boolean UpdateRecordBiner(const char* namaFile, Record* record, const char* primaryKey);
+/* Tujuan : Memperbarui record yang ada di file database biner */
+/* IS      : namaFile, record, dan primaryKey terdefinisi */
+/* FS      : Record dengan primary key yang sesuai diperbarui dalam file biner, mengembalikan TRUE jika berhasil */
+
+boolean HapusRecordBiner(const char* namaFile, const char* primaryKey, const char* primaryValue);
+/* Tujuan : Menghapus record dari file database biner */
+/* IS      : namaFile, primaryKey, dan primaryValue terdefinisi */
+/* FS      : Record dengan primary key yang sesuai dihapus dari file biner, mengembalikan TRUE jika berhasil */
+
 // Fungsi database spesifik
 // 1. Akun User
 boolean SimpanAkunUser(Record* record);
@@ -133,25 +167,31 @@ boolean SimpanAkunUser(Record* record);
 /* IS      : record terdefinisi dan berisi data akun user */
 /* FS      : Data akun user disimpan ke database, mengembalikan TRUE jika berhasil */
 
-boolean BacaAkunUser(Record* record, const char* username);
+boolean BacaAkunUser(Record* record, const char* email);
 /* Tujuan : Membaca data akun user dari database */
-/* IS      : record dan username terdefinisi */
-/* FS      : Data akun user dengan username yang sesuai dibaca dari database dan disimpan di record, mengembalikan TRUE jika berhasil */
+/* IS      : record dan email terdefinisi */
+/* FS      : Data akun user dengan email yang sesuai dibaca dari database dan disimpan di record, mengembalikan TRUE jika berhasil */
 
 boolean UpdateAkunUser(Record* record);
 /* Tujuan : Memperbarui data akun user di database */
 /* IS      : record terdefinisi dan berisi data akun user yang diperbarui */
 /* FS      : Data akun user diperbarui di database, mengembalikan TRUE jika berhasil */
 
-boolean HapusAkunUser(const char* username);
+boolean HapusAkunUser(const char* email);
 /* Tujuan : Menghapus data akun user dari database */
-/* IS      : username terdefinisi */
-/* FS      : Data akun user dengan username yang sesuai dihapus dari database, mengembalikan TRUE jika berhasil */
+/* IS      : email terdefinisi */
+/* FS      : Data akun user dengan email yang sesuai dihapus dari database, mengembalikan TRUE jika berhasil */
 
-boolean VerifikasiLogin(const char* username, const char* password);
-/* Tujuan : Memverifikasi login user dengan username dan password */
-/* IS      : username dan password terdefinisi */
-/* FS      : Mengembalikan TRUE jika username dan password cocok, FALSE jika tidak */
+boolean VerifikasiLogin(const char* email, const char* password);
+/* Tujuan : Memverifikasi login user dengan email dan password */
+/* IS      : email dan password terdefinisi */
+/* FS      : Mengembalikan TRUE jika email dan password cocok, FALSE jika tidak */
+
+// Tambahkan fungsi untuk membaca semua akun user dari database
+boolean BacaSemuaAkunUser(Record** records, int* jumlahRecord);
+/* Tujuan : Membaca semua akun user dari database */
+/* IS      : records pointer dan jumlahRecord terdefinisi */
+/* FS      : records diisi array Record, jumlahRecord diisi banyaknya record, mengembalikan TRUE jika berhasil */
 
 // 2. Rekening User
 boolean SimpanRekeningUser(Record* record);
@@ -225,6 +265,11 @@ void CariJadwalKereta(const char* stasiunAsal, const char* stasiunTujuan, const 
 /* Tujuan : Mencari jadwal kereta berdasarkan stasiun asal, stasiun tujuan, dan tanggal */
 /* IS      : stasiunAsal, stasiunTujuan, tanggal, records, dan jumlahRecord terdefinisi */
 /* FS      : records berisi daftar jadwal kereta yang sesuai dengan kriteria pencarian, jumlahRecord berisi jumlah jadwal yang ditemukan */
+
+void BacaSemuaJadwalKereta(Record* records, int* jumlahRecord, int maxRecords);
+/* Tujuan : Membaca semua jadwal kereta dari database */
+/* IS      : records, jumlahRecord, dan maxRecords terdefinisi */
+/* FS      : records berisi semua jadwal kereta, jumlahRecord berisi jumlah jadwal yang ditemukan */
 
 // 5. Kursi Kereta
 boolean SimpanKursiKereta(Record* record);
@@ -303,5 +348,16 @@ void RiwayatPembelianUser(const char* username, Record* records, int* jumlahReco
 /* Tujuan : Mendapatkan riwayat pembelian untuk user tertentu */
 /* IS      : username, records, dan jumlahRecord terdefinisi */
 /* FS      : records berisi daftar riwayat pembelian user, jumlahRecord berisi jumlah riwayat yang ditemukan */
+
+// Fungsi untuk konversi format
+boolean KonversiFileTeksToBiner(const char* namaFile);
+/* Tujuan : Mengkonversi file dari format teks ke format biner */
+/* IS      : namaFile terdefinisi */
+/* FS      : File berhasil dikonversi ke format biner, mengembalikan TRUE jika berhasil */
+
+boolean KonversiDatabaseKeBiner();
+/* Tujuan : Mengkonversi semua file database ke format biner */
+/* IS      : - */
+/* FS      : Semua file database berhasil dikonversi ke format biner, mengembalikan TRUE jika berhasil */
 
 #endif /* DATABASES_H */ 

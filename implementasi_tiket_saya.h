@@ -39,7 +39,7 @@ void TampilkanTiketSaya(TiketSaya T, User user_aktif);
 // FS     : Informasi tiket ditampilkan ke layar
 
 // Fungsi untuk menampilkan detail tiket berdasarkan indeks
-boolean TampilkanDetailTiket(TiketSaya T, User user_aktif, int indeks);
+boolean TampilkanDetailTiketSaya(TiketSaya T, User user_aktif, int indeks);
 // Tujuan : Menampilkan detail tiket pada indeks tertentu
 // IS     : T, user_aktif, dan indeks terdefinisi
 // FS     : Detail tiket ditampilkan ke layar, mengembalikan TRUE jika berhasil

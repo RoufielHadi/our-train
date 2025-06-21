@@ -14,7 +14,7 @@ Politeknik Negeri Bandung
 #include "linked.h"
 #include "time.h"
 
-#define FILE_RIWAYAT "riwayatPembelian.txt"
+#define FILE_RIWAYAT "riwayat_pemesanan.txt"
 
 // Struktur data untuk user dalam riwayat tiket
 typedef struct {
@@ -41,7 +41,8 @@ typedef struct {
     UserRiwayat riwayat_user;
     KeretaRiwayat riwayat_kereta; 
     int riwayat_nomor_gerbong;
-    int riwayat_nomor_kursi; 
+    int riwayat_nomor_kursi;
+    char riwayat_kode_kursi[5]; // Untuk menyimpan huruf kursi (misalnya "C" dari "C2")
     Waktu riwayat_waktu_pemesanan; 
 } RiwayatTiket;
 

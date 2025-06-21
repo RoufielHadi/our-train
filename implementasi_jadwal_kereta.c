@@ -1,6 +1,15 @@
 /*
-Author: Devi Maulani     
-NIM: 241524007  
+Author: Adi Rafi Chaerufarizki 
+NIM: 241524001  
+Kelas: 1A  
+Prodi: Sarjana Terapan Teknik Informatika  
+Jurusan: Teknik Komputer dan Informatika  
+Politeknik Negeri Bandung  
+*/
+
+/*
+Author:Devi maulani
+NIM: 241524007
 Kelas: 1A  
 Prodi: Sarjana Terapan Teknik Informatika  
 Jurusan: Teknik Komputer dan Informatika  
@@ -8,6 +17,39 @@ Politeknik Negeri Bandung
 */
 
 #include "implementasi_jadwal_kereta.h"
+#include <ctype.h>  // for tolower
+
+// Definisikan konstanta untuk nama file jadwal
+#define FILE_JADWAL DB_JADWAL_KERETA
+
+// Fungsi pembantu untuk membaca jadwal dari file
+boolean BacaJadwalDariFile(FILE* fp, JadwalHarian* jadwal) {
+    char buffer[MAX_RECORD_LENGTH];
+    if (fgets(buffer, MAX_RECORD_LENGTH, fp) == NULL) {
+        return FALSE;
+    }
+    
+    // Parsing record string menjadi JadwalHarian
+    Record record;
+    InisialisasiRecord(&record);
+    StringKeRecord(buffer, &record);
+    *jadwal = KonversiRecordKeJadwalKereta(record);
+    
+    return TRUE;
+}
+
+// Fungsi pembantu untuk menyimpan jadwal ke file
+void SimpanJadwalKeFile(FILE* fp, JadwalHarian* jadwal) {
+    // Konversi jadwal ke record
+    Record record;
+    InisialisasiRecord(&record);
+    KonversiJadwalKeRecord(*jadwal, &record);
+    
+    // Simpan record ke file
+    char recordString[MAX_RECORD_LENGTH];
+    RecordKeString(&record, recordString, MAX_RECORD_LENGTH);
+    fprintf(fp, "%s\n", recordString);
+}
 
 // Fungsi untuk membuat jadwal kereta baru
 JadwalHarian BuatJadwalKereta(char* id_kereta, char* tanggal) {
@@ -117,17 +159,55 @@ JadwalHarian KonversiRecordKeJadwalKereta(Record record) {
 
     CreateJadwalKereta(&jadwal.jadwal_rute);
 
-    const char* asal = AmbilNilai(&record, "stasiunAsal");
-    const char* tujuan = AmbilNilai(&record, "stasiunTujuan");
+    // Coba baca dari format baru (stations dan times)
+    const char* stations = AmbilNilai(&record, "stations");
+    const char* times = AmbilNilai(&record, "times");
 
-    if (asal != NULL) {
-        Waktu w1 = {7, 0, 0};
-        TambahStasiunKeJadwal(&jadwal, (char*)asal, w1);
-    }
+    if (stations != NULL && times != NULL) {
+        // Salin string untuk dimodifikasi dengan strtok
+        char stationsCopy[MAX_RECORD_LENGTH];
+        char timesCopy[MAX_RECORD_LENGTH];
+        strcpy(stationsCopy, stations);
+        strcpy(timesCopy, times);
 
-    if (tujuan != NULL) {
-        Waktu w2 = {9, 0, 0};
-        TambahStasiunKeJadwal(&jadwal, (char*)tujuan, w2);
+        // Parsing stasiun dan waktu
+        char* stationToken = strtok(stationsCopy, ",");
+        char* timeToken = strtok(timesCopy, ",");
+
+        while (stationToken != NULL && timeToken != NULL) {
+            // Parse waktu dari string
+            Waktu waktu = {0, 0, 0};
+            sscanf(timeToken, "%d:%d", &waktu.jam, &waktu.menit);
+
+            // Tambahkan stasiun ke jadwal
+            TambahStasiunKeJadwal(&jadwal, stationToken, waktu);
+
+            // Lanjut ke token berikutnya
+            stationToken = strtok(NULL, ",");
+            timeToken = strtok(NULL, ",");
+        }
+    } else {
+        // Fallback ke format lama jika format baru tidak tersedia
+        const char* asal = AmbilNilai(&record, "stasiunAsal");
+        const char* tujuan = AmbilNilai(&record, "stasiunTujuan");
+        const char* waktuAsal = AmbilNilai(&record, "waktuAsal");
+        const char* waktuTujuan = AmbilNilai(&record, "waktuTujuan");
+
+        if (asal != NULL) {
+            Waktu w1 = {7, 0, 0};
+            if (waktuAsal != NULL) {
+                sscanf(waktuAsal, "%d:%d", &w1.jam, &w1.menit);
+            }
+            TambahStasiunKeJadwal(&jadwal, (char*)asal, w1);
+        }
+
+        if (tujuan != NULL) {
+            Waktu w2 = {9, 0, 0};
+            if (waktuTujuan != NULL) {
+                sscanf(waktuTujuan, "%d:%d", &w2.jam, &w2.menit);
+            }
+            TambahStasiunKeJadwal(&jadwal, (char*)tujuan, w2);
+        }
     }
 
     return jadwal;
@@ -138,14 +218,58 @@ JadwalHarian KonversiRecordKeJadwalKereta(Record record) {
 void KonversiJadwalKeRecord(JadwalHarian jadwal, Record* record) {
     InisialisasiRecord(record);
     TambahField(record, "kodeJadwal", jadwal.id_kereta);
-    TambahField(record, "tanggal", jadwal.tanggal);
-
+    // Removed date field as it is no longer needed
+    
+    // Buat string untuk menyimpan semua stasiun dan waktu transit
+    char stations[MAX_RECORD_LENGTH] = "";
+    char times[MAX_RECORD_LENGTH] = "";
+    
+    // Traverse linked list jadwal untuk mengumpulkan semua stasiun dan waktu
+    StasiunTransit* curr = jadwal.jadwal_rute.head;
+    while (curr != NULL) {
+        // Tambahkan nama stasiun ke string stations
+        if (strlen(stations) > 0) {
+            strcat(stations, ",");
+        }
+        strcat(stations, curr->nama_stasiun);
+        
+        // Konversi waktu transit ke format string dan tambahkan ke times
+        Waktu waktu = KonversiKeWaktu(curr->waktu_transit);
+        char waktuStr[10];
+        sprintf(waktuStr, "%02d:%02d", waktu.jam, waktu.menit);
+        
+        if (strlen(times) > 0) {
+            strcat(times, ",");
+        }
+        strcat(times, waktuStr);
+        
+        curr = curr->next;
+    }
+    
+    // Tambahkan fields untuk stasiun asal dan tujuan (untuk kompatibilitas)
     if (jadwal.jadwal_rute.head != NULL) {
         TambahField(record, "stasiunAsal", jadwal.jadwal_rute.head->nama_stasiun);
+        
+        // Temukan stasiun terakhir (tujuan)
         StasiunTransit* last = jadwal.jadwal_rute.head;
         while (last->next != NULL) last = last->next;
         TambahField(record, "stasiunTujuan", last->nama_stasiun);
+        
+        // Tambahkan waktu keberangkatan dan kedatangan
+        Waktu waktuAsal = KonversiKeWaktu(jadwal.jadwal_rute.head->waktu_transit);
+        char waktuAsalStr[10];
+        sprintf(waktuAsalStr, "%02d:%02d", waktuAsal.jam, waktuAsal.menit);
+        TambahField(record, "waktuAsal", waktuAsalStr);
+        
+        Waktu waktuTujuan = KonversiKeWaktu(last->waktu_transit);
+        char waktuTujuanStr[10];
+        sprintf(waktuTujuanStr, "%02d:%02d", waktuTujuan.jam, waktuTujuan.menit);
+        TambahField(record, "waktuTujuan", waktuTujuanStr);
     }
+    
+    // Tambahkan semua stasiun dan waktu sebagai fields terpisah
+    TambahField(record, "stations", stations);
+    TambahField(record, "times", times);
 }
 
 // Fungsi untuk menghapus jadwal dari list
@@ -328,16 +452,23 @@ int HitungDurasiPerjalanan(JadwalHarian jadwal, char* stasiun_asal, char* stasiu
     return -1; // Stasiun asal atau tujuan tidak ditemukan
 }
 
+// Helper function for case-insensitive string comparison
+static boolean equalsIgnoreCase(const char* a, const char* b) {
+    while (*a && *b) {
+        if (tolower((unsigned char)*a) != tolower((unsigned char)*b)) return FALSE;
+        a++; b++;
+    }
+    return *a == '\0' && *b == '\0';
+}
+
 // Fungsi untuk memperbarui waktu transit stasiun
 boolean UpdateWaktuTransit(JadwalHarian *jadwal, char* nama_stasiun, Waktu waktu_baru) {
     if (jadwal->jadwal_rute.head == NULL) {
         return FALSE; // Jadwal kosong
     }
-    
     StasiunTransit* stasiun = jadwal->jadwal_rute.head;
-    
     while (stasiun != NULL) {
-        if (strcmp(stasiun->nama_stasiun, nama_stasiun) == 0) {
+        if (equalsIgnoreCase(stasiun->nama_stasiun, nama_stasiun)) {
             // Update waktu transit
             stasiun->waktu_transit.jam = waktu_baru.jam;
             stasiun->waktu_transit.menit = waktu_baru.menit;
@@ -345,7 +476,6 @@ boolean UpdateWaktuTransit(JadwalHarian *jadwal, char* nama_stasiun, Waktu waktu
         }
         stasiun = stasiun->next;
     }
-    
     return FALSE; // Stasiun tidak ditemukan
 }
 
@@ -354,16 +484,13 @@ boolean IsStasiunTersedia(JadwalHarian jadwal, const char* nama_stasiun) {
     if (jadwal.jadwal_rute.head == NULL) {
         return FALSE; // Jadwal kosong
     }
-    
     StasiunTransit* stasiun = jadwal.jadwal_rute.head;
-    
     while (stasiun != NULL) {
-        if (strcmp(stasiun->nama_stasiun, nama_stasiun) == 0) {
+        if (equalsIgnoreCase(stasiun->nama_stasiun, nama_stasiun)) {
             return TRUE; // Stasiun ditemukan
         }
         stasiun = stasiun->next;
     }
-    
     return FALSE; // Stasiun tidak ditemukan
 }
 
@@ -443,7 +570,8 @@ boolean ValidasiTanggal(char* tanggal) {
     }
     
     // Cek apakah semua karakter (kecuali pemisah) adalah digit
-    for (int i = 0; i < 10; i++) {
+    int i;
+    for ( i = 0; i < 10; i++) {
         if (i != 2 && i != 5) {
             if (tanggal[i] < '0' || tanggal[i] > '9') {
                 return FALSE;
@@ -475,4 +603,39 @@ boolean ValidasiTanggal(char* tanggal) {
     }
     
     return TRUE;
+}
+
+// Implementasi fungsi untuk menghapus jadwal berdasarkan ID kereta
+boolean HapusSemuaJadwalByKereta(const char* idKereta) {
+    boolean ada_perubahan = FALSE;
+    FILE *fp = fopen(FILE_JADWAL, "r");
+    if (fp == NULL) return FALSE; // Gagal membuka file
+    
+    // Baca semua data ke array sementara
+    JadwalHarian jadwals[1000]; // Asumsi maksimal 1000 jadwal
+    int jumlahJadwal = 0;
+    
+    JadwalHarian temp;
+    while (BacaJadwalDariFile(fp, &temp)) {
+        // Jika ID kereta tidak sama dengan yang ingin dihapus, simpan
+        if (strcmp(temp.id_kereta, idKereta) != 0) {
+            jadwals[jumlahJadwal++] = temp;
+        } else {
+            ada_perubahan = TRUE; // Set bahwa ada jadwal yang dihapus
+        }
+    }
+    
+    fclose(fp);
+    
+    // Tulis ulang file dengan data yang tersisa
+    fp = fopen(FILE_JADWAL, "w");
+    if (fp == NULL) return FALSE; // Gagal membuka file
+    
+    int i;
+    for (i = 0; i < jumlahJadwal; i++) {
+        SimpanJadwalKeFile(fp, &jadwals[i]);
+    }
+    
+    fclose(fp);
+    return ada_perubahan; // Berhasil jika ada perubahan
 } 

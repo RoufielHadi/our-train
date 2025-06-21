@@ -184,24 +184,17 @@ void InsertFirstJadwal(JadwalKereta *J, StasiunTransit *P) {
 
 // Insert terakhir untuk user
 void InsertLastUser(ListUser *L, DataUser *newNode) {
-    if (L == NULL) printf("Debug: ListUser adalah NULL sebelum pemanggilan InsertLastUser!\n");
-    if (newNode == NULL) printf("Debug: newNode adalah NULL sebelum pemanggilan InsertLastUser!\n");
-    
-    if (L == NULL || newNode == NULL) {
-        printf("Error: ListUser atau newNode NULL dalam InsertLastUser!\n");
-        return;
-    }
-
-    if (L->First == NULL) {
+    if (isEmptyUser(*L)) {
+        newNode->next = NULL;
         L->First = newNode;
-        return;
+    } else {
+        DataUser *temp = L->First;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->next = NULL;
     }
-
-    DataUser *temp = L->First;
-    while (temp->next != NULL) {
-        temp = temp->next;
-    }
-    temp->next = newNode;
 }
 
 // Insert terakhir untuk payment

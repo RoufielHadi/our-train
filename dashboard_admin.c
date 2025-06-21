@@ -7,12 +7,34 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+#include "clear.h"
+#include "boolean.h"
+#include "time.h"
+#include "tree_non_biner.h"
+#include "dashboard_manajemen_jadwal.h"
 #include "dashboard_admin.h"
 #include "dashboard_manajemen_kereta.h"
-#include "dashboard_manajemen_jadwal.h"
+#include "dashboard_manajemen_rute.h"
+#include "dashboard_manajemen_user.h"
+#include "hash_password.h"
+#include "implementasi_rekapitulasi_keuntungan.h"
+#include "stack.h"
+#include "implementasi_informasi_kereta.h"
+#include "tree_biner.h"
+#include "implementasi_rute_kereta.h"
+
+//Maksimal node yang dapat ditampung dalam array
+#define jml_maks 200
+
+// Variable global untuk morse tree
+extern HashPassword* morseTree;
 
 // *** TAMPILAN DASHBOARD ***
-void ShowAdminDashboard(const char* email) {
+void TampilkanDashboardAdmin(const char* email) {
     clearScreen();
     
     // Ambil data admin
@@ -24,77 +46,624 @@ void ShowAdminDashboard(const char* email) {
     
     printf("+----------------------------------------------+\n");
     printf("|                                              |\n");
-    printf("|             ADMIN DASHBOARD                  |\n");
+    printf("|             DASHBOARD ADMIN                  |\n");
     printf("|                                              |\n");
     printf("+----------------------------------------------+\n");
     printf("| Selamat datang, Admin %-22s |\n", nama != NULL ? nama : "");
     printf("+----------------------------------------------+\n");
     printf("| Menu:                                        |\n");
     printf("|  1. Manajemen User                           |\n");
-    printf("|  2. Manajemen Kereta                         |\n");
-    printf("|  3. Manajemen Jadwal                         |\n");
-    printf("|  4. Manajemen Rute                           |\n");
+    printf("|  2. Manajemen Kereta dan Jadwal              |\n");
+    printf("|  3. Manajemen Rute                           |\n");
+    printf("|  4. Rekapitulasi Keuntungan                  |\n");
     printf("|  5. Logout                                   |\n");
+    printf("|  6. Keluar Aplikasi                          |\n");
     printf("+----------------------------------------------+\n");
     printf("Pilihan: ");
 }
 
 // *** MENU ADMIN ***
-void ShowUserManagementMenu(const char* email) {
-    clearScreen();
-    printf("+----------------------------------------------+\n");
-    printf("|              MANAJEMEN USER                  |\n");
-    printf("+----------------------------------------------+\n");
-    printf("| Fitur ini akan tersedia pada versi mendatang |\n");
-    printf("+----------------------------------------------+\n");
+void TampilkanMenuManajemenUser(const char* email) {
+    RunUserManagementDashboard(email);
+}
+
+void TampilkanMenuManajemenKereta(const char* email) {
+    MenuManajemenKereta(email);
+}
+
+void TampilkanMenuManajemenJadwal(const char* email) {
+    MenuManajemenJadwal(email);
+}
+
+void TampilkanMenuManajemenRute(const char* email) {
+    MenuManajemenRuteAdmin(email);
+}
+
+void TampilkanMenuRekapitulasiKeuntungan(const char* email) {
+    int pilihan_menu;
     
-    printf("\nTekan Enter untuk kembali ke menu utama...");
+    do {
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|          REKAPITULASI KEUNTUNGAN             |\n");
+        printf("+----------------------------------------------+\n");
+        
+        // Inisialisasi stack riwayat
+        StackRiwayat stackRiwayat;
+        CreateStackRiwayat(&stackRiwayat);
+        
+        // Baca data riwayat dari file
+        LoadRiwayatFromFile(&stackRiwayat, FILE_RIWAYAT);
+        
+        // Jika tidak ada riwayat
+        if (isEmptyStackRiwayat(stackRiwayat)) {
+            printf("\nTidak ada data riwayat pemesanan.\n");
+            printf("\nTekan Enter untuk kembali...");
+            getch();
+            return;
+        }
+        
+        // Tampilkan menu filter
+        int filterChoice;
+        Waktu waktuSekarang = WaktuSekarang();
+        Waktu waktuAwal, waktuAkhir;
+        
+        printf("\nPilih filter waktu:\n");
+        printf("1. Hari ini\n");
+        printf("2. Minggu ini\n");
+        printf("3. Bulan ini\n");
+        printf("4. Tahun ini\n");
+        printf("5. Semua waktu\n");
+        printf("6. Kembali ke Dashboard Admin\n");
+        printf("Pilihan: ");
+        scanf("%d", &filterChoice);
+        
+        if (filterChoice == 6) {
+            return; // Kembali ke dashboard admin
+        }
+        
+        // Set waktu awal dan akhir berdasarkan pilihan filter
+        switch (filterChoice) {
+            case 1: // Hari ini
+                waktuAwal = BuatWaktuLengkap(waktuSekarang.hari, waktuSekarang.bulan, waktuSekarang.tahun, 0, 0, 0);
+                waktuAkhir = BuatWaktuLengkap(waktuSekarang.hari, waktuSekarang.bulan, waktuSekarang.tahun, 23, 59, 59);
+                break;
+                
+            case 2: // Minggu ini (7 hari terakhir)
+                waktuAwal = KurangHari(waktuSekarang, 7);
+                waktuAwal = BuatWaktuLengkap(waktuAwal.hari, waktuAwal.bulan, waktuAwal.tahun, 0, 0, 0);
+                waktuAkhir = BuatWaktuLengkap(waktuSekarang.hari, waktuSekarang.bulan, waktuSekarang.tahun, 23, 59, 59);
+                break;
+                
+            case 3: // Bulan ini
+                waktuAwal = BuatWaktuLengkap(1, waktuSekarang.bulan, waktuSekarang.tahun, 0, 0, 0);
+                waktuAkhir = BuatWaktuLengkap(31, waktuSekarang.bulan, waktuSekarang.tahun, 23, 59, 59);
+                break;
+                
+            case 4: // Tahun ini
+                waktuAwal = BuatWaktuLengkap(1, 1, waktuSekarang.tahun, 0, 0, 0);
+                waktuAkhir = BuatWaktuLengkap(31, 12, waktuSekarang.tahun, 23, 59, 59);
+                break;
+                
+            case 5: // Semua waktu
+            default:
+                waktuAwal = BuatWaktuLengkap(1, 1, 1970, 0, 0, 0);
+                waktuAkhir = waktuSekarang;
+                break;
+        }
+        
+        // Tampilkan periode yang dipilih
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|          REKAPITULASI KEUNTUNGAN             |\n");
+        printf("+----------------------------------------------+\n");
+        
+        printf("\nPeriode: ");
+        PrintWaktuLengkap(waktuAwal);
+        printf(" s/d ");
+        PrintWaktuLengkap(waktuAkhir);
+        printf("\n\n");
+        
+        // Hitung jumlah data yang sesuai filter
+        int jumlahData = 0;
+        addressRiwayat P = stackRiwayat.top;
+        while (P != NULL) {
+            Waktu waktuPemesanan = P->info.riwayat_waktu_pemesanan;
+            
+            // Cek apakah waktu pemesanan berada dalam rentang filter
+            if ((IsWaktuLebihAwal(waktuAwal, waktuPemesanan) || IsWaktuSama(waktuAwal, waktuPemesanan)) && 
+                (IsWaktuLebihAwal(waktuPemesanan, waktuAkhir) || IsWaktuSama(waktuPemesanan, waktuAkhir))) {
+                jumlahData++;
+            }
+            P = P->next;
+        }
+        
+        // Jika tidak ada data yang sesuai filter
+        if (jumlahData == 0) {
+            printf("Tidak ada data pemesanan dalam periode tersebut.\n");
+            printf("\nTekan Enter untuk kembali...");
+            getch();
+            continue;
+        }
+        
+        // Buat array untuk menyimpan data yang sesuai filter
+        RiwayatTiket* dataFiltered = (RiwayatTiket*)malloc(jumlahData * sizeof(RiwayatTiket));
+        if (dataFiltered == NULL) {
+            printf("Error: Gagal mengalokasikan memori.\n");
+            printf("\nTekan Enter untuk kembali...");
+            getch();
+            continue;
+        }
+        
+        // Salin data yang sesuai filter ke array
+        int idx = 0;
+        P = stackRiwayat.top;
+        while (P != NULL) {
+            Waktu waktuPemesanan = P->info.riwayat_waktu_pemesanan;
+            
+            // Cek apakah waktu pemesanan berada dalam rentang filter
+            if ((IsWaktuLebihAwal(waktuAwal, waktuPemesanan) || IsWaktuSama(waktuAwal, waktuPemesanan)) && 
+                (IsWaktuLebihAwal(waktuPemesanan, waktuAkhir) || IsWaktuSama(waktuPemesanan, waktuAkhir))) {
+                dataFiltered[idx++] = P->info;
+            }
+            P = P->next;
+        }
+        
+        // Pilihan sorting
+        int sortChoice;
+        printf("Pilih metode pengurutan:\n");
+        printf("1. Berdasarkan Nama Kereta (A-Z)\n");
+        printf("2. Berdasarkan Waktu Pemesanan (Terbaru)\n");
+        printf("3. Berdasarkan Waktu Pemesanan (Terlama)\n");
+        printf("Pilihan: ");
+        scanf("%d", &sortChoice);
+        
+        // Lakukan sorting berdasarkan pilihan
+        int i, j;
+        RiwayatTiket temp;
+        
+        switch (sortChoice) {
+            case 1: // Sort by nama kereta (A-Z)
+                for (i = 0; i < jumlahData - 1; i++) {
+                    for (j = 0; j < jumlahData - i - 1; j++) {
+                        if (strcmp(dataFiltered[j].riwayat_kereta.nama_kereta, dataFiltered[j+1].riwayat_kereta.nama_kereta) > 0) {
+                            temp = dataFiltered[j];
+                            dataFiltered[j] = dataFiltered[j+1];
+                            dataFiltered[j+1] = temp;
+                        }
+                    }
+                }
+                break;
+                
+            case 2: // Sort by waktu pemesanan (terbaru)
+                for (i = 0; i < jumlahData - 1; i++) {
+                    for (j = 0; j < jumlahData - i - 1; j++) {
+                        if (IsWaktuLebihAwal(dataFiltered[j].riwayat_waktu_pemesanan, dataFiltered[j+1].riwayat_waktu_pemesanan)) {
+                            temp = dataFiltered[j];
+                            dataFiltered[j] = dataFiltered[j+1];
+                            dataFiltered[j+1] = temp;
+                        }
+                    }
+                }
+                break;
+                
+            case 3: // Sort by waktu pemesanan (terlama)
+                for (i = 0; i < jumlahData - 1; i++) {
+                    for (j = 0; j < jumlahData - i - 1; j++) {
+                        if (IsWaktuLebihAwal(dataFiltered[j+1].riwayat_waktu_pemesanan, dataFiltered[j].riwayat_waktu_pemesanan)) {
+                            temp = dataFiltered[j];
+                            dataFiltered[j] = dataFiltered[j+1];
+                            dataFiltered[j+1] = temp;
+                        }
+                    }
+                }
+                break;
+                
+            default:
+                break;
+        }
+        
+        // Struktur untuk menyimpan keuntungan per kereta
+        typedef struct {
+            char nama_kereta[100];
+            int total_keuntungan;
+            int jumlah_tiket;
+        } KeuntunganKereta;
+        
+        // Array untuk menyimpan keuntungan per kereta
+        KeuntunganKereta keuntungan_kereta[100];
+        int jumlah_kereta = 0;
+        
+        // Tampilkan data dalam bentuk tabel
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|          REKAPITULASI KEUNTUNGAN             |\n");
+        printf("+----------------------------------------------+\n");
+        
+        printf("\nPeriode: ");
+        PrintWaktuLengkap(waktuAwal);
+        printf(" s/d ");
+        PrintWaktuLengkap(waktuAkhir);
+        printf("\n\n");
+        
+        // Tentukan cara pengelompokan berdasarkan filter
+        int kelompokkan_berdasarkan = 0; // 0=jam, 1=hari, 2=minggu, 3=bulan, 4=tahun
+        
+        switch (filterChoice) {
+            case 1: // Hari ini - kelompokkan per jam
+                kelompokkan_berdasarkan = 0;
+                break;
+            case 2: // Minggu ini - kelompokkan per hari
+                kelompokkan_berdasarkan = 1;
+                break;
+            case 3: // Bulan ini - kelompokkan per minggu
+                kelompokkan_berdasarkan = 2;
+                break;
+            case 4: // Tahun ini - kelompokkan per bulan
+                kelompokkan_berdasarkan = 3;
+                break;
+            case 5: // Semua waktu - kelompokkan per tahun
+                kelompokkan_berdasarkan = 4;
+                break;
+        }
+        
+        printf("+-----+----------------------+----------------------+----------+----------+--------------------+-------------+\n");
+        printf("| No. | Nama Kereta          | Nama Penumpang       | Gerbong  | Kursi    | Waktu Pemesanan    | Harga       |\n");
+        printf("+-----+----------------------+----------------------+----------+----------+--------------------+-------------+\n");
+        
+        int total_keuntungan = 0;
+        
+        // Variabel untuk kelompok waktu terakhir
+        int kelompok_terakhir = -1;
+        int subtotal_kelompok = 0;
+        
+        for (i = 0; i < jumlahData; i++) {
+            // Tentukan kelompok waktu saat ini
+            int kelompok_saat_ini;
+            switch (kelompokkan_berdasarkan) {
+                case 0: // Per jam
+                    kelompok_saat_ini = dataFiltered[i].riwayat_waktu_pemesanan.jam;
+                    break;
+                case 1: // Per hari
+                    kelompok_saat_ini = dataFiltered[i].riwayat_waktu_pemesanan.hari;
+                    break;
+                case 2: // Per minggu (minggu ke-n dalam bulan)
+                    kelompok_saat_ini = (dataFiltered[i].riwayat_waktu_pemesanan.hari - 1) / 7 + 1;
+                    break;
+                case 3: // Per bulan
+                    kelompok_saat_ini = dataFiltered[i].riwayat_waktu_pemesanan.bulan;
+                    break;
+                case 4: // Per tahun
+                    kelompok_saat_ini = dataFiltered[i].riwayat_waktu_pemesanan.tahun;
+                    break;
+                default:
+                    kelompok_saat_ini = 0;
+            }
+            
+            // Jika kelompok berubah, tampilkan subtotal
+            if (kelompok_terakhir != -1 && kelompok_saat_ini != kelompok_terakhir) {
+                // Tampilkan subtotal kelompok sebelumnya
+                printf("+-----+----------------------+----------------------+----------+----------+--------------------+-------------+\n");
+                switch (kelompokkan_berdasarkan) {
+                    case 0:
+                        printf("| Subtotal Jam %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                        break;
+                    case 1:
+                        printf("| Subtotal Hari %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                        break;
+                    case 2:
+                        printf("| Subtotal Minggu %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                        break;
+                    case 3:
+                        printf("| Subtotal Bulan %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                        break;
+                    case 4:
+                        printf("| Subtotal Tahun %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                        break;
+                }
+                printf("+-----+----------------------+----------------------+----------+----------+--------------------+-------------+\n");
+                subtotal_kelompok = 0;
+            }
+            
+            // Tampilkan gerbong sebagai angka dan kursi sebagai huruf+angka
+            // Tentukan huruf berdasarkan nomor gerbong (1=A, 2=B, dst)
+            char kursi_huruf = 'A' + dataFiltered[i].riwayat_nomor_gerbong - 1;
+            if (kursi_huruf < 'A') kursi_huruf = 'A'; // Pastikan tidak negatif
+            
+            printf("| %-3d | %-20s | %-20s | %-8d | %-8c%-1d | %02d/%02d/%04d %02d:%02d | Rp %-7d |\n", 
+                   i+1, 
+                   dataFiltered[i].riwayat_kereta.nama_kereta, 
+                   dataFiltered[i].riwayat_user.nama,
+                   dataFiltered[i].riwayat_nomor_gerbong, 
+                   kursi_huruf,
+                   dataFiltered[i].riwayat_nomor_kursi,
+                   dataFiltered[i].riwayat_waktu_pemesanan.hari,
+                   dataFiltered[i].riwayat_waktu_pemesanan.bulan,
+                   dataFiltered[i].riwayat_waktu_pemesanan.tahun,
+                   dataFiltered[i].riwayat_waktu_pemesanan.jam,
+                   dataFiltered[i].riwayat_waktu_pemesanan.menit,
+                   dataFiltered[i].riwayat_kereta.harga);
+            
+            // Tambahkan ke total keuntungan
+            total_keuntungan += dataFiltered[i].riwayat_kereta.harga;
+            subtotal_kelompok += dataFiltered[i].riwayat_kereta.harga;
+            
+            // Catat keuntungan per kereta
+            int kereta_ditemukan = 0;
+            for (j = 0; j < jumlah_kereta; j++) {
+                if (strcmp(keuntungan_kereta[j].nama_kereta, dataFiltered[i].riwayat_kereta.nama_kereta) == 0) {
+                    keuntungan_kereta[j].total_keuntungan += dataFiltered[i].riwayat_kereta.harga;
+                    keuntungan_kereta[j].jumlah_tiket++;
+                    kereta_ditemukan = 1;
+                    break;
+                }
+            }
+            
+            if (!kereta_ditemukan) {
+                strcpy(keuntungan_kereta[jumlah_kereta].nama_kereta, dataFiltered[i].riwayat_kereta.nama_kereta);
+                keuntungan_kereta[jumlah_kereta].total_keuntungan = dataFiltered[i].riwayat_kereta.harga;
+                keuntungan_kereta[jumlah_kereta].jumlah_tiket = 1;
+                jumlah_kereta++;
+            }
+            
+            // Update kelompok terakhir
+            kelompok_terakhir = kelompok_saat_ini;
+        }
+        
+        // Tampilkan subtotal kelompok terakhir
+        if (jumlahData > 0) {
+            printf("+-----+----------------------+----------------------+----------+----------+--------------------+-------------+\n");
+            switch (kelompokkan_berdasarkan) {
+                case 0:
+                    printf("| Subtotal Jam %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                    break;
+                case 1:
+                    printf("| Subtotal Hari %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                    break;
+                case 2:
+                    printf("| Subtotal Minggu %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                    break;
+                case 3:
+                    printf("| Subtotal Bulan %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                    break;
+                case 4:
+                    printf("| Subtotal Tahun %d: Rp %d\n", kelompok_terakhir, subtotal_kelompok);
+                    break;
+            }
+        }
+        
+        printf("+-----+----------------------+----------------------+----------+----------+--------------------+-------------+\n");
+        printf("Total data: %d\n\n", jumlahData);
+        
+        // Tampilkan total keuntungan keseluruhan
+        printf("Total Keuntungan: Rp %d\n\n", total_keuntungan);
+        
+        // Tampilkan keuntungan per kereta
+        printf("+----------------------+-------------+-------------+\n");
+        printf("| Nama Kereta          | Jumlah Tiket| Keuntungan  |\n");
+        printf("+----------------------+-------------+-------------+\n");
+        for (i = 0; i < jumlah_kereta; i++) {
+            printf("| %-20s | %-11d | Rp %-7d |\n", 
+                   keuntungan_kereta[i].nama_kereta,
+                   keuntungan_kereta[i].jumlah_tiket,
+                   keuntungan_kereta[i].total_keuntungan);
+        }
+        printf("+----------------------+-------------+-------------+\n");
+        
+        // Pilihan untuk melihat detail atau kembali
+        printf("\n1. Lihat Detail Tiket\n");
+        printf("2. Kembali ke Menu Rekap\n");
+        printf("3. Kembali ke Dashboard Admin\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan_menu);
+        
+        if (pilihan_menu == 1) {
+            // Lihat detail tiket
+            int detailChoice;
+            printf("\nMasukkan nomor untuk melihat detail (0 untuk kembali): ");
+            scanf("%d", &detailChoice);
+            
+            if (detailChoice > 0 && detailChoice <= jumlahData) {
+                RiwayatTiket selectedTicket = dataFiltered[detailChoice-1];
+                
+                clearScreen();
+                printf("+----------------------------------------------+\n");
+                printf("|          DETAIL PEMESANAN TIKET              |\n");
+                printf("+----------------------------------------------+\n");
+                
+                printf("\nInformasi Penumpang:\n");
+                printf("Nama           : %s\n", selectedTicket.riwayat_user.nama);
+                printf("Email          : %s\n", selectedTicket.riwayat_user.email);
+                printf("Nomor Telepon  : %s\n", selectedTicket.riwayat_user.nomor_telepon);
+                
+                printf("\nInformasi Kereta:\n");
+                printf("Kode Kereta    : %s\n", selectedTicket.riwayat_kereta.kode_kereta);
+                printf("Nama Kereta    : %s\n", selectedTicket.riwayat_kereta.nama_kereta);
+                printf("Stasiun Asal   : %s\n", selectedTicket.riwayat_kereta.stasiun_asal);
+                printf("Stasiun Tujuan : %s\n", selectedTicket.riwayat_kereta.stasiun_tujuan);
+                printf("Tanggal        : %s\n", selectedTicket.riwayat_kereta.tanggal_berangkat);
+                printf("Jam Berangkat  : %s\n", selectedTicket.riwayat_kereta.jam_berangkat);
+                printf("Jam Tiba       : %s\n", selectedTicket.riwayat_kereta.jam_tiba);
+                printf("Kelas          : %s\n", selectedTicket.riwayat_kereta.kelas);
+                printf("Harga          : Rp %d\n", selectedTicket.riwayat_kereta.harga);
+                
+                printf("\nInformasi Kursi:\n");
+                printf("Nomor Gerbong  : %d\n", selectedTicket.riwayat_nomor_gerbong);
+                if (selectedTicket.riwayat_kode_kursi[0] != '\0') {
+                    printf("Nomor Kursi    : %s%d\n", selectedTicket.riwayat_kode_kursi, selectedTicket.riwayat_nomor_kursi);
+                } else {
+                    printf("Nomor Kursi    : C%d\n", selectedTicket.riwayat_nomor_kursi);
+                }
+                
+                printf("\nInformasi Pemesanan:\n");
+                printf("Waktu Pemesanan: %02d/%02d/%04d %02d:%02d:%02d\n", 
+                       selectedTicket.riwayat_waktu_pemesanan.hari,
+                       selectedTicket.riwayat_waktu_pemesanan.bulan,
+                       selectedTicket.riwayat_waktu_pemesanan.tahun,
+                       selectedTicket.riwayat_waktu_pemesanan.jam,
+                       selectedTicket.riwayat_waktu_pemesanan.menit,
+                       selectedTicket.riwayat_waktu_pemesanan.detik);
+                
+                printf("\nTekan Enter untuk kembali...");
+                getch();
+            }
+        } else if (pilihan_menu == 3) {
+            // Kembali ke dashboard admin
+            free(dataFiltered);
+            return;
+        }
+        
+        // Bebaskan memori
+        free(dataFiltered);
+        
+    } while (pilihan_menu != 3);
+}
+
+// Tambahkan fungsi menu gabungan kereta dan jadwal
+void TampilkanMenuManajemenKeretaDanJadwal(const char* email) {
+    int pilihan;
+    do {
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|      MANAJEMEN KERETA DAN JADWAL             |\n");
+        printf("+----------------------------------------------+\n");
+        printf("| 1. Lihat Informasi Kereta                    |\n");
+        printf("| 2. Lihat Informasi Jadwal                    |\n");
+        printf("| 3. Tambah Kereta dan Jadwal                  |\n");
+        printf("| 4. Edit Kereta/Jadwal                        |\n");
+        printf("| 5. Hapus Kereta/Jadwal                       |\n");
+        printf("| 6. Kembali ke Dashboard Admin                |\n");
+        printf("+----------------------------------------------+\n");
+        printf("Pilihan: ");
+        scanf("%d", &pilihan); while(getchar()!='\n');
+        switch (pilihan) {
+            case 1:
+                LihatInformasiKereta(email);
+                break;
+            case 2:
+                LihatInformasiJadwal(email);
+                break;
+            case 3:
+                TambahKeretaDanJadwal(email);
+                break;
+            case 4:
+                EditKeretaAtauJadwal(email);
+                break;
+            case 5:
+                HapusKeretaAtauJadwal(email);
+                break;
+            case 6:
+                return;
+            default:
+                printf("\nPilihan tidak valid!\n");
+                printf("Tekan Enter untuk melanjutkan...");
+                getch();
+                break;
+        }
+    } while (1);
+}
+
+// Fungsi pendukung untuk manajemen kereta dan jadwal
+void LihatInformasiKereta(const char* email) {
+    clearScreen();
+    TampilkanDaftarKeretaUI();
+    printf("\nTekan Enter untuk kembali...");
     getch();
 }
 
-void ShowTrainManagementMenu(const char* email) {
-    ShowKeretaManagementMenu(email);
+void LihatInformasiJadwal(const char* email) {
+    TampilkanDaftarJadwal();
 }
 
-void ShowScheduleManagementMenu(const char* email) {
-    ShowJadwalManagementMenu(email);
-}
-
-void ShowRouteManagementMenu(const char* email) {
+void TambahKeretaDanJadwal(const char* email) {
     clearScreen();
-    printf("+----------------------------------------------+\n");
-    printf("|              MANAJEMEN RUTE                  |\n");
-    printf("+----------------------------------------------+\n");
-    printf("| Fitur ini akan tersedia pada versi mendatang |\n");
-    printf("+----------------------------------------------+\n");
-    
-    printf("\nTekan Enter untuk kembali ke menu utama...");
-    getch();
+    TampilkanFormTambahKereta();
+}
+
+void EditKeretaAtauJadwal(const char* email) {
+    int subPil;
+    do {
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|         EDIT KERETA / JADWAL                 |\n");
+        printf("+----------------------------------------------+\n");
+        printf("| 1. Edit Kereta                               |\n");
+        printf("| 2. Edit Jadwal                               |\n");
+        printf("| 3. Kembali                                   |\n");
+        printf("+----------------------------------------------+\n");
+        printf("Pilihan: ");
+        scanf("%d", &subPil); while(getchar()!='\n');
+        switch (subPil) {
+            case 1:
+                TampilkanFormEditKereta();
+                break;
+            case 2:
+                EditJadwal();
+                break;
+            case 3:
+                return;
+            default:
+                printf("\nPilihan tidak valid!\n");
+                printf("Tekan Enter untuk melanjutkan...");
+                getch();
+        }
+    } while (1);
+}
+
+void HapusKeretaAtauJadwal(const char* email) {
+    int subPil;
+    do {
+        clearScreen();
+        printf("+----------------------------------------------+\n");
+        printf("|        HAPUS KERETA / JADWAL                 |\n");
+        printf("+----------------------------------------------+\n");
+        printf("| 1. Hapus Kereta                              |\n");
+        printf("| 2. Hapus Jadwal                              |\n");
+        printf("| 3. Kembali                                   |\n");
+        printf("+----------------------------------------------+\n");
+        printf("Pilihan: ");
+        scanf("%d", &subPil); while(getchar()!='\n');
+        switch (subPil) {
+            case 1:
+                TampilkanFormHapusKereta();
+                break;
+            case 2:
+                DashboardHapusJadwal();
+                break;
+            case 3:
+                return;
+            default:
+                printf("\nPilihan tidak valid!\n");
+                printf("Tekan Enter untuk melanjutkan...");
+                getch();
+        }
+    } while (1);
 }
 
 // *** FUNGSI UTAMA ***
-void RunAdminDashboard(const char* email) {
+void JalankanDashboardAdmin(const char* email) {
     int choice;
     
     do {
-        ShowAdminDashboard(email);
+        TampilkanDashboardAdmin(email);
         scanf("%d", &choice);
         
         switch (choice) {
             case 1:
-                ShowUserManagementMenu(email);
+                TampilkanMenuManajemenUser(email);
                 break;
                 
             case 2:
-                ShowTrainManagementMenu(email);
+                TampilkanMenuManajemenKeretaDanJadwal(email);
                 break;
                 
             case 3:
-                ShowScheduleManagementMenu(email);
+                // Manajemen Rute (Admin menu)
+                MenuManajemenRuteAdmin(email);
                 break;
                 
             case 4:
-                ShowRouteManagementMenu(email);
+                TampilkanMenuRekapitulasiKeuntungan(email);
                 break;
                 
             case 5:
@@ -103,6 +672,11 @@ void RunAdminDashboard(const char* email) {
                 printf("Tekan Enter untuk kembali ke menu utama...");
                 getch();
                 return;
+                
+            case 6:
+                // Keluar Aplikasi
+                printf("\nKeluar dari aplikasi...\n");
+                exit(0);
                 
             default:
                 printf("\nPilihan tidak valid. Silakan coba lagi.\n");

@@ -20,4 +20,3 @@ void MenuTiketSaya(User user_aktif);
 // FS     : Menampilkan menu dan menjalankan fitur sesuai pilihan user
 
 #endif
-

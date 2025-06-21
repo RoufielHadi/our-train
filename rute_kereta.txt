@@ -1,0 +1,200 @@
+"nama"='Banjar'           | "status"=TRUE  | 0  | 0 | 2 | 1
+"nama"='Batulawang'       | "status"=FALSE | 1  | 22 | 3 | 2
+"nama"='Gunung Cupu'      | "status"=FALSE | 2  | 0  | 4 | 3
+"nama"='Cikotok'          | "status"=FALSE | 3  | 0  | 5 | 4
+"nama"='Sukajadi'         | "status"=FALSE | 4  | 0  | 6 | 5
+"nama"='Banjarsari'       | "status"=FALSE | 5  | 0  | 7 | 6
+"nama"='Cicapar'          | "status"=FALSE | 6  | 0  | 8 | 7
+"nama"='Kedungwuluh'      | "status"=FALSE | 7  | 0  | 9 | 8
+"nama"='Padaherang Pasar' | "status"=FALSE | 8  | 0  | 10 | 9
+"nama"='Padaherang'       | "status"=FALSE | 9  | 0  | 11 | 10
+"nama"='Ciganjeng'        | "status"=FALSE | 10 | 0  | 12 | 11
+"nama"='Tunggilis'        | "status"=FALSE | 11 | 0  | 13 | 12
+"nama"='Kalipucang'       | "status"=FALSE | 12 | 0  | 14 | 13
+"nama"='Sumber'           | "status"=FALSE | 13 | 0  | 15 | 14
+"nama"='Ciputrapinggan'   | "status"=FALSE | 14 | 0  | 16 | 15
+"nama"='Pangandaran'      | "status"=FALSE | 15 | 0  | 17 | 16
+"nama"='Cikembulan'       | "status"=FALSE | 16 | 0  | 18 | 17
+"nama"='Cikalong'         | "status"=FALSE | 17 | 0  | 19 | 18
+"nama"='Cibenda'          | "status"=FALSE | 18 | 0  | 20 | 19
+"nama"='Parigi'           | "status"=FALSE | 19 | 0  | 21 | 20
+"nama"='Cijulang'         | "status"=FALSE | 20 | 0  | 0 | 21
+"nama"='Pamalayan'        | "status"=TRUE  | 1  | 0  | 23 | 22
+"nama"='Karangpucung'     | "status"=TRUE  | 22 | 0  | 24 | 23
+"nama"='Bojong'           | "status"=FALSE | 23 | 0  | 25 | 24
+"nama"='Ciamis'           | "status"=TRUE  | 24 | 0  | 26 | 25
+"nama"='Cirahong'         | "status"=FALSE | 25 | 0  | 27 | 26
+"nama"='Manonjaya'        | "status"=TRUE  | 26 | 0  | 28 | 27
+"nama"='Awipari'          | "status"=TRUE  | 27 | 0  | 29 | 28
+"nama"='Tasikmalaya'      | "status"=TRUE  | 28 | 0  | 30 | 29
+"nama"='Indihiang'        | "status"=TRUE  | 29 | 0  | 31 | 30
+"nama"='Cibodas'          | "status"=FALSE | 30 | 0  | 32 | 31
+"nama"='Bantarkadu'       | "status"=FALSE | 31 | 0  | 33 | 32
+"nama"='Rajapolah'        | "status"=TRUE  | 32 | 0  | 34 | 33
+"nama"='Cihonje'          | "status"=FALSE | 33 | 0  | 35 | 34
+"nama"='Ciawi'            | "status"=TRUE  | 34 | 0  | 36 | 35
+"nama"='Cirahayu'         | "status"=TRUE  | 35 | 0  | 37 | 36
+"nama"='Cipeundeuy'       | "status"=TRUE  | 36 | 0  | 38 | 37
+"nama"='Bumiwaluya'       | "status"=TRUE  | 37 | 0  | 39 | 38
+"nama"='Warungbandrek'    | "status"=TRUE  | 38 | 0  | 40 | 39
+"nama"='Cibatu'           | "status"=TRUE  | 39 | 65  | 41 | 40
+"nama"='Cikoang'       	  | "status"=FALSE | 40 | 0  | 42 | 41
+"nama"='Pasirjengkol'     | "status"=TRUE  | 41 | 0  | 43 | 42
+"nama"='Citameng'         | "status"=FALSE | 42 | 0  | 44 | 43
+"nama"='Wanaraja'         | "status"=TRUE  | 43 | 0  | 45 | 44
+"nama"='Cinunuk'          | "status"=FALSE | 44 | 0  | 46 | 45
+"nama"='Tungilis'         | "status"=FALSE | 45 | 0  | 47 | 46
+"nama"='Cibolerang'       | "status"=FALSE | 46 | 0  | 48 | 47
+"nama"='Cimurah'          | "status"=FALSE | 47 | 0  | 49 | 48
+"nama"='Pasiruncal'       | "status"=FALSE | 48 | 0  | 50 | 49
+"nama"='Sukarame'         | "status"=FALSE | 49 | 0  | 51 | 50
+"nama"='Garut'            | "status"=TRUE  | 50 | 0  | 52 | 51
+"nama"='Pamoyanan'        | "status"=FALSE | 51 | 0  | 53 | 52
+"nama"='Cireungit'        | "status"=FALSE | 52 | 0  | 54 | 53
+"nama"='Ciroyom (Garut)'  | "status"=FALSE | 53 | 0  | 55 | 54
+"nama"='Kamojan'          | "status"=FALSE | 54 | 0  | 56 | 55
+"nama"='Cioyod'           | "status"=FALSE | 55 | 0  | 57 | 56
+"nama"='Dangdeur'         | "status"=FALSE | 56 | 0  | 58 | 57
+"nama"='Bayongbong'       | "status"=FALSE | 57 | 0  | 59 | 58
+"nama"='Cipelah'          | "status"=FALSE | 58 | 0  | 60 | 59
+"nama"='Cisurupan'        | "status"=FALSE | 59 | 0  | 61 | 60
+"nama"='Cisero'           | "status"=FALSE | 60 | 0  | 62 | 61
+"nama"='Cidatar'          | "status"=FALSE | 61 | 0  | 63 | 62
+"nama"='Patrol Girang'    | "status"=FALSE | 62 | 0  | 64 | 63
+"nama"='Cikajang'         | "status"=FALSE | 63 | 0  | 0  | 64
+"nama"='Leuwigoong'       | "status"=TRUE  | 40 | 0  | 66 | 65
+"nama"='Karangsari'       | "status"=TRUE  | 65 | 0  | 67 | 66
+"nama"='Leles'            | "status"=TRUE  | 66 | 0  | 68 | 67
+"nama"='Lebakjero'        | "status"=TRUE  | 67 | 0  | 69 | 68
+"nama"='Nagreg'           | "status"=TRUE  | 68 | 0  | 70 | 69
+"nama"='Cikurutug'        | "status"=FALSE | 69 | 0  | 71 | 70
+"nama"='Cicalengka'       | "status"=TRUE  | 70 | 0  | 72 | 71
+"nama"='Haurpugur'        | "status"=TRUE  | 71 | 0  | 73 | 72
+"nama"='Rancakendal'      | "status"=FALSE | 72 | 0  | 74 | 73
+"nama"='Rancaekek'        | "status"=TRUE  | 73 | 79 | 75 | 74
+"nama"='Bojongloa'        | "status"=FALSE | 74 | 0  | 76 | 75
+"nama"='Cikeruh'          | "status"=FALSE | 75 | 0  | 77 | 76
+"nama"='Cileles'          | "status"=FALSE | 76 | 0  | 78 | 77
+"nama"='Tanjungsari'      | "status"=FALSE | 77 | 0  | 0 | 78
+"nama"='Cimekar'          | "status"=TRUE  | 74 | 0  | 80 | 79
+"nama"='Gedebage Baru'    | "status"=FALSE | 79 | 0  | 81 | 80
+"nama"='Gedebage'         | "status"=TRUE  | 80 | 0  | 82 | 81
+"nama"='Kiaracondong'     | "status"=TRUE  | 81 | 0  | 83 | 82
+"nama"='Cikudapateuh'     | "status"=TRUE  | 82 | 107| 84 | 83
+"nama"='Cibangkonglor'    | "status"=FALSE | 83 | 0  | 85 | 84
+"nama"='Cibangkong'       | "status"=FALSE | 84 | 0  | 86 | 85
+"nama"='Buahbatu'         | "status"=FALSE | 85 | 0  | 87 | 86
+"nama"='Bojongsoang'      | "status"=FALSE | 86 | 0  | 88 | 87
+"nama"='Dayeuhkolot'      | "status"=FALSE | 87 | 100| 89 | 88
+"nama"='Kulalet'          | "status"=FALSE | 88 | 0  | 90 | 89
+"nama"='Pameungpeuk'      | "status"=FALSE | 89 | 0  | 91 | 90
+"nama"='Cikupa'           | "status"=FALSE | 90 | 0  | 92 | 91
+"nama"='Banjaran'         | "status"=FALSE | 91 | 0  | 93 | 92
+"nama"='Cangkuang'        | "status"=FALSE | 92 | 0  | 94 | 93
+"nama"='Citaliktik'       | "status"=FALSE | 93 | 0  | 95 | 94
+"nama"='Soreang'          | "status"=FALSE | 94 | 0  | 96 | 95
+"nama"='Sadu'             | "status"=FALSE | 95 | 0  | 97 | 96
+"nama"='Cukanghaur'       | "status"=FALSE | 96 | 0  | 98 | 97
+"nama"='Cisondari'        | "status"=FALSE | 97 | 0  | 99 | 98
+"nama"='Ciwidey'          | "status"=FALSE | 98 | 0  | 0 | 99
+"nama"='Cilelea'          | "status"=FALSE | 88  | 0 | 101 | 100
+"nama"='Manggahang'       | "status"=FALSE | 100 | 0 | 102 | 101
+"nama"='Jelekong'         | "status"=FALSE | 101 | 0 | 103 | 102
+"nama"='Ciheulang'        | "status"=FALSE | 102 | 0 | 104 | 103
+"nama"='Peneureusan'      | "status"=FALSE | 103 | 0 | 105 | 104
+"nama"='Ciparay'          | "status"=FALSE | 104 | 0 | 106 | 105
+"nama"='Cibungur'         | "status"=FALSE | 105 | 0 | 107 | 106
+"nama"='Majalaya'         | "status"=FALSE | 106 | 0 | 0 | 107
+"nama"='Bandung'          | "status"=TRUE  | 83  | 0 | 109 | 108
+"nama"='Bandung gudang' | "status"=FALSE | 108 | 0 | 110 | 109
+"nama"='Ciroyom'          | "status"=TRUE  | 109 | 0 | 111 | 110
+"nama"='Andir'            | "status"=TRUE  | 110 | 0 | 112 | 111
+"nama"='Cimindi'          | "status"=TRUE  | 111 | 0 | 113 | 112
+"nama"='Cimahi'           | "status"=TRUE  | 112 | 0 | 114 | 113
+"nama"='Gadobangkong'     | "status"=TRUE  | 113 | 0 | 115 | 114
+"nama"='Padalarang'       | "status"=TRUE  | 114 | 147 | 116 | 115
+"nama"='Tagogapu'         | "status"=FALSE | 115 | 0 | 117 | 116
+"nama"='Cipatat'          | "status"=TRUE  | 116 | 0 | 118 | 117
+"nama"='Rajamandala'      | "status"=FALSE | 117 | 0 | 119 | 118
+"nama"='Cipeuyeum'        | "status"=TRUE  | 118 | 0 | 120 | 119
+"nama"='Ciranjang'        | "status"=TRUE  | 119 | 0 | 121 | 120
+"nama"='Selajambe'        | "status"=FALSE | 120 | 0 | 122 | 121
+"nama"='Tipar'            | "status"=FALSE | 121 | 0 | 123 | 122
+"nama"='Maleber'          | "status"=FALSE | 122 | 0 | 124 | 123
+"nama"='Cianjur'          | "status"=TRUE  | 123 | 0 | 125 | 124
+"nama"='Pasirhayam'       | "status"=FALSE | 124 | 0 | 126 | 125
+"nama"='Cilaku'           | "status"=FALSE | 125 | 0 | 127 | 126
+"nama"='Cibeber'          | "status"=TRUE  | 126 | 0 | 128 | 127
+"nama"='Sindangresmi'     | "status"=FALSE | 127 | 0 | 129 | 128
+"nama"='Lampegan'         | "status"=TRUE  | 128 | 0 | 130 | 129
+"nama"='Cireungas'        | "status"=TRUE  | 129 | 0 | 131 | 130
+"nama"='Gandasoli'        | "status"=TRUE  | 130 | 0 | 132 | 131
+"nama"='Ranji'            | "status"=FALSE | 131 | 0 | 133 | 132
+"nama"='Sukabumi'         | "status"=TRUE  | 132 | 0 | 134 | 133
+"nama"='Cisaat'           | "status"=TRUE  | 133 | 0 | 135 | 134
+"nama"='Pondok Leungsir'  | "status"=FALSE | 134 | 0 | 136 | 135
+"nama"='Karangtengah'     | "status"=TRUE  | 135 | 0 | 137 | 136
+"nama"='Cibadak'          | "status"=TRUE  | 136 | 0 | 138 | 137
+"nama"='Parungkuda'       | "status"=TRUE  | 137 | 0 | 139 | 138
+"nama"='Cijambe'          | "status"=FALSE | 138 | 0 | 140 | 139
+"nama"='Cicurug'          | "status"=TRUE  | 139 | 0 | 141 | 140
+"nama"='Cigombong'        | "status"=TRUE  | 140 | 0 | 142 | 141
+"nama"='Maseng'           | "status"=TRUE  | 141 | 0 | 143 | 142
+"nama"='Ciomas'           | "status"=TRUE  | 142 | 0 | 144 | 143
+"nama"='Batutulis'        | "status"=TRUE  | 143 | 0 | 145 | 144
+"nama"='Tanjakan Empang'  | "status"=FALSE | 144 | 0 | 146 | 145
+"nama"='Bogor Paledang'   | "status"=TRUE  | 145 | 0 | 147 | 146
+"nama"='Bogor'            | "status"=TRUE  | 146 | 0 | 0 | 147
+"nama"='Cilame'          | "status"=TRUE  | 115 | 0 | 149 | 148
+"nama"='Sasaksaat'       | "status"=TRUE  | 148 | 0 | 150 | 149
+"nama"='Maswati'         | "status"=TRUE  | 149 | 0 | 151 | 150
+"nama"='Rendeh'          | "status"=TRUE  | 150 | 0 | 152 | 151
+"nama"='Cikadongdong'    | "status"=TRUE  | 151 | 0 | 153 | 152
+"nama"='Cisomang'        | "status"=FALSE | 152 | 0 | 154 | 153
+"nama"='Plered'          | "status"=TRUE  | 153 | 0 | 155 | 154
+"nama"='Sukatani'        | "status"=TRUE  | 154 | 0 | 156 | 155
+"nama"='Ciganea'         | "status"=TRUE  | 155 | 0 | 157 | 156
+"nama"='Purwakarta'      | "status"=TRUE  | 156 | 0 | 158 | 157
+"nama"='Pasar Jumahat'   | "status"=FALSE | 157 | 0 | 159 | 158
+"nama"='Sadang'          | "status"=FALSE | 158 | 0 | 160 | 159
+"nama"='Cibungur'        | "status"=TRUE  | 159 | 0 | 161 | 160
+"nama"='Cikampek'        | "status"=TRUE  | 160 | 0 | 162 | 161
+"nama"='Dawuan'          | "status"=TRUE  | 161 | 0 | 163 | 162
+"nama"='Kosambi'         | "status"=TRUE  | 162 | 0 | 164 | 163
+"nama"='Klari'           | "status"=TRUE  | 163 | 0 | 165 | 164
+"nama"='Warungbambu'     | "status"=FALSE | 164 | 0 | 166 | 165
+"nama"='Karawang'        | "status"=TRUE  | 165 | 0 | 167 | 166
+"nama"='Kedunggedeh'     | "status"=TRUE  | 166 | 0 | 168 | 167
+"nama"='Rengasbandung'   | "status"=FALSE | 167 | 0 | 169 | 168
+"nama"='Lemahabang'      | "status"=TRUE  | 168 | 0 | 170 | 169
+"nama"='Cikarang'        | "status"=TRUE  | 169 | 0 | 171 | 170
+"nama"='Metland Telagamurni' | "status"=TRUE | 170 | 0 | 172 | 171
+"nama"='Cibitung'        | "status"=TRUE  | 171 | 0 | 173 | 172
+"nama"='Tambun'          | "status"=TRUE  | 172 | 0 | 174 | 173
+"nama"='Bekasi Timur'    | "status"=TRUE  | 173 | 0 | 175 | 174
+"nama"='Bekasi'          | "status"=TRUE  | 174 | 0 | 176 | 175
+"nama"='Kranji'          | "status"=TRUE  | 175 | 0 | 177 | 176
+"nama"='Rawabebek'       | "status"=FALSE | 176 | 0 | 178 | 177
+"nama"='Cakung'          | "status"=TRUE  | 177 | 0 | 179 | 178
+"nama"='Klender Baru'    | "status"=TRUE  | 178 | 0 | 180 | 179
+"nama"='Buaran'          | "status"=TRUE  | 179 | 0 | 181 | 180
+"nama"='Klender'         | "status"=TRUE  | 180 | 0 | 182 | 181
+"nama"='Cipinang'        | "status"=FALSE | 181 | 0 | 183 | 182
+"nama"='Jatinegara'      | "status"=TRUE  | 182 | 193| 184 | 183
+"nama"='Pondok Jati'     | "status"=TRUE  | 183 | 0  | 185 | 184
+"nama"='Kramat'          | "status"=TRUE  | 184 | 0 | 186 | 185
+"nama"='Gang Sentiong'   | "status"=TRUE  | 185 | 0 | 187 | 186
+"nama"='Pasar Senen'     | "status"=TRUE  | 186 | 0 | 188 | 187
+"nama"='Kemayoran'       | "status"=TRUE  | 187 | 0 | 189 | 188
+"nama"='Rajawali'        | "status"=TRUE  | 188 | 0 | 190 | 189
+"nama"='Gunung Sahari'   | "status"=FALSE | 189 | 0 | 191 | 190
+"nama"='Kampung Bandan'  | "status"=TRUE  | 190 | 0 | 192 | 191
+"nama"='Jakarta Kota'    | "status"=TRUE  | 191 | 0 | 0 | 192
+"nama"='Matraman'       | "status"=TRUE  | 182 | 0 | 194 | 193
+"nama"='Kebon Pala'     | "status"=FALSE | 193 | 0 | 195 | 194
+"nama"='Manggarai'      | "status"=TRUE  | 194 | 0 | 196 | 195
+"nama"='Pegangsaan'     | "status"=FALSE | 195 | 0 | 197 | 196
+"nama"='Cikini'         | "status"=TRUE  | 196 | 0 | 198 | 197
+"nama"='Kebun Binatang' | "status"=FALSE | 197 | 0 | 199 | 198
+"nama"='Gondangdia'     | "status"=TRUE  | 198 | 0 | 200 | 199
+"nama"='Gambir'         | "status"=TRUE  | 199 | 0 | 0  | 200

@@ -11,6 +11,7 @@ Politeknik Negeri Bandung
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h> // Untuk fungsi isdigit()
 
 // Membuat stack riwayat kosong
 void CreateStackRiwayat(StackRiwayat *S) {
@@ -156,18 +157,14 @@ void SaveRiwayatToFile(StackRiwayat S, const char *filename) {
 void LoadRiwayatFromFile(StackRiwayat *S, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        printf("Riwayat pembelian belum ada.\n");
-        return;
+        return; // Hapus pesan debug
     }
 
     // Hapus stack yang ada
     DeAlokasiStackRiwayat(S);
 
     // Buffer untuk membaca data
-    char buffer[256];
-    char nama_user[100], nama_kereta[100];
-    int gerbong, kursi;
-    int jam, menit, detik, hari, bulan, tahun;
+    char buffer[512]; // Perbesar buffer untuk menampung baris yang panjang
     
     // Stack sementara untuk mempertahankan urutan yang benar
     StackRiwayat tempStack;
@@ -175,27 +172,93 @@ void LoadRiwayatFromFile(StackRiwayat *S, const char *filename) {
 
     // Baca data dari file
     while (fgets(buffer, sizeof(buffer), file) != NULL) {
-        // Parse data dari buffer
-        if (sscanf(buffer, "%[^,],%[^,],%d,%d,%d:%d:%d %d/%d/%d",
-                   nama_user, nama_kereta, &gerbong, &kursi, 
-                   &jam, &menit, &detik, &hari, &bulan, &tahun) == 10) {
-            
-            // Buat objek RiwayatTiket
-            RiwayatTiket tiket;
-            strcpy(tiket.riwayat_user.nama, nama_user);
-            strcpy(tiket.riwayat_kereta.nama_kereta, nama_kereta);
-            tiket.riwayat_nomor_gerbong = gerbong;
-            tiket.riwayat_nomor_kursi = kursi;
+        // Inisialisasi tiket
+        RiwayatTiket tiket;
+        memset(&tiket, 0, sizeof(RiwayatTiket));
+        
+        // Parse data dari format file riwayat_pemesanan.txt
+        // Format: KodeKereta|NamaKereta|StasiunAsal|StasiunTujuan|JamBerangkat|JamTiba|Tanggal|Harga|Kelas|NamaPenumpang|EmailPenumpang|NoTelp|Gerbong|Kursi|Waktu
+        
+        char *token = strtok(buffer, "|");
+        if (token) strcpy(tiket.riwayat_kereta.kode_kereta, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.nama_kereta, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.stasiun_asal, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.stasiun_tujuan, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.jam_berangkat, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.jam_tiba, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.tanggal_berangkat, token);
+        
+        token = strtok(NULL, "|");
+        if (token) tiket.riwayat_kereta.harga = atoi(token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_kereta.kelas, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_user.nama, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_user.email, token);
+        
+        token = strtok(NULL, "|");
+        if (token) strcpy(tiket.riwayat_user.nomor_telepon, token);
+        
+        // Parse kode kursi dan nomor kursi (misalnya: C2)
+        token = strtok(NULL, "|");
+        if (token) {
+            char kursi_str[10];
+            strcpy(kursi_str, token);
+            int i = 0;
+            while (kursi_str[i] != '\0' && !isdigit(kursi_str[i])) {
+                i++;
+            }
+            if (kursi_str[i] != '\0') {
+                tiket.riwayat_nomor_kursi = atoi(&kursi_str[i]);
+                if (i > 0) {
+                    kursi_str[i] = '\0';
+                    strcpy(tiket.riwayat_kode_kursi, kursi_str);
+                } else {
+                    strcpy(tiket.riwayat_kode_kursi, "");
+                }
+            } else {
+                tiket.riwayat_nomor_kursi = 0;
+                strcpy(tiket.riwayat_kode_kursi, "");
+            }
+        }
+        
+        // Parse nomor gerbong dari data tiket
+        token = strtok(NULL, "|");
+        if (token) {
+            tiket.riwayat_nomor_gerbong = atoi(token);
+        }
+        
+        token = strtok(NULL, "|");
+        if (token) {
+            // Parse waktu format: YYYY-MM-DD HH:MM:SS
+            int tahun, bulan, hari, jam, menit, detik;
+            sscanf(token, "%d-%d-%d %d:%d:%d", &tahun, &bulan, &hari, &jam, &menit, &detik);
+            tiket.riwayat_waktu_pemesanan.tahun = tahun;
+            tiket.riwayat_waktu_pemesanan.bulan = bulan;
+            tiket.riwayat_waktu_pemesanan.hari = hari;
             tiket.riwayat_waktu_pemesanan.jam = jam;
             tiket.riwayat_waktu_pemesanan.menit = menit;
             tiket.riwayat_waktu_pemesanan.detik = detik;
-            tiket.riwayat_waktu_pemesanan.hari = hari;
-            tiket.riwayat_waktu_pemesanan.bulan = bulan;
-            tiket.riwayat_waktu_pemesanan.tahun = tahun;
-            
-            // Tambahkan ke stack sementara
-            PushRiwayat(&tempStack, tiket);
         }
+        
+        // Tambahkan ke stack sementara
+        PushRiwayat(&tempStack, tiket);
     }
     
     // Pindahkan dari stack sementara ke stack utama agar urutan tetap benar
@@ -207,5 +270,4 @@ void LoadRiwayatFromFile(StackRiwayat *S, const char *filename) {
     }
 
     fclose(file);
-    printf("Riwayat berhasil dimuat dari file %s\n", filename);
 }

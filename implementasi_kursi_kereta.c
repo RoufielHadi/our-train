@@ -1,404 +1,354 @@
-/*
-Author: Devi Maulani 
-NIM: 241524007
-Kelas: 1A
-Prodi: Sarjana Terapan Teknik Informatika
-Jurusan: Teknik Komputer dan Informatika
-Politeknik Negeri Bandung
-*/
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "implementasi_kursi_kereta.h"
+#include "array.h"
+#include "databases.h"
+#include "boolean.h"
+#include <ctype.h>
+#include "implementasi_informasi_kereta.h"
 
-// *** OPERASI PENGELOLAAN GERBONG ***
-void TambahGerbong(KursiKereta *kereta, int jumlah_gerbong_baru) {
-    // Validasi input
-    if (jumlah_gerbong_baru <= 0) {
-        printf("Jumlah gerbong yang ditambahkan harus positif.\n");
-        return;
-    }
-    
-    // Cek apakah melebihi batas maksimum
-    int total_gerbong = kereta->jumlah_gerbong + jumlah_gerbong_baru;
-    if (total_gerbong > MAX_GERBONG) {
-        printf("Tidak dapat menambahkan gerbong. Maksimum gerbong adalah %d.\n", MAX_GERBONG);
-        return;
-    }
-    
-    // Simpan jumlah gerbong awal
-    int gerbong_awal = kereta->jumlah_gerbong;
-    
-    // Update jumlah gerbong
-    kereta->jumlah_gerbong = total_gerbong;
-    
-    // Inisialisasi gerbong baru
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    for (int g = gerbong_awal; g < total_gerbong; g++) {
-        kereta->data_kursi[g].nomor_gerbong = g + 1;
-        
-        for (int b = 0; b < konfig.baris; b++) {
-            for (int k = 0; k < konfig.kolom; k++) {
-                kereta->data_kursi[g].status_kursi[k][b] = FALSE; // Kursi kosong
-            }
-        }
-    }
-    
-    printf("Berhasil menambahkan %d gerbong baru. Total gerbong sekarang: %d.\n", 
-           jumlah_gerbong_baru, kereta->jumlah_gerbong);
+// Utility: Hilangkan spasi di awal/akhir
+static char* trim(char *s) {
+    while(isspace((unsigned char)*s)) s++;
+    if(*s == 0) return s;
+    char *end = s + strlen(s) - 1;
+    while(end > s && isspace((unsigned char)*end)) end--;
+    end[1] = '\0';
+    return s;
 }
 
-void KurangiGerbong(KursiKereta *kereta, int jumlah_gerbong_dikurangi) {
-    // Validasi input
-    if (jumlah_gerbong_dikurangi <= 0) {
-        printf("Jumlah gerbong yang dikurangi harus positif.\n");
-        return;
-    }
-    
-    // Cek apakah gerbong cukup untuk dikurangi
-    if (jumlah_gerbong_dikurangi >= kereta->jumlah_gerbong) {
-        printf("Tidak dapat mengurangi gerbong. Kereta harus memiliki minimal 1 gerbong.\n");
-        return;
-    }
-    
-    // Hitung jumlah kursi terisi pada gerbong yang akan dihapus
-    int kursi_terisi = 0;
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    for (int g = kereta->jumlah_gerbong - jumlah_gerbong_dikurangi; g < kereta->jumlah_gerbong; g++) {
-        for (int b = 0; b < konfig.baris; b++) {
-            for (int k = 0; k < konfig.kolom; k++) {
-                if (kereta->data_kursi[g].status_kursi[k][b]) {
-                    kursi_terisi++;
-                }
-            }
-        }
-    }
-    
-    // Beri peringatan jika ada kursi terisi yang akan dihapus
-    if (kursi_terisi > 0) {
-        printf("Peringatan: %d kursi yang terisi akan dihapus.\n", kursi_terisi);
-    }
-    
-    // Update jumlah gerbong
-    kereta->jumlah_gerbong -= jumlah_gerbong_dikurangi;
-    
-    printf("Berhasil mengurangi %d gerbong. Total gerbong sekarang: %d.\n", 
-           jumlah_gerbong_dikurangi, kereta->jumlah_gerbong);
-}
-
-void UbahJenisKereta(KursiKereta *kereta, JenisKereta jenis_baru) {
-    // Simpan data jenis lama
-    JenisKereta jenis_lama = kereta->jenis;
-    KonfigurasiKursi konfig_lama = GetKonfigurasiKursiByJenis(jenis_lama);
-    
-    // Update jenis kereta
-    kereta->jenis = jenis_baru;
-    KonfigurasiKursi konfig_baru = GetKonfigurasiKursiByJenis(jenis_baru);
-    
-    // Hitung jumlah kursi terisi yang akan hilang
-    int kursi_terisi_hilang = 0;
-    
-    for (int g = 0; g < kereta->jumlah_gerbong; g++) {
-        for (int b = 0; b < konfig_lama.baris; b++) {
-            for (int k = 0; k < konfig_lama.kolom; k++) {
-                // Jika kursi terisi dan berada di luar batas konfigurasi baru
-                if (kereta->data_kursi[g].status_kursi[k][b] && 
-                    (b >= konfig_baru.baris || k >= konfig_baru.kolom)) {
-                    kursi_terisi_hilang++;
-                }
-            }
-        }
-    }
-    
-    // Inisialisasi ulang status kursi sesuai dengan konfigurasi baru
-    for (int g = 0; g < kereta->jumlah_gerbong; g++) {
-        // Reset status kursi di area yang sudah ada
-        for (int b = 0; b < konfig_baru.baris; b++) {
-            for (int k = 0; k < konfig_baru.kolom; k++) {
-                // Pertahankan status kursi jika dalam batas konfigurasi lama
-                if (b < konfig_lama.baris && k < konfig_lama.kolom) {
-                    // Status tidak berubah
-                } else {
-                    // Inisialisasi kursi baru sebagai kosong
-                    kereta->data_kursi[g].status_kursi[k][b] = FALSE;
-                }
-            }
-        }
-    }
-    
-    printf("Jenis kereta berhasil diubah dari %s menjadi %s.\n", 
-           GetNamaJenisKereta(jenis_lama), GetNamaJenisKereta(jenis_baru));
-    
-    if (kursi_terisi_hilang > 0) {
-        printf("Perhatian: %d kursi terisi hilang karena perubahan konfigurasi.\n", kursi_terisi_hilang);
-    }
-}
-
-// *** OPERASI MANAJEMEN KURSI ***
-boolean ReservasiKursiOtomatis(KursiKereta *kereta, int *gerbong, int *baris, int *kolom) {
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    // Cari kursi kosong pertama
-    for (int g = 0; g < kereta->jumlah_gerbong; g++) {
-        for (int b = 0; b < konfig.baris; b++) {
-            for (int k = 0; k < konfig.kolom; k++) {
-                if (!kereta->data_kursi[g].status_kursi[k][b]) {
-                    // Kursi kosong ditemukan
-                    kereta->data_kursi[g].status_kursi[k][b] = TRUE; // Reservasi
-                    
-                    // Konversi indeks ke nomor (1-based)
-                    *gerbong = g + 1;
-                    *baris = b + 1;
-                    *kolom = k + 1;
-                    
-                    return TRUE;
-                }
-            }
-        }
-    }
-    
-    // Tidak ada kursi kosong
-    return FALSE;
-}
-
-boolean ReservasiKursiBerurutan(KursiKereta *kereta, int jumlah_kursi, int *gerbong, int *baris_awal, int *kolom_awal) {
-    if (jumlah_kursi <= 0) {
-        printf("Jumlah kursi harus positif.\n");
+// 1. Memuat data kursi kereta dari file database
+boolean MuatDataKursiDariFile(KursiKereta *kereta, const char *namaFile) {
+    FILE *f = fopen(namaFile, "r");
+    if (!f) {
+        printf("Error: Gagal membuka file %s\n", namaFile);
         return FALSE;
     }
-    
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    // Cari kursi berurutan dalam satu baris
-    for (int g = 0; g < kereta->jumlah_gerbong; g++) {
-        for (int b = 0; b < konfig.baris; b++) {
-            for (int k = 0; k <= konfig.kolom - jumlah_kursi; k++) {
-                boolean available = TRUE;
-                
-                // Cek apakah ada jumlah_kursi kursi kosong berurutan
-                for (int i = 0; i < jumlah_kursi; i++) {
-                    if (kereta->data_kursi[g].status_kursi[k + i][b]) {
-                        available = FALSE;
-                        break;
-                    }
-                }
-                
-                if (available) {
-                    // Reservasi kursi berurutan
-                    for (int i = 0; i < jumlah_kursi; i++) {
-                        kereta->data_kursi[g].status_kursi[k + i][b] = TRUE;
-                    }
-                    
-                    // Konversi indeks ke nomor (1-based)
-                    *gerbong = g + 1;
-                    *baris_awal = b + 1;
-                    *kolom_awal = k + 1;
-                    
-                    return TRUE;
-                }
+    char line[8192];
+    boolean found = FALSE;
+    while (fgets(line, sizeof(line), f)) {
+        if (!strstr(line, kereta->id_kereta) || !strstr(line, kereta->tanggal)) continue;
+        // Parsing record: ID_Kereta, Gerbong, Tanggal, status kursi A1..D20
+        char *part = strtok(line, "|");
+        int gerbongIdx = -1;
+        while (part) {
+            char *eq = strchr(part, '=');
+            if (!eq) { part = strtok(NULL, "|"); continue; }
+            *eq = '\0';
+            char *key = trim(part);
+            char *val = trim(eq + 1);
+            // Hilangkan kutip tunggal di awal dan akhir
+            if (*val == '\'') val++;
+            char *endq = strrchr(val, '\'');
+            if (endq) *endq = '\0';
+
+            if (strcmp(key, "Gerbong") == 0) {
+                // Format G<number>
+                if (val[0] == 'G') gerbongIdx = atoi(val + 1) - 1;
             }
+            else if (isupper((unsigned char)key[0]) && isdigit((unsigned char)key[1])) {
+                // Label kursi, misal A1
+                int col = key[0] - 'A';
+                int row = atoi(key + 1) - 1;
+                // Parse comma-separated status values without strtok to avoid conflicts
+                {
+                    int s = 0;
+                    char *start = val;
+                    while (s < kereta->jumlah_segmen) {
+                        char *comma = strchr(start, ',');
+                        int len = comma ? (int)(comma - start) : (int)strlen(start);
+                        char tmpVal[32];
+                        if (len >= (int)sizeof(tmpVal)) len = sizeof(tmpVal) - 1;
+                        strncpy(tmpVal, start, len);
+                        tmpVal[len] = '\0';
+                        boolean status = (strcmp(tmpVal, "True") == 0);
+                        kereta->data_kursi[gerbongIdx].status_kursi[col][row][s] = status;
+                        s++;
+                        if (!comma) break;
+                        start = comma + 1;
+                    }
+                }
+                found = TRUE;
+            }
+            part = strtok(NULL, "|");
         }
     }
-    
-    // Tidak menemukan kursi berurutan yang cukup
+    fclose(f);
+    return found;
+}
+
+// 2. Menginisialisasi kursi berdasarkan jadwal kereta (membangun segmen perjalanan)
+boolean InisialisasiKursiDenganJadwal(KursiKereta *kereta, JenisKereta jenis) {
+    FILE *f = fopen(DB_JADWAL_KERETA, "r");
+    if (!f) return FALSE;
+    char line[4096];
+    while (fgets(line, sizeof(line), f)) {
+        char buf[1024]; strcpy(buf, line);
+        char *id = strtok(buf, "|");
+        if (!id || strcmp(id, kereta->id_kereta) != 0) continue;
+        char *stations = strtok(NULL, "|");
+        char *times = strtok(NULL, "|");
+        if (!stations || !times) { fclose(f); return FALSE; }
+        // Bangun daftar segmen: pair stasiun[i] ke stasiun[i+1]
+        char stcopy[1024]; strncpy(stcopy, stations, sizeof(stcopy)-1);
+        int seg = 0;
+        char *prev = strtok(stcopy, ",");
+        char *cur;
+        while ((cur = strtok(NULL, ",")) && seg < MAX_SEGMEN) {
+            snprintf(kereta->segmen[seg].nama, MAX_NAMA_SEGMEN, "%s-%s", prev, cur);
+            prev = cur; seg++;
+        }
+        kereta->jumlah_segmen = seg;
+        kereta->jumlah_gerbong = kereta->jumlah_gerbong; // dipakai di caller
+        // Inisialisasi semua kursi ke FALSE (kosong)
+        InisialisasiKursiKereta(kereta, jenis);
+        fclose(f);
+        return TRUE;
+    }
+    fclose(f);
     return FALSE;
 }
 
-boolean PindahKursi(KursiKereta *kereta, int gerbong_lama, int baris_lama, int kolom_lama, 
-                    int gerbong_baru, int baris_baru, int kolom_baru) {
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    // Validasi input
-    if (gerbong_lama < 1 || gerbong_lama > kereta->jumlah_gerbong ||
-        baris_lama < 1 || baris_lama > konfig.baris ||
-        kolom_lama < 1 || kolom_lama > konfig.kolom ||
-        gerbong_baru < 1 || gerbong_baru > kereta->jumlah_gerbong ||
-        baris_baru < 1 || baris_baru > konfig.baris ||
-        kolom_baru < 1 || kolom_baru > konfig.kolom) {
-        return FALSE; // Input tidak valid
+// 4. Menampilkan denah kursi gerbong, 'O' untuk available, 'X' untuk terisi
+void TampilkanKursiLangsungDariDatabase(const char *id_kereta, const char *tanggal, int gerbong, const char *stasiun_awal, const char *stasiun_akhir) {
+    KursiKereta kereta;
+    strcpy(kereta.id_kereta, id_kereta);
+    strcpy(kereta.tanggal, tanggal);
+    // Dapatkan jenis kereta dari database umum
+    JenisKereta jenis = GetJenisKeretaById(id_kereta);
+    // Muat jadwal dan data kursi
+    if (!InisialisasiKursiDenganJadwal(&kereta, jenis) || !MuatDataKursiDariFile(&kereta, DB_KURSI_KERETA)) {
+        printf("Gagal memuat data kursi.\n");
+        return;
     }
-    
-    // Konversi ke indeks array (0-based)
-    int g_lama = gerbong_lama - 1;
-    int b_lama = baris_lama - 1;
-    int k_lama = kolom_lama - 1;
-    
-    int g_baru = gerbong_baru - 1;
-    int b_baru = baris_baru - 1;
-    int k_baru = kolom_baru - 1;
-    
-    // Cek apakah kursi lama memang terisi
-    if (!kereta->data_kursi[g_lama].status_kursi[k_lama][b_lama]) {
-        return FALSE; // Kursi lama tidak terisi
+    // Tentukan indeks segmen berdasarkan stasiun asal & tujuan
+    // Bangun daftar stasiun dari segmen
+    int stationCount = kereta.jumlah_segmen + 1;
+    char stationList[MAX_SEGMEN+1][MAX_NAMA_SEGMEN];
+    char tmpStation[MAX_NAMA_SEGMEN];
+    int i;
+    // Stasiun pertama
+    strncpy(tmpStation, kereta.segmen[0].nama, MAX_NAMA_SEGMEN);
+    tmpStation[MAX_NAMA_SEGMEN-1] = '\0';
+    char *dashPtr = strchr(tmpStation, '-');
+    if (dashPtr) *dashPtr = '\0';
+    strcpy(stationList[0], tmpStation);
+    // Stasiun berikutnya
+    for (i = 0; i < kereta.jumlah_segmen; i++) {
+        strncpy(tmpStation, kereta.segmen[i].nama, MAX_NAMA_SEGMEN);
+        tmpStation[MAX_NAMA_SEGMEN-1] = '\0';
+        dashPtr = strchr(tmpStation, '-');
+        if (dashPtr) strcpy(stationList[i+1], dashPtr+1);
+        else stationList[i+1][0] = '\0';
     }
-    
-    // Cek apakah kursi baru kosong
-    if (kereta->data_kursi[g_baru].status_kursi[k_baru][b_baru]) {
-        return FALSE; // Kursi baru sudah terisi
+    // Cari indeks stasiun asal & tujuan
+    int originIdx = -1, destIdx = -1;
+    for (i = 0; i < stationCount; i++) {
+        if (strcasecmp(stationList[i], stasiun_awal) == 0) originIdx = i;
+        if (strcasecmp(stationList[i], stasiun_akhir) == 0) destIdx = i;
     }
-    
-    // Pindahkan reservasi
-    kereta->data_kursi[g_lama].status_kursi[k_lama][b_lama] = FALSE;
-    kereta->data_kursi[g_baru].status_kursi[k_baru][b_baru] = TRUE;
-    
-    return TRUE;
-}
-
-// *** OPERASI STATISTIK ***
-int HitungKetersediaanKursiGerbong(KursiKereta kereta, int gerbong) {
-    if (gerbong < 1 || gerbong > kereta.jumlah_gerbong) {
-        return -1; // Gerbong tidak valid
+    // Hitung indeks segmen: dari originIdx sampai destIdx-1
+    int idxAwal, idxAkhir;
+    if (originIdx < 0 || destIdx < 0 || originIdx >= destIdx) {
+        // fallback ke semua segmen
+        idxAwal = 0;
+        idxAkhir = kereta.jumlah_segmen - 1;
+    } else {
+        idxAwal = originIdx;
+        idxAkhir = destIdx - 1;
     }
-    
-    int g = gerbong - 1; // Konversi ke indeks array
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta.jenis);
-    int total_kursi = konfig.kolom * konfig.baris;
-    int kursi_terisi = 0;
-    
-    for (int b = 0; b < konfig.baris; b++) {
-        for (int k = 0; k < konfig.kolom; k++) {
-            if (kereta.data_kursi[g].status_kursi[k][b]) {
-                kursi_terisi++;
+    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(jenis);
+    // Hitung jumlah kolom yang tersedia di database kursi untuk gerbong ini
+    int numCols = HitungJumlahKolomDariFile(id_kereta, tanggal, gerbong, DB_KURSI_KERETA);
+    if (numCols <= 0 || numCols > konfig.kolom) numCols = konfig.kolom;
+    // Cetak header kolom sesuai jumlah kolom DB
+    printf("    ");
+    int c, r;
+    for (c = 0; c < numCols; c++) printf("%c ", 'A' + c);
+    printf("\n");
+    // Cetak tiap baris kursi
+    for (r = 0; r < konfig.baris; r++) {
+        printf("%2d: ", r + 1);
+        for (c = 0; c < numCols; c++) {
+            boolean avail = TRUE;
+            int s;
+            // Periksa kursi pada segmen perjalanan (idxAwal..idxAkhir)
+            for (s = idxAwal; s <= idxAkhir; s++) {
+                if (!kereta.data_kursi[gerbong-1].status_kursi[c][r][s]) { avail = FALSE; break; }
             }
+            printf("%c ", avail ? 'O' : 'X');
         }
-    }
-    
-    return total_kursi - kursi_terisi;
-}
-
-int HitungKetersediaanKursiTotal(KursiKereta kereta) {
-    int total = HitungJumlahKursiKereta(kereta);
-    int terisi = HitungJumlahKursiTerisi(kereta);
-    return total - terisi;
-}
-
-float HitungPersentaseKetersediaanGerbong(KursiKereta kereta, int gerbong) {
-    if (gerbong < 1 || gerbong > kereta.jumlah_gerbong) {
-        return -1.0; // Gerbong tidak valid
-    }
-    
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta.jenis);
-    int total_kursi = konfig.kolom * konfig.baris;
-    int kursi_tersedia = HitungKetersediaanKursiGerbong(kereta, gerbong);
-    
-    return (float)kursi_tersedia / total_kursi * 100.0;
-}
-
-// *** OPERASI DISPLAY KHUSUS ***
-void TampilkanStatistikKereta(KursiKereta kereta) {
-    int total_kursi = HitungJumlahKursiKereta(kereta);
-    int kursi_terisi = HitungJumlahKursiTerisi(kereta);
-    int kursi_tersedia = total_kursi - kursi_terisi;
-    float persentase_terisi = HitungPersentaseKursiTerisi(kereta);
-    
-    printf("=== STATISTIK KERETA %s ===\n", kereta.id_kereta);
-    printf("Jenis Kereta   : %s\n", GetNamaJenisKereta(kereta.jenis));
-    printf("Jumlah Gerbong : %d\n", kereta.jumlah_gerbong);
-    printf("Total Kursi    : %d\n", total_kursi);
-    printf("Kursi Terisi   : %d (%.2f%%)\n", kursi_terisi, persentase_terisi);
-    printf("Kursi Tersedia : %d (%.2f%%)\n", kursi_tersedia, 100.0 - persentase_terisi);
-    
-    printf("\nStatistik per Gerbong:\n");
-    printf("Gerbong | Kursi Tersedia | Persentase Tersedia\n");
-    printf("----------------------------------------------\n");
-    
-    for (int g = 1; g <= kereta.jumlah_gerbong; g++) {
-        int tersedia = HitungKetersediaanKursiGerbong(kereta, g);
-        float persen = HitungPersentaseKetersediaanGerbong(kereta, g);
-        printf("%-7d | %-14d | %.2f%%\n", g, tersedia, persen);
-    }
-}
-
-void TampilkanDiagramOkupansiKereta(KursiKereta kereta) {
-    printf("=== DIAGRAM OKUPANSI KERETA %s ===\n", kereta.id_kereta);
-    printf("Jenis Kereta: %s\n\n", GetNamaJenisKereta(kereta.jenis));
-    
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta.jenis);
-    
-    for (int g = 1; g <= kereta.jumlah_gerbong; g++) {
-        printf("Gerbong %d:\n", g);
-        TampilkanKursiGerbong(kereta, g);
         printf("\n");
     }
 }
 
-void ExportDaftarPenumpang(KursiKereta kereta, char *filename) {
-    FILE *file = fopen(filename, "w");
-    if (file == NULL) {
-        printf("Error: Tidak dapat membuat file %s\n", filename);
-        return;
+// Fungsi untuk memilih kursi: parsing kode dan memanggil ReservasiKursiMultiSegmen
+boolean PilihKursi(KursiKereta *kereta, int gerbong, const char *kode_kursi, const char *stasiun_awal, const char *stasiun_akhir) {
+    // Parsing kolom (A..), baris (1..)
+    int col = toupper((unsigned char)kode_kursi[0]) - 'A';
+    int row = atoi(kode_kursi + 1) - 1;
+    // Validasi input
+    JenisKereta jenis = GetJenisKeretaFromString(kereta->id_kereta);
+    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(jenis);
+    if (col < 0 || col >= konfig.kolom || row < 0 || row >= konfig.baris) {
+        return FALSE;
     }
-    
-    fprintf(file, "DAFTAR KURSI TERISI KERETA %s\n", kereta.id_kereta);
-    fprintf(file, "Jenis Kereta: %s\n", GetNamaJenisKereta(kereta.jenis));
-    fprintf(file, "Jumlah Gerbong: %d\n\n", kereta.jumlah_gerbong);
-    
-    fprintf(file, "Gerbong | Baris | Kolom\n");
-    fprintf(file, "-----------------------\n");
-    
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta.jenis);
-    int jumlah_terisi = 0;
-    
-    for (int g = 0; g < kereta.jumlah_gerbong; g++) {
-        for (int b = 0; b < konfig.baris; b++) {
-            for (int k = 0; k < konfig.kolom; k++) {
-                if (kereta.data_kursi[g].status_kursi[k][b]) {
-                    fprintf(file, "%-7d | %-5d | %c\n", 
-                           g + 1, b + 1, 'A' + k);
-                    jumlah_terisi++;
+    // Tentukan indeks segmen berdasarkan stasiun awal dan akhir
+    int idxAwal = -1, idxAkhir = -1;
+    int i;
+    char segCopy[MAX_NAMA_SEGMEN];
+    for (i = 0; i < kereta->jumlah_segmen; i++) {
+        strncpy(segCopy, kereta->segmen[i].nama, MAX_NAMA_SEGMEN);
+        segCopy[MAX_NAMA_SEGMEN-1] = '\0';
+        char *dash = strchr(segCopy, '-');
+        if (dash) {
+            *dash = '\0';
+            if (strcasecmp(segCopy, stasiun_awal) == 0) {
+                idxAwal = i;
+            }
+        }
+    }
+    for (i = 0; i < kereta->jumlah_segmen; i++) {
+        strncpy(segCopy, kereta->segmen[i].nama, MAX_NAMA_SEGMEN);
+        segCopy[MAX_NAMA_SEGMEN-1] = '\0';
+        char *dash = strchr(segCopy, '-');
+        if (dash) {
+            char *st2 = dash + 1;
+            if (strcasecmp(st2, stasiun_akhir) == 0) {
+                idxAkhir = i;
+            }
+        }
+    }
+    // Fallback jika tidak ditemukan: cek semua segmen (inklusif)
+    if (idxAwal < 0 || idxAkhir < 0 || idxAwal > idxAkhir) {
+        idxAwal = 0;
+        idxAkhir = kereta->jumlah_segmen - 1;
+    }
+    // Reservasi dari segmen awal sampai akhir (inklusif)
+    return ReservasiKursiMultiSegmen(kereta, gerbong, row, col, idxAwal, idxAkhir);
+}
+
+// 5. Menyimpan perubahan kursi (setelah pembayaran)
+boolean SimpanDataKursiKeFile(KursiKereta *kereta, const char *namaFile) {
+    char tempName[256];
+    sprintf(tempName, "%s.tmp", namaFile);
+    FILE *fin = fopen(namaFile, "r");
+    if (!fin) {
+        printf("Error: Gagal membuka file %s untuk update\n", namaFile);
+        return FALSE;
+    }
+    FILE *fout = fopen(tempName, "w");
+    if (!fout) {
+        printf("Error: Gagal membuat file sementara %s\n", tempName);
+        fclose(fin);
+        return FALSE;
+    }
+
+    char line[8192];
+    boolean updated = FALSE;
+    JenisKereta jenis = GetJenisKeretaFromString(kereta->id_kereta);
+    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(jenis);
+
+    while (fgets(line, sizeof(line), fin)) {
+        char copy[8192]; strcpy(copy, line);
+        // Cari record yang sesuai id, tanggal, dan gerbong
+        if (strstr(copy, kereta->id_kereta) && strstr(copy, kereta->tanggal)) {
+            int gIndex = -1;
+            int g;
+            for (g = 0; g < kereta->jumlah_gerbong; g++) {
+                char gerbKey[32];
+                sprintf(gerbKey, "Gerbong = 'G%d'", g+1);
+                if (strstr(copy, gerbKey)) { gIndex = g; break; }
+            }
+            if (gIndex >= 0) {
+                // Tulis ulang baris dengan status kursi terbaru
+                fprintf(fout, "ID_Kereta = '%s' | Gerbong = 'G%d' | Tanggal = '%s' ",
+                        kereta->id_kereta, gIndex+1, kereta->tanggal);
+                int c,r,s;
+                for (c = 0; c < konfig.kolom; c++) {
+                    for (r = 0; r < konfig.baris; r++) {
+                        fprintf(fout, "| %c%d = '", 'A'+c, r+1);
+                        for (s = 0; s < kereta->jumlah_segmen; s++) {
+                            fprintf(fout, "%s", kereta->data_kursi[gIndex].status_kursi[c][r][s] ? "True" : "False");
+                            if (s + 1 < kereta->jumlah_segmen) fprintf(fout, ",");
+                        }
+                        fprintf(fout, "' ");
+                    }
+                }
+                fprintf(fout, "\n");
+                updated = TRUE;
+                continue; // lanjut baca baris berikutnya
+            }
+        }
+        // Baris lain tetap ditulis
+        fputs(line, fout);
+    }
+    fclose(fin);
+    fclose(fout);
+
+    if (!updated) {
+        // Tidak ada perubahan, hapus file sementara
+        remove(tempName);
+        return FALSE;
+    }
+    // Replace file asli dengan file sementara
+    remove(namaFile);
+    rename(tempName, namaFile);
+    return TRUE;
+}
+
+// Menghitung jumlah gerbong yang tersedia dalam file database kursi
+int HitungJumlahGerbongDariFile(const char *id_kereta, const char *tanggal, const char *namaFile) {
+    FILE *f = fopen(namaFile, "r");
+    if (!f) return 0;
+    char line[8192];
+    int maxG = 0;
+    while (fgets(line, sizeof(line), f)) {
+        if (!strstr(line, id_kereta) || !strstr(line, tanggal)) continue;
+        char *p = strstr(line, "Gerbong");
+        if (p) {
+            char *eq = strchr(p, '=');
+            if (eq) {
+                char *val = eq + 1;
+                // Skip spaces and quotes
+                while (*val && (isspace((unsigned char)*val) || *val == '\'' || *val == '"')) val++;
+                int g = atoi(val);
+                if (g > maxG) maxG = g;
+            }
+        }
+    }
+    fclose(f);
+    return maxG;
+}
+
+// Menghitung jumlah kolom yang tersedia dalam file database kursi
+int HitungJumlahKolomDariFile(const char *id_kereta, const char *tanggal, int gerbong, const char *namaFile) {
+    FILE *f = fopen(namaFile, "r");
+    if (!f) return 0;
+    char line[8192];
+    int maxCol = 0;
+    while (fgets(line, sizeof(line), f)) {
+        if (!strstr(line, id_kereta) || !strstr(line, tanggal)) continue;
+        // Pastikan baris gerbong sesuai
+        char gerbKey[32]; sprintf(gerbKey, "Gerbong = 'G%d'", gerbong);
+        if (!strstr(line, gerbKey)) continue;
+        // Hitung kolom maksimal
+        char *part = strtok(line, "|");
+        while (part) {
+            char *eq = strchr(part, '=');
+            if (eq) {
+                *eq = '\0';
+                char *key = trim(part);
+                if (key[0] >= 'A' && key[0] <= 'Z' && isdigit((unsigned char)key[1])) {
+                    int col = key[0] - 'A' + 1;
+                    if (col > maxCol) maxCol = col;
                 }
             }
+            part = strtok(NULL, "|");
         }
+        break;
     }
-    
-    fprintf(file, "\nTotal Kursi Terisi: %d\n", jumlah_terisi);
-    
-    fclose(file);
-    printf("Daftar kursi terisi berhasil diekspor ke file %s\n", filename);
+    fclose(f);
+    return maxCol;
 }
-
-// *** OPERASI ADMINISTRATIF ***
-void ResetSeluruhKursi(KursiKereta *kereta) {
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    for (int g = 0; g < kereta->jumlah_gerbong; g++) {
-        for (int b = 0; b < konfig.baris; b++) {
-            for (int k = 0; k < konfig.kolom; k++) {
-                kereta->data_kursi[g].status_kursi[k][b] = FALSE; // Kursi kosong
-            }
-        }
-    }
-    
-    printf("Seluruh kursi kereta %s berhasil direset.\n", kereta->id_kereta);
-}
-
-void BlokKursiUntukMaintenance(KursiKereta *kereta, int gerbong, int baris_awal, int baris_akhir) {
-    KonfigurasiKursi konfig = GetKonfigurasiKursiByJenis(kereta->jenis);
-    
-    // Validasi input
-    if (gerbong < 1 || gerbong > kereta->jumlah_gerbong ||
-        baris_awal < 1 || baris_awal > konfig.baris ||
-        baris_akhir < baris_awal || baris_akhir > konfig.baris) {
-        printf("Input tidak valid.\n");
-        return;
-    }
-    
-    int g = gerbong - 1; // Konversi ke indeks array
-    int kursi_terisi_diblokir = 0;
-    
-    for (int b = baris_awal - 1; b <= baris_akhir - 1; b++) {
-        for (int k = 0; k < konfig.kolom; k++) {
-            if (kereta->data_kursi[g].status_kursi[k][b]) {
-                kursi_terisi_diblokir++;
-            }
-            kereta->data_kursi[g].status_kursi[k][b] = TRUE; // Blokir kursi
-        }
-    }
-    
-    printf("Baris %d-%d pada gerbong %d berhasil diblokir untuk maintenance.\n", 
-           baris_awal, baris_akhir, gerbong);
-    
-    if (kursi_terisi_diblokir > 0) {
-        printf("Perhatian: %d kursi yang sudah terisi terpaksa diblokir.\n", kursi_terisi_diblokir);
-    }
-} 

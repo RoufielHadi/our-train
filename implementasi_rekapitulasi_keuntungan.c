@@ -27,7 +27,8 @@ void TambahHargaKereta(DaftarHargaTiket *daftar, char *id_kereta, char *nama_ker
     }
     
     // Cek jika ID kereta sudah ada
-    for (int i = 0; i < daftar->jumlah; i++) {
+    int i;
+    for (i = 0; i < daftar->jumlah; i++) {
         if (strcmp(daftar->data[i].id_kereta, id_kereta) == 0) {
             printf("ID kereta %s sudah ada dalam daftar.\n", id_kereta);
             return;
@@ -60,7 +61,8 @@ boolean UpdateHargaKereta(DaftarHargaTiket *daftar, char *id_kereta,
                          int harga_eksekutif, int harga_luxury, int harga_priority, 
                          int harga_sleeper, int harga_compartment) {
     // Cari kereta berdasarkan ID
-    for (int i = 0; i < daftar->jumlah; i++) {
+    int i;
+    for (i = 0; i < daftar->jumlah; i++) {
         if (strcmp(daftar->data[i].id_kereta, id_kereta) == 0) {
             // Update harga
             daftar->data[i].harga_ekonomi = harga_ekonomi;
@@ -84,7 +86,8 @@ boolean UpdateHargaKereta(DaftarHargaTiket *daftar, char *id_kereta,
 boolean HapusHargaKereta(DaftarHargaTiket *daftar, char *id_kereta) {
     // Cari indeks kereta yang akan dihapus
     int idx = -1;
-    for (int i = 0; i < daftar->jumlah; i++) {
+    int i;
+    for (i = 0; i < daftar->jumlah; i++) {
         if (strcmp(daftar->data[i].id_kereta, id_kereta) == 0) {
             idx = i;
             break;
@@ -98,7 +101,7 @@ boolean HapusHargaKereta(DaftarHargaTiket *daftar, char *id_kereta) {
     }
     
     // Geser elemen di belakangnya
-    for (int i = idx; i < daftar->jumlah - 1; i++) {
+    for (i = idx; i < daftar->jumlah - 1; i++) {
         daftar->data[i] = daftar->data[i + 1];
     }
     
@@ -109,9 +112,10 @@ boolean HapusHargaKereta(DaftarHargaTiket *daftar, char *id_kereta) {
 }
 
 HargaTiketKereta* GetHargaKereta(DaftarHargaTiket daftar, char *id_kereta) {
+	int i;
     static HargaTiketKereta hasil; // Menggunakan static agar variabel tetap ada setelah fungsi berakhir
     
-    for (int i = 0; i < daftar.jumlah; i++) {
+    for (i = 0; i < daftar.jumlah; i++) {
         if (strcmp(daftar.data[i].id_kereta, id_kereta) == 0) {
             hasil = daftar.data[i]; // Salin nilainya, bukan alamatnya
             return &hasil;
@@ -123,6 +127,7 @@ HargaTiketKereta* GetHargaKereta(DaftarHargaTiket daftar, char *id_kereta) {
 
 // *** OPERASI FILE DAFTAR HARGA ***
 void SaveDaftarHargaToFile(DaftarHargaTiket daftar, const char *filename) {
+	int i;
     FILE *file = fopen(filename, "w");
     if (!file) {
         printf("Error: Tidak dapat membuka file %s\n", filename);
@@ -133,7 +138,7 @@ void SaveDaftarHargaToFile(DaftarHargaTiket daftar, const char *filename) {
     fprintf(file, "ID_Kereta,Nama_Kereta,Ekonomi,Ekonomi_Premium,Bisnis,Eksekutif,Luxury,Priority,Sleeper,Compartment\n");
     
     // Tulis data
-    for (int i = 0; i < daftar.jumlah; i++) {
+    for (i = 0; i < daftar.jumlah; i++) {
         fprintf(file, "%s,%s,%d,%d,%d,%d,%d,%d,%d,%d\n",
                daftar.data[i].id_kereta,
                daftar.data[i].nama_kereta,
@@ -290,6 +295,7 @@ RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket d
     
     // Cari kereta terlaris
     if (rekap.jumlah_tiket > 0) {
+    	int i;
         // Hitung jumlah tiket per kereta
         struct {
             char id_kereta[10];
@@ -314,10 +320,11 @@ RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket d
         
         // Hitung jumlah tiket per kereta
         while (!isEmptyStackRiwayat(temp)) {
+        	int i;
             if (PopRiwayat(&temp, &tiket)) {
                 boolean found = FALSE;
                 
-                for (int i = 0; i < jumlah_kereta; i++) {
+                for (i = 0; i < jumlah_kereta; i++) {
                     if (strcmp(kereta_count[i].id_kereta, tiket.riwayat_kereta.kode_kereta) == 0) {
                         kereta_count[i].jumlah++;
                         found = TRUE;
@@ -336,7 +343,7 @@ RekapitulasiKeuntungan BuatRekapitulasi(StackRiwayat riwayat, DaftarHargaTiket d
         
         // Cari kereta dengan jumlah tiket terbanyak
         int max_idx = 0;
-        for (int i = 1; i < jumlah_kereta; i++) {
+        for (i = 1; i < jumlah_kereta; i++) {
             if (kereta_count[i].jumlah > kereta_count[max_idx].jumlah) {
                 max_idx = i;
             }
@@ -493,7 +500,8 @@ void AnalisisKeuntunganPerKereta(StackRiwayat riwayat, DaftarHargaTiket daftar) 
             
             boolean found = FALSE;
             
-            for (int i = 0; i < jumlah_kereta; i++) {
+            int i;
+            for (i = 0; i < jumlah_kereta; i++) {
                 if (strcmp(analisis[i].id_kereta, tiket.riwayat_kereta.kode_kereta) == 0) {
                     analisis[i].jumlah_tiket++;
                     analisis[i].total_keuntungan += harga;
@@ -517,7 +525,8 @@ void AnalisisKeuntunganPerKereta(StackRiwayat riwayat, DaftarHargaTiket daftar) 
            "No", "Nama Kereta", "Jumlah Tiket", "Total Keuntungan", "Rata-rata Harga");
     printf("--------------------------------------------------------------------------\n");
     
-    for (int i = 0; i < jumlah_kereta; i++) {
+    int i;
+    for (i = 0; i < jumlah_kereta; i++) {
         double rata_rata = (double)analisis[i].total_keuntungan / analisis[i].jumlah_tiket;
         
         printf("%-5d | %-30s | %-15d | Rp %-16ld | Rp %-12.2f\n", 
@@ -583,7 +592,8 @@ void AnalisisKeuntunganPerBulan(StackRiwayat riwayat, DaftarHargaTiket daftar, i
     long total_tahunan = 0;
     int total_tiket = 0;
     
-    for (int i = 0; i < 12; i++) {
+    int i;
+    for (i = 0; i < 12; i++) {
         double rata_rata = (bulan[i].jumlah_tiket > 0) ? 
                           (double)bulan[i].total_keuntungan / bulan[i].jumlah_tiket : 0;
         

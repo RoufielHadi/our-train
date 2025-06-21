@@ -7,10 +7,13 @@ Jurusan: Teknik Komputer dan Informatika
 Politeknik Negeri Bandung
 */
 
+#include "tree_biner.h"
+#include "implementasi_morse.h"
 #include "hash_password.h"
 
 // *** VALIDASI PASSWORD ***
 boolean IsPasswordValid(const char *password) {
+	int i;
     if (password == NULL || strlen(password) < 6) {
         return FALSE; // Password terlalu pendek
     }
@@ -19,7 +22,7 @@ boolean IsPasswordValid(const char *password) {
     boolean hasLowercase = FALSE;
     boolean hasDigit = FALSE;
     
-    for (int i = 0; password[i] != '\0'; i++) {
+    for (i = 0; password[i] != '\0'; i++) {
         if (isupper(password[i])) {
             hasUppercase = TRUE;
         } else if (islower(password[i])) {
@@ -33,11 +36,12 @@ boolean IsPasswordValid(const char *password) {
 }
 
 boolean IsPinValid(const char *pin) {
+	int i;
     if (pin == NULL || strlen(pin) != PIN_LENGTH) {
         return FALSE; // PIN harus memiliki panjang yang sesuai
     }
     
-    for (int i = 0; i < PIN_LENGTH; i++) {
+    for (i = 0; i < PIN_LENGTH; i++) {
         if (!isdigit(pin[i])) {
             return FALSE; // Semua karakter harus berupa digit
         }
@@ -158,7 +162,7 @@ void SimpanPasswordKeFile(const char *username, const char *hashedPassword, cons
     printf("Data pengguna berhasil disimpan.\n");
 }
 
-boolean VerifikasiLogin(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename) {
+boolean VerifikasiLoginFromFile(HashPassword *morseTree, const char *username, const char *password, const char *pin, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("File pengguna tidak ditemukan.\n");

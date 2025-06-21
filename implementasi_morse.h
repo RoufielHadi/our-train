@@ -10,11 +10,13 @@ Politeknik Negeri Bandung
 #ifndef IMPLEMENTASI_MORSE_H
 #define IMPLEMENTASI_MORSE_H
 
-#include "tree_biner.h"
-#include "boolean.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "boolean.h"
+
+// Forward declaration - gunakan void* untuk sementara
+typedef struct HashPassword HashPassword;
 
 // *** PROTOTYPE FUNGSI IMPLEMENTASI MORSE ***
 
